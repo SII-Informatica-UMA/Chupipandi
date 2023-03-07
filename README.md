@@ -7,8 +7,7 @@ Aplicacion microservicios
 ## Authors
 
 - [@M4rdom](https://www.github.com/M4rdom)
-
-
+- [@MAngelGC](https://www.github.com/MAngelGC)
 ## Roadmap
 
 - Additional browser support

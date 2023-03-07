@@ -1,25 +1,26 @@
 
 # Sistemas Información para Internet
 
-Aplicacion microservicios
-
+Implementación microservicios de Gestión de Correctores y Evaluación de Exámenes.
 
 ## Authors
 
 - [@M4rdom](https://www.github.com/M4rdom)
 - [@MAngelGC](https://www.github.com/MAngelGC)
-## Roadmap
+- [@fcristallocagnoli](https://www.github.com/fcristallocagnoli)
 
-- Additional browser support
+## Comandos de utilidad JPA
 
-- Add more integrations
-
-
-## Run Locally
-
-Clone the project
-
+Para ejecutar la clase principal de cada microservicio
 ```bash
-  git clone https://github.com/SII-Informatica-UMA/tarea-1-chupipandi.git
+mvn exec:java -Dexec.mainClass="sii.ms_corrector.Main"
+mvn exec:java -Dexec.mainClass="sii.ms_evalexamenes.Main"
 ```
 
+Para levantar la base de datos h2:
+- Copiar archivo jar en directorio de trabajo
+- O bien utilizar la ruta completa
+```bash
+# Ruta del jar: "~\.m2\repository\com\h2database\h2\2.1.210\h2-2.1.210.jar"
+java -cp h2-2.1.210.jar org.h2.tools.Server -ifNotExists
+```

@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
 	<persistence-unit name="JPA" transaction-type="RESOURCE_LOCAL">
-		<class>JPA.Entidades_JPA.Book</class>
-		<class>JPA.Entidades_JPA.Customer</class>
-		<class>JPA.Entidades_JPA.Address</class>
-		<class>JPA.Entidades_JPA.Artist</class>
-		<class>JPA.Entidades_JPA.CD</class>
-		<class>JPA.Entidades_JPA.Item</class>
+		<!-- <class>JPA.Entidades_JPA.{ClaseJava}</class> -->
 		<properties>
 			<property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:test"/>
 			<property name="javax.persistence.jdbc.user" value=""/>

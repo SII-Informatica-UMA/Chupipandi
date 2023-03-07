@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+	<persistence-unit name="ms-evalexamenes" transaction-type="RESOURCE_LOCAL">
+		<class>es.uma.informatica.sii.evalexamenes.entities.Corrector</class>
+		<class>es.uma.informatica.sii.evalexamenes.entities.Examen</class>
+		<class>es.uma.informatica.sii.evalexamenes.entities.Materia</class>
+		<properties>
+			<property name="jakarta.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/./db/dbEvalExamenes"/>
+			<property name="jakarta.persistence.jdbc.user" value="sa"/>
+			<property name="jakarta.persistence.jdbc.password" value="sa"/>
+			<property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
+			<property name="jakarta.persistence.schema-generation.scripts.action" value="create"/>
+			<property name="jakarta.persistence.schema-generation.scripts.create-target" value="esquema.ddl"/>
+			<property name="jakarta.persistence.schema-generation.database.action" value="create"/>
+			<property name="eclipselink.logging.level.sql" value="FINE" />
+			<property name="eclipselink.logging.parameters" value="true" />
+		</properties>
+	</persistence-unit>
+</persistence>

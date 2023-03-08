@@ -48,3 +48,7 @@ buildNumber.properties
 # ----------------------------------------------------
 # ----- Github Database gitignore: -----
 esquema.ddl
+
+# ----------------------------------------------------
+# ----- IDE config files: -----
+.vscode/

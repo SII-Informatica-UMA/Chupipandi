@@ -8,6 +8,7 @@ Implementación microservicios de Gestión de Correctores y Evaluación de Exám
 - [@M4rdom](https://www.github.com/M4rdom)
 - [@MAngelGC](https://www.github.com/MAngelGC)
 - [@fcristallocagnoli](https://www.github.com/fcristallocagnoli)
+- [@RocioLN15](https://github.com/RocioLN15)
 
 ## Comandos de utilidad JPA
 

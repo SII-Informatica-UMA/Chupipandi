@@ -3,7 +3,7 @@
 	<persistence-unit name="ms_corrector" transaction-type="RESOURCE_LOCAL">
 		<class>sii.ms_corrector.entities.Corrector</class>
 		<properties>
-			<property name="javax.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/./ms_corrector"/>
+			<property name="javax.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/./database/ms_corrector"/>
 			<property name="javax.persistence.jdbc.user" value="sa"/>
 			<property name="javax.persistence.jdbc.password" value="sa"/>
 			<property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>

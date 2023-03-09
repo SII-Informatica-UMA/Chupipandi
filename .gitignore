@@ -47,6 +47,7 @@ buildNumber.properties
 
 # ----------------------------------------------------
 # ----- Github Database gitignore: -----
+database/
 esquema.ddl
 
 # ----------------------------------------------------

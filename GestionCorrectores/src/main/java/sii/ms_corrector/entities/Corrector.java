@@ -5,22 +5,24 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Corrector {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(nullable = false)
-    private String nombre;
+    private String nombre; // necesario?
     @Column(nullable = false)
-    private String primerApellido;
-    private String segundoApellido;
+    private String primerApellido; // necesario?
+    private String segundoApellido; // necesario?
     @Column(nullable = false)
-    private String email;
-    private Integer prefijoTelefonico;
-    private Integer numeroMovil;
+    private String email; // necesario?
+    private Integer prefijoTelefonico; // necesario?
+    private Integer numeroMovil; // necesario?
     @Column(nullable = false)
-    private String materiaEspecialista;
+    @ManyToOne(optional=false)
+    private Long materiaEspecialista;
     @Column(nullable = false)
     private Integer numeroMaximoExamenes;
 
@@ -66,10 +68,10 @@ public class Corrector {
     public void setNumeroMovil(Integer numeroMovil) {
         this.numeroMovil = numeroMovil;
     }
-    public String getMateriaEspecialista() {
+    public Long getMateriaEspecialista() {
         return materiaEspecialista;
     }
-    public void setMateriaEspecialista(String materiaEspecialista) {
+    public void setMateriaEspecialista(Long materiaEspecialista) {
         this.materiaEspecialista = materiaEspecialista; 
     }
     public Integer getNumeroMaximoExamenes() {
@@ -105,8 +107,8 @@ public class Corrector {
     public String toString() {
         return "Corrector [id=" + id + ", nombre=" + nombre + ", primerApellido=" + primerApellido
                 + ", segundoApellido=" + segundoApellido + ", email=" + email + ", prefijoTelefonico="
-                + prefijoTelefonico + ", numeroMovil=" + numeroMovil + ", materiaEspecialista=" + materiaEspecialista
-                + ", numeroMaximoExamenes=" + numeroMaximoExamenes + "]";
+                + prefijoTelefonico + ", numeroMovil=" + numeroMovil + ", numeroMaximoExamenes=" + numeroMaximoExamenes
+                + "]";
     }
 
     

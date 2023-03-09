@@ -1,13 +1,10 @@
 package sii.ms_evalexamenes.entities;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity
 public class Materia {
@@ -15,10 +12,6 @@ public class Materia {
     private Long id;
     @Column(nullable = false)
     private String nombre;
-    @OneToMany(mappedBy = "materia")
-    private List<Examen> examenes; // Una materia puede tener varios exámenes
-    @OneToMany(mappedBy = "materiaEspecialista")
-    private List<Corrector> correctores; // Una materia puede tener varios correctores especializados en ella
 
     public Long getId() {
         return id;
@@ -31,18 +24,6 @@ public class Materia {
     }
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-    public List<Examen> getExamenes() {
-        return examenes;
-    }
-    public void setExamenes(List<Examen> examenes) {
-        this.examenes = examenes;
-    }
-    public List<Corrector> getCorrectores() {
-        return correctores;
-    }
-    public void setCorrectores(List<Corrector> correctores) {
-        this.correctores = correctores;
     }
     @Override
     public int hashCode() {

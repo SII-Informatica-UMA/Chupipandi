@@ -11,6 +11,7 @@ import javax.persistence.OneToOne;
 public class Examen {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @Column(nullable = false)
     private Integer calificacion;
     @ManyToOne(optional=false)
     private Materia materia; // Un examen sólo pertenece a una materia

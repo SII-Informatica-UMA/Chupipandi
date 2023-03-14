@@ -23,13 +23,13 @@ Para levantar la base de datos h2:
 - Copiar archivo jar en directorio de trabajo
 - O bien utilizar la ruta completa
 ```bash
-# Ruta del jar: "~\.m2\repository\com\h2database\h2\2.1.210\h2-2.1.210.jar"
 java -cp h2-2.1.210.jar org.h2.tools.Server -ifNotExists
 ```
 
 Ejecutar el archivo Por lotes Para cada Servicio:
-- Copia al Directorio el Jar  # Ruta del jar: "~\.m2\repository\com\h2database\h2\2.1.210\h2-2.1.210.jar" 
+- Copia al Directorio el Jar
 - Ejecuta por consola de consola de comando de Windows
 ```cmd
+# Ruta del jar: "~\.m2\repository\com\h2database\h2\2.1.210\h2-2.1.210.jar"
 runme.bat
 ```

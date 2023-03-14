@@ -1,6 +1,7 @@
 package sii.ms_evalexamenes.entities;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,10 +17,12 @@ public class Examen {
     private Integer calificacion;
     @Column(nullable = false)
     private Timestamp fechaYHora;
-    @ManyToOne(optional=false)
+    @ManyToOne(optional = false)
     private Materia materia; // Un examen sólo pertenece a una materia
-    private Long correctorId; // Un examen sólo tiene un corrector
-    private Long alumnoId; // Un examen sólo puede pertenecer a un alumno
+    @Column(nullable = false)
+    private Long correctorId; // Id del corrector del examen (un examen sólo tiene un corrector)
+    @Column(nullable = false)
+    private Long alumnoId; // Id del alumno al que pertenece el examen (un examen sólo tiene un alumno)
     public Long getId() {
         return id;
     }
@@ -87,7 +90,6 @@ public class Examen {
     }
     @Override
     public String toString() {
-        return "Examen [id=" + id + ", calificacion=" + calificacion + "]";
+        return "Examen [id=" + id + ", calificacion=" + calificacion + ", fechaYHora=" + (new SimpleDateFormat("dd/MM/yyyy HH:mm")).format(fechaYHora) + "]";
     }
-    
 }

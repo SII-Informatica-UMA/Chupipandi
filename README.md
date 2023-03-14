@@ -27,7 +27,10 @@ java -cp h2-2.1.210.jar org.h2.tools.Server -ifNotExists
 ```
 
 Ejecutar el archivo Por lotes Para cada Servicio:
-- Copia al Directorio el Jar
+- Copia a cada proyecto el Jar
+```bash
+# Ruta del jar: "~\.m2\repository\com\h2database\h2\2.1.210\h2-2.1.210.jar"
+```
 - Ejecuta por consola de consola de comando de Windows
 ```cmd
 runme.bat

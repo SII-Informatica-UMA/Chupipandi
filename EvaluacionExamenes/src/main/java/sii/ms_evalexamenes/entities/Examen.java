@@ -18,9 +18,7 @@ public class Examen {
     private Timestamp fechaYHora;
     @ManyToOne(optional=false)
     private Materia materia; // Un examen sólo pertenece a una materia
-    @ManyToOne(optional = false)
     private Long correctorId; // Un examen sólo tiene un corrector
-    @ManyToOne(optional=false)
     private Long alumnoId; // Un examen sólo puede pertenecer a un alumno
     public Long getId() {
         return id;

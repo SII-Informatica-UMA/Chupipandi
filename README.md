@@ -21,25 +21,14 @@ mvn exec:java -Dexec.mainClass="sii.ms_evalexamenes.Main"
 
 Para levantar la base de datos h2:
 - Copiar archivo jar en directorio de trabajo
-- O bien utilizar la ruta completa
 ```bash
-java -cp h2-2.1.210.jar org.h2.tools.Server -ifNotExists
+# Ruta del jar: "~/.m2/repository/com/h2database/h2/2.1.210/h2-2.1.210.jar"
 ```
-
-Ejecutar el archivo Por lotes Para cada Servicio:
-- Copia a cada proyecto el Jar
-```bash
-# Ruta del jar: "~\.m2\repository\com\h2database\h2\2.1.210\h2-2.1.210.jar"
-```
-- Ejecuta por consola de consola de comando de Windows
+- Ejecuta por consola de comandos de Windows el archivo por lotes para cada servicio:
 ```cmd
 runme.bat
 ```
-
 ## Configuracion Via Web de h2
-
-![App Screenshot](http://imgfz.com/i/wrREPZW.png)
-
-
-
-
+Dos bases de datos disponibles:
+- *jdbc:h2:tcp://localhost/./database/ms_evalexamenes*
+- *jdbc:h2:tcp://localhost/./database/ms_corrector*

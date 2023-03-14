@@ -1,5 +1,7 @@
 package sii.ms_evalexamenes.entities;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +14,7 @@ public class Examen {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Integer calificacion;
+    private Timestamp fechaYHora;
     @ManyToOne(optional=false)
     private Materia materia; // Un examen sólo pertenece a una materia
     @ManyToOne(optional = false)
@@ -29,6 +32,18 @@ public class Examen {
     }
     public void setCalificacion(Integer calificacion) {
         this.calificacion = calificacion;
+    }
+    /*  
+        Para fecha:
+            String fecha = (new SimpleDateFormat("yyyy-MM-dd")).format(fechaYHora);
+        Para hora:
+            String hora = (new SimpleDateFormat("HH:mm:ss")).format(fechaYHora);
+    */
+    public Timestamp getFechaYHora() {
+        return fechaYHora;
+    }
+    public void setFechaYHora(Timestamp fechaYHora) {
+        this.fechaYHora = fechaYHora;
     }
     public Materia getMateria() {
         return materia;

@@ -30,6 +30,13 @@ Ejecutar el archivo Por lotes Para cada Servicio:
 - Copia al Directorio el Jar
 - Ejecuta por consola de consola de comando de Windows
 ```cmd
-# Ruta del jar: "~\.m2\repository\com\h2database\h2\2.1.210\h2-2.1.210.jar"
 runme.bat
 ```
+
+## Configuracion Via Web de h2
+
+![App Screenshot](http://imgfz.com/i/wrREPZW.png)
+
+
+
+

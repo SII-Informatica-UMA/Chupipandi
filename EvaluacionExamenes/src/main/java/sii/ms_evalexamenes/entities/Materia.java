@@ -1,6 +1,6 @@
 package sii.ms_evalexamenes.entities;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,10 +15,9 @@ public class Materia {
     private Long id;
     @Column(nullable = false)
     private String nombre;
+    private ArrayList<Long> correctores; // Una materia puede tener varios correctores (lista de ids de los correctores)
     @OneToMany(mappedBy = "materia")
-    private List<Examen> examenes; // Una materia puede tener varios exámenes
-    @OneToMany(mappedBy = "materiaEspecialista")
-    private List<Corrector> correctores; // Una materia puede tener varios correctores especializados en ella
+    private ArrayList<Examen> examenes; // Una materia puede tener varios exámenes
 
     public Long getId() {
         return id;
@@ -32,17 +31,17 @@ public class Materia {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-    public List<Examen> getExamenes() {
-        return examenes;
-    }
-    public void setExamenes(List<Examen> examenes) {
-        this.examenes = examenes;
-    }
-    public List<Corrector> getCorrectores() {
+    public ArrayList<Long> getCorrectores() {
         return correctores;
     }
-    public void setCorrectores(List<Corrector> correctores) {
+    public void setCorrectores(ArrayList<Long> correctores) {
         this.correctores = correctores;
+    }
+    public ArrayList<Examen> getExamenes() {
+        return examenes;
+    }
+    public void setExamenes(ArrayList<Examen> examenes) {
+        this.examenes = examenes;
     }
     @Override
     public int hashCode() {
@@ -71,6 +70,4 @@ public class Materia {
     public String toString() {
         return "Materia [id=" + id + ", nombre=" + nombre + "]";
     }
-
-    
 }

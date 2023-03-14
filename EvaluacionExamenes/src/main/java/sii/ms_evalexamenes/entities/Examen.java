@@ -1,5 +1,9 @@
 package sii.ms_evalexamenes.entities;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,10 +15,14 @@ public class Examen {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Integer calificacion;
-    @ManyToOne
+    @Column(nullable = false)
+    private Timestamp fechaYHora;
+    @ManyToOne(optional = false)
     private Materia materia; // Un examen sólo pertenece a una materia
-    @ManyToOne
-    private Corrector corrector; // Un examen sólo tiene un corrector
+    @Column(nullable = false)
+    private Long correctorId; // Id del corrector del examen (un examen sólo tiene un corrector)
+    @Column(nullable = false)
+    private Long alumnoId; // Id del alumno al que pertenece el examen (un examen sólo tiene un alumno)
     public Long getId() {
         return id;
     }
@@ -27,17 +35,29 @@ public class Examen {
     public void setCalificacion(Integer calificacion) {
         this.calificacion = calificacion;
     }
+    /*  
+        Para fecha:
+            String fecha = (new SimpleDateFormat("yyyy-MM-dd")).format(fechaYHora);
+        Para hora:
+            String hora = (new SimpleDateFormat("HH:mm:ss")).format(fechaYHora);
+    */
+    public Timestamp getFechaYHora() {
+        return fechaYHora;
+    }
+    public void setFechaYHora(Timestamp fechaYHora) {
+        this.fechaYHora = fechaYHora;
+    }
     public Materia getMateria() {
         return materia;
     }
     public void setMateria(Materia materia) {
         this.materia = materia;
     }
-    public Corrector getCorrector() {
-        return corrector;
+    public Long getCorrectorId() {
+        return correctorId;
     }
-    public void setCorrector(Corrector corrector) {
-        this.corrector = corrector;
+    public void setCorrectorId(Long correctorId) {
+        this.correctorId = correctorId;
     }
     @Override
     public int hashCode() {
@@ -45,6 +65,12 @@ public class Examen {
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
+    }
+    public Long getAlumnoId() {
+        return alumnoId;
+    }
+    public void setAlumnoId(Long alumnoId) {
+        this.alumnoId = alumnoId;
     }
     @Override
     public boolean equals(Object obj) {
@@ -64,7 +90,6 @@ public class Examen {
     }
     @Override
     public String toString() {
-        return "Examen [id=" + id + ", calificacion=" + calificacion + "]";
+        return "Examen [id=" + id + ", calificacion=" + calificacion + ", fechaYHora=" + (new SimpleDateFormat("dd/MM/yyyy HH:mm")).format(fechaYHora) + "]";
     }
-    
 }

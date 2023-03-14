@@ -1,5 +1,7 @@
 package sii.ms_corrector.entities;
 
+import java.util.ArrayList;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,68 +10,37 @@ import javax.persistence.Id;
 
 @Entity
 public class Corrector {
+    /*
+     * Hemos considerado que los atributos comunes a todos
+     * los usuarios (nombre, apellidos, email...) los contendrá
+     * la entidad Usuario en el microservicio de Gestión de usuarios,
+     * y por tanto sería redundante almacenarlos aquí también. Esta entidad
+     * contiene por tanto los atributos propios de un corrector.
+     */
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @Column(nullable = false)
-    private String nombre;
-    @Column(nullable = false)
-    private String primerApellido;
-    private String segundoApellido;
-    @Column(nullable = false)
-    private String email;
-    private Integer prefijoTelefonico;
-    private Integer numeroMovil;
-    @Column(nullable = false)
-    private String materiaEspecialista;
+    private Long materiaEspecialista; // Un corrector sólo es especialista de una materia (id de la materia)
+    private ArrayList<Long> examenes; // Un corrector puede corregir varios exámenes (lista de ids de los exámenes)
     @Column(nullable = false)
     private Integer numeroMaximoExamenes;
 
     public Long getId() {
         return id;
     }
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
     public void setId(Long id) {
         this.id = id;
     }
-    public String getNombre() {
-        return nombre;
+    public ArrayList<Long> getExamenes() {
+        return examenes;
     }
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setExamenes(ArrayList<Long> examenes) {
+        this.examenes = examenes;
     }
-    public String getPrimerApellido() {
-        return primerApellido;
-    }
-    public void setPrimerApellido(String primerApellido) {
-        this.primerApellido = primerApellido;
-    }
-    public String getSegundoApellido() {
-        return segundoApellido;
-    }
-    public void setSegundoApellido(String segundoApellido) {
-        this.segundoApellido = segundoApellido;
-    }
-    public Integer getPrefijoTelefonico() {
-        return prefijoTelefonico;
-    }
-    public void setPrefijoTelefonico(Integer prefijoTelefonico) {
-        this.prefijoTelefonico = prefijoTelefonico;
-    }
-    public Integer getNumeroMovil() {
-        return numeroMovil;
-    }
-    public void setNumeroMovil(Integer numeroMovil) {
-        this.numeroMovil = numeroMovil;
-    }
-    public String getMateriaEspecialista() {
+    public Long getMateriaEspecialista() {
         return materiaEspecialista;
     }
-    public void setMateriaEspecialista(String materiaEspecialista) {
+    public void setMateriaEspecialista(Long materiaEspecialista) {
         this.materiaEspecialista = materiaEspecialista; 
     }
     public Integer getNumeroMaximoExamenes() {
@@ -103,12 +74,7 @@ public class Corrector {
     }
     @Override
     public String toString() {
-        return "Corrector [id=" + id + ", nombre=" + nombre + ", primerApellido=" + primerApellido
-                + ", segundoApellido=" + segundoApellido + ", email=" + email + ", prefijoTelefonico="
-                + prefijoTelefonico + ", numeroMovil=" + numeroMovil + ", materiaEspecialista=" + materiaEspecialista
-                + ", numeroMaximoExamenes=" + numeroMaximoExamenes + "]";
+        return "Corrector [id=" + id + ", materiaEspecialista=" + materiaEspecialista + ", numeroMaximoExamenes="
+                + numeroMaximoExamenes + "]";
     }
-
-    
-    
 }

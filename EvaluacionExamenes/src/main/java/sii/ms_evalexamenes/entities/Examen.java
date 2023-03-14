@@ -14,6 +14,7 @@ public class Examen {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Integer calificacion;
+    @Column(nullable = false)
     private Timestamp fechaYHora;
     @ManyToOne(optional=false)
     private Materia materia; // Un examen sólo pertenece a una materia

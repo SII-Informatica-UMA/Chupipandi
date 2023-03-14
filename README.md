@@ -13,7 +13,7 @@ Implementación microservicios de Gestión de Correctores y Evaluación de Exám
 
 ## Comandos de utilidad JPA
 
-Para ejecutar la clase principal de cada microservicio
+Para ejecutar la clase principal de cada microservicio (dentro de cada proyecto)
 ```bash
 mvn exec:java -Dexec.mainClass="sii.ms_corrector.Main"
 mvn exec:java -Dexec.mainClass="sii.ms_evalexamenes.Main"
@@ -23,6 +23,10 @@ Para levantar la base de datos h2:
 - Copiar archivo jar en directorio de trabajo
 - O bien utilizar la ruta completa
 ```bash
-# Ruta del jar: "~\.m2\repository\com\h2database\h2\2.1.210\h2-2.1.210.jar"
+# Ruta del jar: "~/.m2/repository/com/h2database/h2/2.1.210/h2-2.1.210.jar"
 java -cp h2-2.1.210.jar org.h2.tools.Server -ifNotExists
 ```
+## Conectarse a la base de datos H2
+URL JDBC:
+- Para **Gestión de Correctores**: *jdbc:h2:tcp://localhost/./database/ms_corrector*
+- Para **Evaluación de Exámanes**: *jdbc:h2:tcp://localhost/./database/ms_evalexamenes*

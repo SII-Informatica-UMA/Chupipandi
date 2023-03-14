@@ -26,3 +26,9 @@ Para levantar la base de datos h2:
 # Ruta del jar: "~\.m2\repository\com\h2database\h2\2.1.210\h2-2.1.210.jar"
 java -cp h2-2.1.210.jar org.h2.tools.Server -ifNotExists
 ```
+
+Ejecutar el archivo Por lotes Para cada Servicio:
+```bash
+# Ruta del jar: "~\.m2\repository\com\h2database\h2\2.1.210\h2-2.1.210.jar"
+java -cp h2-2.1.210.jar org.h2.tools.Server -ifNotExists
+```

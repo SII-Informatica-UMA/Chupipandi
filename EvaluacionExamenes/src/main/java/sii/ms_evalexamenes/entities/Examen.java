@@ -23,6 +23,9 @@ public class Examen {
     private Long correctorId; // Id del corrector del examen (un examen sólo tiene un corrector)
     @Column(nullable = false)
     private Long alumnoId; // Id del alumno al que pertenece el examen (un examen sólo tiene un alumno)
+
+    public Examen(){}
+    
     public Long getId() {
         return id;
     }

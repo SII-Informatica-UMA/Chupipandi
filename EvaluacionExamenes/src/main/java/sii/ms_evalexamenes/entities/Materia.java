@@ -19,6 +19,8 @@ public class Materia {
     @OneToMany(mappedBy = "materia")
     private ArrayList<Examen> examenes; // Una materia puede tener varios exámenes
 
+    public Materia(){}
+
     public Long getId() {
         return id;
     }

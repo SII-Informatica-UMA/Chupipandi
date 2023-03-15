@@ -25,6 +25,9 @@ public class Corrector {
     @Column(nullable = false)
     private Integer numeroMaximoExamenes;
 
+
+    public Corrector(){}
+    
     public Long getId() {
         return id;
     }

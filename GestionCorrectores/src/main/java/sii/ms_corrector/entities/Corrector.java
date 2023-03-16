@@ -8,7 +8,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Corrector {
     /*
      * Hemos considerado que los atributos comunes a todos
@@ -25,33 +32,6 @@ public class Corrector {
     @Column(nullable = false)
     private Integer numeroMaximoExamenes;
 
-
-    public Corrector(){}
-    
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public ArrayList<Long> getExamenes() {
-        return examenes;
-    }
-    public void setExamenes(ArrayList<Long> examenes) {
-        this.examenes = examenes;
-    }
-    public Long getMateriaEspecialista() {
-        return materiaEspecialista;
-    }
-    public void setMateriaEspecialista(Long materiaEspecialista) {
-        this.materiaEspecialista = materiaEspecialista; 
-    }
-    public Integer getNumeroMaximoExamenes() {
-        return numeroMaximoExamenes;
-    }
-    public void setNumeroMaximoExamenes(Integer numeroMaximoExamenes) {
-        this.numeroMaximoExamenes = numeroMaximoExamenes;
-    }
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -59,6 +39,7 @@ public class Corrector {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -75,6 +56,7 @@ public class Corrector {
             return false;
         return true;
     }
+    
     @Override
     public String toString() {
         return "Corrector [id=" + id + ", materiaEspecialista=" + materiaEspecialista + ", numeroMaximoExamenes="

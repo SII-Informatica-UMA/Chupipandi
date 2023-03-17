@@ -9,7 +9,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Materia {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -19,32 +26,6 @@ public class Materia {
     @OneToMany(mappedBy = "materia")
     private ArrayList<Examen> examenes; // Una materia puede tener varios exámenes
 
-    public Materia(){}
-
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public String getNombre() {
-        return nombre;
-    }
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-    public ArrayList<Long> getCorrectores() {
-        return correctores;
-    }
-    public void setCorrectores(ArrayList<Long> correctores) {
-        this.correctores = correctores;
-    }
-    public ArrayList<Examen> getExamenes() {
-        return examenes;
-    }
-    public void setExamenes(ArrayList<Examen> examenes) {
-        this.examenes = examenes;
-    }
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -52,6 +33,7 @@ public class Materia {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -68,6 +50,7 @@ public class Materia {
             return false;
         return true;
     }
+    
     @Override
     public String toString() {
         return "Materia [id=" + id + ", nombre=" + nombre + "]";

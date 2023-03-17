@@ -10,12 +10,21 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Examen {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private Integer calificacion;
     @Column(nullable = false)
+    @Getter(AccessLevel.NONE)   // mantengo getter por si mas adelante distinguimos hora/fecha
     private Timestamp fechaYHora;
     @ManyToOne(optional = false)
     private Materia materia; // Un examen sólo pertenece a una materia
@@ -24,20 +33,6 @@ public class Examen {
     @Column(nullable = false)
     private Long alumnoId; // Id del alumno al que pertenece el examen (un examen sólo tiene un alumno)
 
-    public Examen(){}
-    
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public Integer getCalificacion() {
-        return calificacion;
-    }
-    public void setCalificacion(Integer calificacion) {
-        this.calificacion = calificacion;
-    }
     /*  
         Para fecha:
             String fecha = (new SimpleDateFormat("yyyy-MM-dd")).format(fechaYHora);
@@ -47,21 +42,7 @@ public class Examen {
     public Timestamp getFechaYHora() {
         return fechaYHora;
     }
-    public void setFechaYHora(Timestamp fechaYHora) {
-        this.fechaYHora = fechaYHora;
-    }
-    public Materia getMateria() {
-        return materia;
-    }
-    public void setMateria(Materia materia) {
-        this.materia = materia;
-    }
-    public Long getCorrectorId() {
-        return correctorId;
-    }
-    public void setCorrectorId(Long correctorId) {
-        this.correctorId = correctorId;
-    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -69,12 +50,7 @@ public class Examen {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
-    public Long getAlumnoId() {
-        return alumnoId;
-    }
-    public void setAlumnoId(Long alumnoId) {
-        this.alumnoId = alumnoId;
-    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -91,6 +67,7 @@ public class Examen {
             return false;
         return true;
     }
+
     @Override
     public String toString() {
         return "Examen [id=" + id + ", calificacion=" + calificacion + ", fechaYHora=" + (new SimpleDateFormat("dd/MM/yyyy HH:mm")).format(fechaYHora) + "]";

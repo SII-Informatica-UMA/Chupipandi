@@ -28,6 +28,9 @@ replay_pid*
 # ----------------------------------------------------
 # ----- Github Maven gitignore: -----
 target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup

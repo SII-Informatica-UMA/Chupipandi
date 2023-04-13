@@ -14,6 +14,8 @@
 
 # Package Files #
 *.jar
+!EvaluacionExamenes/h2-2.1.210.jar
+!GestionCorrectores/h2-2.1.210.jar
 *.war
 *.nar
 *.ear

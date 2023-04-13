@@ -6,5 +6,5 @@ timeout /t 10
 :: CALL mvn exec:java -Dexec.mainClass="es.uma.informatica.jpa.demo.Main"
 :: CALL mvn exec:java -Dexec.mainClass="sii.ms_evalexamenes.Main"
 :: CALL mvn exec:java -Dexec.mainClass="sii.ms_corrector.Main"
-CALL java -jar ms_corrector-0.0.1-SNAPSHOT.jar
+CALL java -jar target/ms_corrector-0.0.1-SNAPSHOT.jar
 PAUSE

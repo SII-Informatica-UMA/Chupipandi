@@ -3,24 +3,27 @@ package sii.ms_evalexamenes.entities;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)
+@ToString(doNotUseGetters = true, exclude = {"materia", "correctorId", "alumnoId"})
 @NoArgsConstructor
 public class Examen {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = GenerationType.AUTO) @EqualsAndHashCode.Include
     private Long id;
     private Integer calificacion;
     @Column(nullable = false)
@@ -41,35 +44,5 @@ public class Examen {
     */
     public Timestamp getFechaYHora() {
         return fechaYHora;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Examen other = (Examen) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "Examen [id=" + id + ", calificacion=" + calificacion + ", fechaYHora=" + (new SimpleDateFormat("dd/MM/yyyy HH:mm")).format(fechaYHora) + "]";
     }
 }

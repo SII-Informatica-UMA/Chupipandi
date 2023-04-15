@@ -9,6 +9,8 @@ import sii.ms_corrector.entities.Corrector;
 
 public interface CorrectorRepository extends CrudRepository<Corrector, Long> {
 
-    Optional<List<Corrector>> findByIdConvocatoria(Long idConvocatoria);
+    boolean existsByIdUsuario(Long idUsuario);
+
+    Optional<List<Corrector>> findAllByIdConvocatoria(Long idConvocatoria);
     
 }

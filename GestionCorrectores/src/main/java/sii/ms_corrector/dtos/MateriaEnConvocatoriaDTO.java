@@ -10,4 +10,8 @@ import lombok.Setter;
 public class MateriaEnConvocatoriaDTO {
     Long idMateria;
     Long idConvocatoria;
+    // FIXME: necesitamos entidad materia en este microservicio? o como la obtentemos?
+    // public static MateriaEnConvocatoriaDTO fromMateria(Materia materia) { 
+        
+    // }
 }

@@ -3,8 +3,10 @@ package sii.ms_corrector.controllers;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -19,10 +21,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import sii.ms_corrector.dtos.CorrectorDTO;
+import sii.ms_corrector.dtos.CorrectorNuevoDTO;
 import sii.ms_corrector.entities.Corrector;
 import sii.ms_corrector.services.CorrectorService;
 import sii.ms_corrector.services.exceptions.AccesoNoAutorizado;
 import sii.ms_corrector.services.exceptions.CorrectorNoEncontrado;
+import sii.ms_corrector.services.exceptions.CorrectorYaExiste;
 
 @RestController
 @RequestMapping("/correctores")
@@ -41,11 +46,13 @@ public class CorrectorController {
 		return ResponseEntity.of(contactoById);
 	}
 
+	// FIXME
 	@PutMapping("{id}")
 	// 200, 403, 404
-	public ResponseEntity<?> modificaCorrector(@PathVariable Long id, @RequestBody Corrector corrector) {
-		corrector.setId(id);
-		service.modificarCorrector(corrector);
+	public ResponseEntity<?> modificaCorrector(@PathVariable Long id, @RequestBody CorrectorDTO corrector) {
+		Corrector entidadCorrector = corrector.corrector();
+		entidadCorrector.setId(id);
+		service.modificarCorrector(entidadCorrector);
 		return ResponseEntity.ok().build();
 	}
 
@@ -58,22 +65,22 @@ public class CorrectorController {
 
     @GetMapping
 	// 200, 403
-    public ResponseEntity<List<Corrector>> obtieneCorrectores(@RequestParam Long idConvocatoria) {
-        Optional<List<Corrector>> correctores = service.getTodosCorrectoresByConvocatoria(idConvocatoria);
-        return ResponseEntity.of(correctores);
+    public ResponseEntity<List<CorrectorDTO>> obtieneCorrectores(@RequestParam(required = false) Long idConvocatoria) {
+		List<Corrector> correctores;
+		if (idConvocatoria == null) {
+			correctores = service.getTodosCorrectores().get();
+		} else {
+			correctores = service.getTodosCorrectoresByConvocatoria(idConvocatoria).get();
+		}
+        Function<Corrector, CorrectorDTO> mapper = (correct -> CorrectorDTO.fromCorrector(correct));
+		return ResponseEntity.ok(correctores.stream().map(mapper).toList());
     }
 
-    @GetMapping
-	// 200, 403
-    public ResponseEntity<List<Corrector>> obtieneCorrectores() {
-        return ResponseEntity.ok(service.getTodosCorrectores());
-    }
-
-    @PostMapping
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)	// "aplication/json"
 	// 201, 403, 409
-	@ResponseStatus(code = HttpStatus.CREATED)
-	public ResponseEntity<?> añadirCorrector(@RequestBody Corrector nuevoCorrector, UriComponentsBuilder builder) {
-		Long id = service.añadirCorrector(nuevoCorrector);
+	
+	public ResponseEntity<?> añadirCorrector(@RequestBody CorrectorNuevoDTO nuevoCorrector, UriComponentsBuilder builder) {
+		Long id = service.añadirCorrector(nuevoCorrector.corrector());
 		URI uri = builder
 				.path("/correctores")
 				.path(String.format("/%d",id))
@@ -90,7 +97,7 @@ public class CorrectorController {
     @ResponseStatus(code = HttpStatus.NOT_FOUND)	// 404
     public void correctorNoEncontrado() {}
 
-    @ExceptionHandler(CorrectorNoEncontrado.class)
+    @ExceptionHandler(CorrectorYaExiste.class)
     @ResponseStatus(code = HttpStatus.CONFLICT)		// 409
     public void correctorYaExiste() {}
 }

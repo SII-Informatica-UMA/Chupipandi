@@ -23,12 +23,12 @@ public class CorrectorService {
         this.repository = repository;
     }
 
-    public List<Corrector> getTodosCorrectores() {
-        return (List<Corrector>) repository.findAll();
+    public Optional<List<Corrector>> getTodosCorrectores() {
+        return Optional.of((List<Corrector>) repository.findAll());
     }
 
     public Optional<List<Corrector>> getTodosCorrectoresByConvocatoria(Long idConvocatoria) {
-        return repository.findByIdConvocatoria(idConvocatoria);
+        return repository.findAllByIdConvocatoria(idConvocatoria);
     }
 
     public Optional<Corrector> getCorrectorById(Long id) {
@@ -36,7 +36,7 @@ public class CorrectorService {
     }
 
     public Long añadirCorrector(Corrector nuevoCorrector) {
-        if (repository.existsById(nuevoCorrector.getId())) {
+        if (repository.existsByIdUsuario(nuevoCorrector.getIdUsuario())) {
             throw new CorrectorYaExiste();
         }
         nuevoCorrector.setId(null);
@@ -49,9 +49,17 @@ public class CorrectorService {
 			throw new CorrectorNoEncontrado();
         }
         Optional<Corrector> correctorRepo = repository.findById(corrector.getId());
-        correctorRepo.ifPresent(c->c.setExamenes(corrector.getExamenes()));
         correctorRepo.ifPresent(c->c.setMateriaEspecialista(corrector.getMateriaEspecialista()));
-        correctorRepo.ifPresent(c->c.setMaximasCorrecciones(corrector.getMaximasCorrecciones()));
+        
+        // (Campos sacados del esquema de la API)
+        // se permite cambiar el id de la base de datos?
+        // o acaso 'id' en corrector es independiente
+        // y que es 'identificadorUsuario'
+        correctorRepo.ifPresent(c -> c.setId(corrector.getId()));
+        correctorRepo.ifPresent(c -> c.setIdUsuario(corrector.getIdUsuario()));
+        correctorRepo.ifPresent(c -> c.setTelefono(corrector.getTelefono()));
+        correctorRepo.ifPresent(c -> c.setMaximasCorrecciones(corrector.getMaximasCorrecciones()));
+        // que es exactamente la lista de materias en convocatoria?
 	}
 
 	public void eliminarCorrector(Long id) {

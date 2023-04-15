@@ -51,7 +51,7 @@ public class CorrectorService {
         Optional<Corrector> correctorRepo = repository.findById(corrector.getId());
         correctorRepo.ifPresent(c->c.setExamenes(corrector.getExamenes()));
         correctorRepo.ifPresent(c->c.setMateriaEspecialista(corrector.getMateriaEspecialista()));
-        correctorRepo.ifPresent(c->c.setNumeroMaximoExamenes(corrector.getNumeroMaximoExamenes()));
+        correctorRepo.ifPresent(c->c.setMaximasCorrecciones(corrector.getMaximasCorrecciones()));
 	}
 
 	public void eliminarCorrector(Long id) {

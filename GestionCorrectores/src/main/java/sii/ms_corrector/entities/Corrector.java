@@ -33,5 +33,5 @@ public class Corrector {
     private Long materiaEspecialista; // Un corrector sólo es especialista de una materia (id de la materia)
     private ArrayList<Long> examenes; // Un corrector puede corregir varios exámenes (lista de ids de los exámenes)
     @Column(nullable = false)
-    private Integer numeroMaximoExamenes;
+    private Integer maximasCorrecciones;
 }

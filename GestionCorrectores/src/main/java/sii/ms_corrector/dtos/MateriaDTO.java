@@ -12,10 +12,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class MateriaDTO {
-    Long id;
-    String nombre;
-    // FIXME: necesitamos entidad materia en este microservicio? o como la obtentemos?
-    // public static MateriaDTO fromMateria(Materia materia) { 
-        
-    // }
+    private Long id;
+    private String nombre;
 }

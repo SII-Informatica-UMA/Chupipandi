@@ -34,4 +34,8 @@ public class Corrector {
     private ArrayList<Long> examenes; // Un corrector puede corregir varios exámenes (lista de ids de los exámenes)
     @Column(nullable = false)
     private Integer maximasCorrecciones;
+
+    private Long idConvocatoria;
+    private Long idUsuario;
+    private String telefono;
 }

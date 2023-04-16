@@ -1,13 +1,22 @@
 package sii.ms_evalexamenes.controller;
 
+import java.net.URI;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.service.ExamenDBService;
 
 
@@ -25,7 +34,7 @@ public class Examen_Controller {
 	
 	
 	@GetMapping
-	public ResponseEntity<?> obtieneListas() {
+	public ResponseEntity<?> get_All_Examenes() {
 		return ResponseEntity.ok().build();
 	}
 	
@@ -33,8 +42,31 @@ public class Examen_Controller {
 	
 	@GetMapping("{id}")
 	// 200, 403, 404
-	public ResponseEntity<?> obtenerCorrector(@PathVariable Long id) {
+	public ResponseEntity<?> get_Exmamen_By_Id(@PathVariable Long id) {
 		return ResponseEntity.ok().build();
 	}
 	
+	@PutMapping("{id}")
+	public ResponseEntity<?> modify_Examen_By_id(@PathVariable Long id, @RequestBody Examen examen) {
+		//examen.setId(id);
+		//service.modificarListaCompra(examen);
+		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("{id}")
+	@ResponseStatus(code = HttpStatus.OK)
+	public void eliminarLista(@PathVariable Long idExamen) throws Exception {
+		service.delete_Examen(idExamen);
+	}
+	
+	
+	@PostMapping
+	public ResponseEntity<?> aniadeLista(@RequestBody Examen examen, UriComponentsBuilder builder) {
+		Long id = service.add_Examen(examen);
+		URI uri = builder.path("/examen")
+						.path(String.format("/%d", id))
+						.build()
+						.toUri();
+		return ResponseEntity.created(uri).build();
+	}
 }

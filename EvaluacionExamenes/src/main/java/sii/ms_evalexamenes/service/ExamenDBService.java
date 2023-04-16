@@ -40,13 +40,9 @@ public class ExamenDBService {
 	}
 	
 	public Long add_Examen(Examen examen) {
-
-		/*examen.setId(idExamen);
+		examen.setId(null);
 		examenRepository.save(examen);
 		return examen.getId();
-		*/
-		//Hay que devolver un id para contruir la uri
-		return null;
 	}
 	
 	

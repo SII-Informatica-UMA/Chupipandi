@@ -2,6 +2,7 @@ package sii.ms_evalexamenes.controller;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,9 @@ import sii.ms_evalexamenes.service.ExamenDBService;
 
 
 @RestController
-@RequestMapping(path = "/examen")
+@RequestMapping(path = "/examenes")
 public class Examen_Controller {
-	public static final String EXAMEN_PATH="/examen";
+	public static final String EXAMEN_PATH="/examenes";
 	
 	private ExamenDBService service;
 	
@@ -34,16 +35,17 @@ public class Examen_Controller {
 	
 	
 	@GetMapping
-	public ResponseEntity<?> get_All_Examenes() {
-		return ResponseEntity.ok().build();
+	public List<?> get_All_Examenes() {
+		return service.get_All_Examen();
 	}
 	
 	
 	
 	@GetMapping("{id}")
-	// 200, 403, 404
 	public ResponseEntity<?> get_Exmamen_By_Id(@PathVariable Long id) {
-		return ResponseEntity.ok().build();
+		Optional<Examen> ExamenById = service.get_Examen_By_Id(id);
+		return ResponseEntity.of(ExamenById);
+		
 	}
 	
 	@PutMapping("{id}")
@@ -55,15 +57,16 @@ public class Examen_Controller {
 	
 	@DeleteMapping("{id}")
 	@ResponseStatus(code = HttpStatus.OK)
-	public void eliminarLista(@PathVariable Long idExamen) throws Exception {
+	public ResponseEntity<?> delete_Examen(@PathVariable Long idExamen) throws Exception {
 		service.delete_Examen(idExamen);
+		return ResponseEntity.ok().build();
 	}
 	
 	
 	@PostMapping
-	public ResponseEntity<?> aniadeLista(@RequestBody Examen examen, UriComponentsBuilder builder) {
+	public ResponseEntity<?> add_Examen(@RequestBody Examen examen, UriComponentsBuilder builder) {
 		Long id = service.add_Examen(examen);
-		URI uri = builder.path("/examen")
+		URI uri = builder.path("/examenes")
 						.path(String.format("/%d", id))
 						.build()
 						.toUri();

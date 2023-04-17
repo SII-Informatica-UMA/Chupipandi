@@ -68,9 +68,10 @@ public class DB_Service {
 		return materiaRepository.findById(id);
 	}
 		
-	public List<Long> get_All_Materias() {
-        return StreamSupport.stream(materiaRepository.findAll().spliterator(),false)
-				.map(Materia::getId).toList();
+	public List<Materia> get_All_Materias() {
+        return materiaRepository.findAll();
+		//return StreamSupport.stream(materiaRepository.findAll().spliterator(),false)
+		//		.map(Materia::getId).toList();
     }
 	
 	public Long add_Materia(Materia examen) {

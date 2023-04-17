@@ -75,9 +75,16 @@ public class ExamenDBService {
 		return materiaRepository.findById(id);
 	}
 	
-	public List<Materia> get_All_Materia() {
+	
+	/*
+	public List<Materia> get_All_Materias() {
 		return materiaRepository.findAll();
 	}
+	*/
+	
+	public Optional<List<Materia>> get_All_Materias() {
+        return Optional.of((List<Materia>) materiaRepository.findAll());
+    }
 	
 	public Long add_Materia(Materia examen) {
 		examen.setId(null);

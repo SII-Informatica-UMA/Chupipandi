@@ -35,6 +35,10 @@ public class Examen_Controller {
 	}
 	
 	
+	@GetMapping
+	public ResponseEntity<?> get_Examenes() {
+		return ResponseEntity.ok().build();
+	}
 	
 		
 	

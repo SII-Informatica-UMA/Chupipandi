@@ -25,8 +25,8 @@ public class Materia_Controller {
 	}
 	
 	@GetMapping
-	public List<Long> obtieneListas() {
-		return service.get_All_Materias();
+	public ResponseEntity<?> get_Materias() {
+		return ResponseEntity.ok().build();
 	}
 	
 }

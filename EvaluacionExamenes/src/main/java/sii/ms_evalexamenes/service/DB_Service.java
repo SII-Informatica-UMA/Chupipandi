@@ -15,6 +15,9 @@ import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.entities.Materia;
 import sii.ms_evalexamenes.repositories.ExamenRepository;
 import sii.ms_evalexamenes.repositories.MateriaRepository;
+import sii.ms_evalexamenes.service.exceptions.AlreadyExistsException;
+import sii.ms_evalexamenes.service.exceptions.NotFoundException;
+
 
 
 @Service
@@ -37,67 +40,62 @@ public class DB_Service {
 	
 	
 	//Examen
-	
-	
-	public Optional<Examen> get_Examen_By_Id(Long id) {
-		return examenRepository.findById(id);
-	}
-	
-	public List<Examen> get_All_Examen() {
-		return examenRepository.findAll();
-	}
-	
-	public Long add_Examen(Examen examen) {
-		examen.setId(null);
-		examenRepository.save(examen);
-		return examen.getId();
-	}
-			
-	public void modify_Examen(Long idExamen, Examen examen) throws Exception {
-		if (examenRepository.existsById(idExamen)) {
-			examenRepository.save(examen);
-		} else {
-			throw new Exception("Examen no Encontrado, no se ha modificado ningún Examen");
-		}
-	}
-	
-	
-	//Materia
-	
-	public Optional<Materia> get_Materia_By_Id(Long id) {
-		return materiaRepository.findById(id);
-	}
-		
-	public List<Materia> get_All_Materias() {
-        return materiaRepository.findAll();
-		//return StreamSupport.stream(materiaRepository.findAll().spliterator(),false)
-		//		.map(Materia::getId).toList();
+	public Optional<List<Examen>> getAllExamenes(){
+        return Optional.of(examenRepository.findAll());
+    }
+
+    public Optional<Examen> getExamenById(Long id){
+        return examenRepository.findById(id);
     }
 	
-	public Long add_Materia(Materia examen) {
+	public Long addExamen(Examen examen) {
+        if (examenRepository.existsById(examen.getId())) throw new AlreadyExistsException();
 		examen.setId(null);
-		materiaRepository.save(examen);
-		return examen.getId();
-	}
-		
-	public void delete_Materia(Long idMateria) throws Exception {
-		if (materiaRepository.existsById(idMateria)) {
-			materiaRepository.deleteById(idMateria);
+		examenRepository.save(examen);
+        return examen.getId();
+    }
+
+	public void updateExamen(Examen examen) {
+        Optional<Examen> exam = examenRepository.findById(examen.getId());
+        exam.ifPresent(ex -> ex.setCalificacion(examen.getCalificacion()));
+    }
+	
+
+	//Materias
+	public Optional<List<Materia>> getAllMaterias(){
+        return Optional.of(materiaRepository.findAll());
+    }
+
+    public Optional<Materia> getMateriaById(Long id) {
+        return materiaRepository.findById(id);
+    }
+	
+    //Esto es Inventada o bien se hace asi?
+    public Optional<List<Materia>> getTodasMateriasPorConvocatoria(Long idConvocatoria) {
+        return materiaRepository.findAllByIdConvocatoria(idConvocatoria);
+    }
+    
+	
+	public Long addMateria(Materia materia) {
+        if (materiaRepository.existsById(materia.getId())) throw new AlreadyExistsException();
+
+		materia.setId(null);
+		materiaRepository.save(materia);
+        return materia.getId();
+    }
+
+    public void deleteMateria(Long id) {
+
+        /* 
+         * if (materiaRepository.existsById(id)) {
+			materiaRepository.deleteById(id);
 		} else {
-			throw new Exception("Materia no Encontrada, no se ha eliminado ningúna Materia");
+			throw new NotFoundException();
 		}
+        */
+		materiaRepository.deleteById(id);
 	}
-	
-	public void modify_Materia(Long idMateria, Materia materia) throws Exception {
-		if (materiaRepository.existsById(idMateria)) {
-			materiaRepository.save(materia);
-		} else {
-			throw new Exception("Materia no Encontrada, no se ha modificado ningúna Materia");
-		}
-	}
-	
-	
-	
-	
+
+   
 	
 }

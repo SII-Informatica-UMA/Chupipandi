@@ -34,11 +34,11 @@ public class Examen_Controller {
 		this.service = service;
 	}
 	
-	
-	@GetMapping
-	public ResponseEntity<?> get_Examenes() {
-		return ResponseEntity.ok().build();
-	}
+	@GetMapping("{id}")
+    public ResponseEntity<Examen> getExamen(@PathVariable Long id) {
+        Optional<Examen> examen = service.getExamenById(id);
+        return ResponseEntity.of(examen);
+    }
 	
 		
 	

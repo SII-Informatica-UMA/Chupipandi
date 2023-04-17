@@ -28,4 +28,12 @@ public class Materia {
     private ArrayList<Long> correctores; // Una materia puede tener varios correctores (lista de ids de los correctores)
     @OneToMany(mappedBy = "materia")
     private ArrayList<Examen> examenes; // Una materia puede tener varios exámenes
+
+
+
+
+
+
+
+    private Long idConvocatoria;
 }

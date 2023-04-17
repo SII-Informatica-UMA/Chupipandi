@@ -11,8 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Examen_DTO {
-    
+public class Materia_DTO {
     private Long id;
-    private Integer calificacion;
+    private String nombre;
 }

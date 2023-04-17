@@ -19,7 +19,7 @@ import sii.ms_evalexamenes.repositories.MateriaRepository;
 
 @Service
 @Transactional
-public class ExamenDBService {
+public class DB_Service {
 
 	
 	
@@ -28,8 +28,9 @@ public class ExamenDBService {
 
 
 	@Autowired
-	public ExamenDBService(ExamenRepository examenRepository) {
+	public DB_Service(ExamenRepository examenRepository,MateriaRepository materiaRepository) {
 		this.examenRepository = examenRepository;
+		this.materiaRepository = materiaRepository;
 	}
 	
 	

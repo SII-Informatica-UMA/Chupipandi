@@ -25,7 +25,5 @@ public class Materia_DTO {
     private ArrayList<Examen> examenes;
     
     
-    public static Materia_DTO fromMateria(Materia materia) {
-        return null;
-    }
+    
 }

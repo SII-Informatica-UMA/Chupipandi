@@ -27,13 +27,13 @@ public class Materia_Controller {
 	
 	@GetMapping
 	 public ResponseEntity<List<Materia_DTO>> obtieneCorrectores(@RequestParam(required = false) Long idConvocatoria) {
-		List<Materia> materias;
+		List<Materia> materias = null;
 		if (idConvocatoria == null) {
 			materias = service.get_All_Materias().get();
 		} else {
 			//materias = service.getTodosMateriasByConvocatoria(idConvocatoria).get();
 		}
-        Function<Materia, Materia_DTO> mapper = (materia -> Materia_DTO.fromCorrector(materia));
+        Function<Materia, Materia_DTO> mapper = (materia -> Materia_DTO.fromMateria(materia));
 		return ResponseEntity.ok(materias.stream().map(mapper).toList());
     }
 	

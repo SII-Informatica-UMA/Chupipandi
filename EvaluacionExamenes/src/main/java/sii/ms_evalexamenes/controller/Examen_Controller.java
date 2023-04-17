@@ -37,8 +37,9 @@ public class Examen_Controller {
 	
 	@GetMapping("{id}")
 	public ResponseEntity<?> get_Exmamen_By_Id(@PathVariable Long id) {
-		Optional<Examen> ExamenById = service.get_Examen_By_Id(id);
-		return ResponseEntity.of(ExamenById);
+		//Optional<Examen> ExamenById = service.get_Examen_By_Id(id);
+		//return ResponseEntity.of(ExamenById);
+		return ResponseEntity.ok().build();
 		
 	}
 	

@@ -4,6 +4,7 @@ package sii.ms_evalexamenes.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -34,7 +35,7 @@ public class ExamenDBService {
 	
 	
 	
-	//Service
+	//Examen
 	
 	
 	public Optional<Examen> get_Examen_By_Id(Long id) {
@@ -50,16 +51,7 @@ public class ExamenDBService {
 		examenRepository.save(examen);
 		return examen.getId();
 	}
-		
-	public void delete_Examen(Long idExamen) throws Exception {
-		if (examenRepository.existsById(idExamen)) {
-			examenRepository.deleteById(idExamen);
-		} else {
-			throw new Exception("Examen no Encontrado, no se ha eliminado ningún Examen");
-		}
-	}
-	
-	
+			
 	public void modify_Examen(Long idExamen, Examen examen) throws Exception {
 		if (examenRepository.existsById(idExamen)) {
 			examenRepository.save(examen);
@@ -74,16 +66,10 @@ public class ExamenDBService {
 	public Optional<Materia> get_Materia_By_Id(Long id) {
 		return materiaRepository.findById(id);
 	}
-	
-	
-	/*
-	public List<Materia> get_All_Materias() {
-		return materiaRepository.findAll();
-	}
-	*/
-	
-	public Optional<List<Materia>> get_All_Materias() {
-        return Optional.of((List<Materia>) materiaRepository.findAll());
+		
+	public List<Long> get_All_Materias() {
+        return StreamSupport.stream(materiaRepository.findAll().spliterator(),false)
+				.map(Materia::getId).toList();
     }
 	
 	public Long add_Materia(Materia examen) {
@@ -92,8 +78,6 @@ public class ExamenDBService {
 		return examen.getId();
 	}
 		
-	
-	
 	public void delete_Materia(Long idMateria) throws Exception {
 		if (materiaRepository.existsById(idMateria)) {
 			materiaRepository.deleteById(idMateria);
@@ -101,7 +85,6 @@ public class ExamenDBService {
 			throw new Exception("Materia no Encontrada, no se ha eliminado ningúna Materia");
 		}
 	}
-	
 	
 	public void modify_Materia(Long idMateria, Materia materia) throws Exception {
 		if (materiaRepository.existsById(idMateria)) {

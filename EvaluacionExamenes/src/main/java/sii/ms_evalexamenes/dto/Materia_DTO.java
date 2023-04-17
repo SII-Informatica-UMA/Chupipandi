@@ -18,6 +18,7 @@ import sii.ms_evalexamenes.entities.Materia;
 @AllArgsConstructor
 @Builder
 public class Materia_DTO {
+	
     private Long id;
     private String nombre;
     private ArrayList<Long> correctores; 
@@ -25,7 +26,6 @@ public class Materia_DTO {
     
     
     public static Materia_DTO fromMateria(Materia materia) {
-        
         return null;
     }
 }

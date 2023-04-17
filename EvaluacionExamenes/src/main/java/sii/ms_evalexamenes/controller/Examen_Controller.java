@@ -32,11 +32,17 @@ public class Examen_Controller {
 		this.service = service;
 	}
 	
+	/*
+	@GetMapping
+	public ResponseEntity<?> get_All_Examenes() {
+		return ResponseEntity.ok().build();
+	}
 	
+	*/
 	
 	@GetMapping
-	public List<?> get_All_Examenes() {
-		return service.get_All_Examen();
+	public ResponseEntity<List<Examen>> get_All_Examenes() {
+		return ResponseEntity.ok(service.get_All_Examen());
 	}
 	
 	

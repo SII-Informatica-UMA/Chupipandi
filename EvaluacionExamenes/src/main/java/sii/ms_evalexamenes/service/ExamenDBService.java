@@ -21,10 +21,10 @@ public class ExamenDBService {
 	
 	private ExamenRepository examenRepository;
 
+
 	@Autowired
 	public ExamenDBService(ExamenRepository examenRepository) {
 		this.examenRepository = examenRepository;
-		
 	}
 	
 	
@@ -32,11 +32,8 @@ public class ExamenDBService {
 		return examenRepository.findById(id);
 	}
 	
-	
 	public List<Examen> get_All_Examen() {
-		return examenRepository.findAll()
-				.stream()
-				.toList();		
+		return examenRepository.findAll();
 	}
 	
 	public Long add_Examen(Examen examen) {

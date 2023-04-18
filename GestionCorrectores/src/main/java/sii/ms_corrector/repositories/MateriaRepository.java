@@ -6,4 +6,10 @@ import sii.ms_corrector.entities.Materia;
 
 public interface MateriaRepository extends JpaRepository<Materia, Long> {
     
+    boolean existsByIdMateria(Long id);
+    Materia findByIdMateria(Long id);
+
+    boolean existsByNombre(String nombre);
+    Materia findByNombre(String nombre);
+
 }

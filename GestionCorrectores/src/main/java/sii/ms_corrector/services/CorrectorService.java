@@ -57,12 +57,22 @@ public class CorrectorService {
             throw new CorrectorYaExiste();
         }
         // [ ] Gestionar las nuevas materias por separado
-        // (falta comprobar que la materia no exista ya)
         
         // Guardamos la nueva materia en su correspondiente repositorio
-        // Capaz habria que comprobar que exista o que pertenezca a un conjunto de posibilidades
+        // Capaz habria que asegurarse que exista o que pertenezca a un conjunto de posibilidades
         Materia mat = nuevoCorrectorDTO.getMateria().materia();
-        mat.setId(null);
+        
+        // [x] Comprobar que la materia no exista ya
+        // Compruebo si ya existe la materia (por id o por nombre), y en caso contrario la creo
+        if (matRepo.existsByIdMateria(mat.getIdMateria())) {
+            mat = matRepo.findByIdMateria(mat.getIdMateria());
+            mat.setId(mat.getId());
+        } else if (matRepo.existsByNombre(mat.getNombre())) {
+            mat = matRepo.findByNombre(mat.getNombre());
+            mat.setId(mat.getId());
+        } else {
+            mat.setId(null);
+        }
         matRepo.save(mat);
         
         // Guardamos la nueva materia en convocatoria en su correspondiente repositorio
@@ -73,6 +83,10 @@ public class CorrectorService {
         matConv.setIdConvocatoria(idConv);
         matConv.setMateria(mat);
         matConvRepo.save(matConv);
+
+        List<MateriaEnConvocatoria> lista = new ArrayList<>();
+        lista.add(matConv);
+        nuevoCorrector.setMatEnConv(lista);
 
         // Finalmente guardamos el nuevo corrector
         nuevoCorrector.setId(null);
@@ -98,7 +112,18 @@ public class CorrectorService {
         // Guardamos la nueva materia en su correspondiente repositorio
         // Capaz habria que comprobar que exista o que pertenezca a un conjunto de posibilidades
         Materia mat = correctorMod.getMateria().materia();
-        mat.setId(null);
+
+        // [x] Comprobar que la materia no exista ya
+        // Compruebo si ya existe la materia (por id o por nombre), y en caso contrario la creo
+        if (matRepo.existsByIdMateria(mat.getIdMateria())) {
+            mat = matRepo.findByIdMateria(mat.getIdMateria());
+            mat.setId(mat.getId());
+        } else if (matRepo.existsByNombre(mat.getNombre())) {
+            mat = matRepo.findByNombre(mat.getNombre());
+            mat.setId(mat.getId());
+        } else {
+            mat.setId(null);
+        }
         matRepo.save(mat);
         
         // Guardamos la nueva materia en convocatoria en su correspondiente repositorio
@@ -110,12 +135,13 @@ public class CorrectorService {
         matConv.setMateria(mat);
         matConvRepo.save(matConv);
 
-        List<MateriaEnConvocatoria> lista = entidadCorrector.getMatEnConv();
-        if (lista == null) {
-            lista = new ArrayList<>();
+        // [ ] Si la materia en convocatoria ya esta asociada, no la vuelvo a incluir
+        // [ ] Qué hace que dos materias en convocatoria sean iguales?
+        List<MateriaEnConvocatoria> lista = corrector.getMatEnConv();
+        if (!lista.contains(matConv)) {
+            lista.add(matConv);
         }
-        lista.add(matConv);
-        corrector.setMatEnConv(lista);;
+        corrector.setMatEnConv(lista);
         
 	}
 

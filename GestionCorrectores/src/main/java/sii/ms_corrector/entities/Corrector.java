@@ -37,7 +37,6 @@ public class Corrector {
 
     @OneToMany(mappedBy = "corrector")
     List<MateriaEnConvocatoria> matEnConv;
-    private Long idConvocatoria;
     private Long idUsuario;
     private String telefono;
 }

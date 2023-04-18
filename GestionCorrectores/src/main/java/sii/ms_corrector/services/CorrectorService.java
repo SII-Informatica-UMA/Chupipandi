@@ -68,6 +68,7 @@ public class CorrectorService {
         matConv.setId(null);
         matConv.setCorrector(nuevoCorrector);
         matConv.setIdConvocatoria(idConv);
+        matConv.setMateria(mat);
         matConvRepo.save(matConv);
 
         // Finalmente guardamos el nuevo corrector

@@ -1,6 +1,7 @@
 package sii.ms_corrector.dtos;
 
-import java.util.Set;
+import java.util.List;
+import java.util.function.Function;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sii.ms_corrector.entities.Corrector;
+import sii.ms_corrector.entities.MateriaEnConvocatoria;
 
 @Getter
 @Setter
@@ -23,23 +25,25 @@ public class CorrectorDTO {
     private Long identificadorUsuario;
     private String telefono;
     private int maximasCorrecciones;
-    // Set ya que son unicas
-    private Set<MateriaEnConvocatoriaDTO> materias;
+    // Deberiamos usar un Set?
+    private List<MateriaEnConvocatoriaDTO> materias;
 
     public static CorrectorDTO fromCorrector(Corrector corrector) {
         var dto = new CorrectorDTO();
         dto.setId(corrector.getId());
-        dto.setIdentificadorUsuario(corrector.getIdUsuario());  // de donde lo obtenemos?
-        dto.setTelefono(corrector.getTelefono());  // de donde lo obtenemos?
+        dto.setIdentificadorUsuario(corrector.getIdUsuario());
+        dto.setTelefono(corrector.getTelefono());
         dto.setMaximasCorrecciones(corrector.getMaximasCorrecciones());
         // que son las materias en convocatoria?
         // El id de la materia deberia ser siempre el mismo, puesto que cada corrector solo puede estar especializado
         // en una materia.
         // El id de la convocatoria entiendo yo que es lo unico que varia, ... habria que obtenerlo de la base de datos?
-        dto.setMaterias(Set.of(
-            MateriaEnConvocatoriaDTO.builder()
-            .idMateria(corrector.getMateriaEspecialista())
-            .idConvocatoria(0L).build()));
+        // dto.setMaterias(Set.of(
+        //     MateriaEnConvocatoriaDTO.builder()
+        //     .idMateria(corrector.getMateriaEspecialista())
+        //     .idConvocatoria(0L).build()));
+        Function<MateriaEnConvocatoria, MateriaEnConvocatoriaDTO> mapper = (mat -> MateriaEnConvocatoriaDTO.fromMateriaEnConvocatoria(mat));
+        dto.setMaterias(corrector.getMatEnConv().stream().map(mapper).toList());
         return dto;
     }
 

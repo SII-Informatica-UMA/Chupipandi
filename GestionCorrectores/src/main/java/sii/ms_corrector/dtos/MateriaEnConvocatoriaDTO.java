@@ -17,9 +17,9 @@ public class MateriaEnConvocatoriaDTO {
     private Long idMateria;
     private Long idConvocatoria;
 
-    public static MateriaEnConvocatoriaDTO fromMateriaEnConvocatoria(MateriaEnConvocatoriaDTO materia) { 
+    public static MateriaEnConvocatoriaDTO fromMateriaEnConvocatoria(MateriaEnConvocatoria materia) { 
         var dto = new MateriaEnConvocatoriaDTO();
-        dto.setIdMateria(materia.getIdMateria());
+        dto.setIdMateria(materia.getMateria().getIdMateria());
         dto.setIdConvocatoria(materia.getIdConvocatoria());
         return dto;
     }

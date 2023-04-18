@@ -23,19 +23,19 @@ public class CorrectorService {
         this.repository = repository;
     }
 
-    public Optional<List<Corrector>> getTodosCorrectores() {
-        return Optional.of((List<Corrector>) repository.findAll());
+    public List<Corrector> getTodosCorrectores() {
+        return repository.findAll();
     }
 
-    public Optional<List<Corrector>> getTodosCorrectoresByConvocatoria(Long idConvocatoria) {
+    public List<Corrector> getTodosCorrectoresByConvocatoria(Long idConvocatoria) {
         return repository.findAllByIdConvocatoria(idConvocatoria);
     }
 
-    public Optional<Corrector> getCorrectorById(Long id) {
+    public Corrector getCorrectorById(Long id) {
         if (!repository.existsById(id)) {
             throw new CorrectorNoEncontrado();
         }
-        return repository.findById(id);
+        return repository.findById(id).get();
     }
 
     public Long añadirCorrector(Corrector nuevoCorrector) {

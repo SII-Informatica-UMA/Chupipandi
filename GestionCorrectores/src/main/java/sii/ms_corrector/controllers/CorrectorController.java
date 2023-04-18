@@ -2,7 +2,6 @@ package sii.ms_corrector.controllers;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 
 import org.springframework.http.HttpStatus;
@@ -42,8 +41,8 @@ public class CorrectorController {
 	@GetMapping("{id}")
 	// 200, 403, 404
 	public ResponseEntity<CorrectorDTO> obtenerCorrector(@PathVariable Long id) {
-		Optional<Corrector> contactoById = service.getCorrectorById(id);
-		return ResponseEntity.ok(CorrectorDTO.fromCorrector(contactoById.get()));
+		Corrector contactoById = service.getCorrectorById(id);
+		return ResponseEntity.ok(CorrectorDTO.fromCorrector(contactoById));
 	}
 
 	// FIXME
@@ -68,9 +67,9 @@ public class CorrectorController {
     public ResponseEntity<List<CorrectorDTO>> obtieneCorrectores(@RequestParam(required = false) Long idConvocatoria) {
 		List<Corrector> correctores;
 		if (idConvocatoria == null) {
-			correctores = service.getTodosCorrectores().get();
+			correctores = service.getTodosCorrectores();
 		} else {
-			correctores = service.getTodosCorrectoresByConvocatoria(idConvocatoria).get();
+			correctores = service.getTodosCorrectoresByConvocatoria(idConvocatoria);
 		}
         Function<Corrector, CorrectorDTO> mapper = (correct -> CorrectorDTO.fromCorrector(correct));
 		return ResponseEntity.ok(correctores.stream().map(mapper).toList());

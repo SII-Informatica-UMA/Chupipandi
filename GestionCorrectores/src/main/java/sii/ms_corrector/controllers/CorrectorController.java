@@ -78,7 +78,7 @@ public class CorrectorController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)	// "aplication/json"
 	// 201, 403, 409
 	public ResponseEntity<?> añadirCorrector(@RequestBody CorrectorNuevoDTO nuevoCorrector, UriComponentsBuilder builder) {
-		Long id = service.añadirCorrector(nuevoCorrector.corrector());
+		Long id = service.añadirCorrector(nuevoCorrector);
 		URI uri = builder
 				.path("/correctores")
 				.path(String.format("/%d",id))

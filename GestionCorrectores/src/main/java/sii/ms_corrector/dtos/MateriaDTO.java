@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import sii.ms_corrector.entities.Materia;
 
 @Getter
 @Setter
@@ -14,4 +15,18 @@ import lombok.Setter;
 public class MateriaDTO {
     private Long id;
     private String nombre;
+
+    public static MateriaDTO fromMateria(Materia materia) { 
+        var dto = new MateriaDTO();
+        dto.setId(materia.getIdMateria());
+        dto.setNombre(materia.getNombre());
+        return dto;
+    }
+
+    public Materia materia() {
+        var mat = new Materia();
+        mat.setIdMateria(id);
+        mat.setNombre(nombre);
+        return mat;
+    }
 }

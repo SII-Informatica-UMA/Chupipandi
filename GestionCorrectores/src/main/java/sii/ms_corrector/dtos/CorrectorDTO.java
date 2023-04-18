@@ -54,7 +54,6 @@ public class CorrectorDTO {
         correct.setTelefono(telefono);
         // El id de la materia deberia ser siempre el mismo, puesto que cada corrector solo puede estar especializado
         // un corrector siempre tendra un array con al menos una materia, no?
-        correct.setMateriaEspecialista(materias.stream().findFirst().get().getIdMateria());
         correct.setMaximasCorrecciones(maximasCorrecciones);
         return correct;
     }

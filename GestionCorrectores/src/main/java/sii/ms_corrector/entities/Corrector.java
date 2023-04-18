@@ -18,7 +18,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)
-@ToString(doNotUseGetters = true, exclude = {"materiaEspecialista"})
+@ToString(doNotUseGetters = true)
 @NoArgsConstructor
 public class Corrector {
     /*
@@ -30,8 +30,6 @@ public class Corrector {
      */
     @Id @GeneratedValue(strategy = GenerationType.AUTO) @EqualsAndHashCode.Include
     private Long id;
-    @Column(nullable = false)
-    private Long materiaEspecialista; // Un corrector sólo es especialista de una materia (id de la materia)
     @Column(nullable = false)
     private Integer maximasCorrecciones;
 

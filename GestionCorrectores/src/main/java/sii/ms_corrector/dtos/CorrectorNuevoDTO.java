@@ -29,7 +29,6 @@ public class CorrectorNuevoDTO {
         dto.setTelefono(corrector.getTelefono());
         // de donde obtenemos el nombre de la materia? (capaz no usamos este metodo 'fromCorrector')
         // (de momento no se usa)
-        dto.setMateria(MateriaDTO.builder().id(corrector.getMateriaEspecialista()).nombre("").build());
         dto.setMaximasCorrecciones(corrector.getMaximasCorrecciones());
         return dto;
     }
@@ -38,7 +37,6 @@ public class CorrectorNuevoDTO {
         var correct = new Corrector();
         correct.setIdUsuario(identificadorUsuario);
         correct.setTelefono(telefono);
-        correct.setMateriaEspecialista(materia.getId());
         correct.setMaximasCorrecciones(maximasCorrecciones);
         return correct;
     }

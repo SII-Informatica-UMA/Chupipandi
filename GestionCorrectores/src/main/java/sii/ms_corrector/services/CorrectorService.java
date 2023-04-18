@@ -82,7 +82,6 @@ public class CorrectorService {
 			throw new CorrectorNoEncontrado();
         }
         Optional<Corrector> correctorRepo = corRepo.findById(corrector.getId());
-        correctorRepo.ifPresent(c->c.setMateriaEspecialista(corrector.getMateriaEspecialista()));
         
         // (Campos sacados del esquema de la API)
         // se permite cambiar el id de la base de datos?

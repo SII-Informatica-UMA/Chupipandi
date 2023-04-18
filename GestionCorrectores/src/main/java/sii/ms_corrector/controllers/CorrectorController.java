@@ -41,9 +41,9 @@ public class CorrectorController {
 
 	@GetMapping("{id}")
 	// 200, 403, 404
-	public ResponseEntity<Corrector> obtenerCorrector(@PathVariable Long id) {
+	public ResponseEntity<CorrectorDTO> obtenerCorrector(@PathVariable Long id) {
 		Optional<Corrector> contactoById = service.getCorrectorById(id);
-		return ResponseEntity.of(contactoById);
+		return ResponseEntity.ok(CorrectorDTO.fromCorrector(contactoById.get()));
 	}
 
 	// FIXME

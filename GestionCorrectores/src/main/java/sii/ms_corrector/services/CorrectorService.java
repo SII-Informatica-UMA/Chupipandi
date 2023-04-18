@@ -32,6 +32,9 @@ public class CorrectorService {
     }
 
     public Optional<Corrector> getCorrectorById(Long id) {
+        if (!repository.existsById(id)) {
+            throw new CorrectorNoEncontrado();
+        }
         return repository.findById(id);
     }
 

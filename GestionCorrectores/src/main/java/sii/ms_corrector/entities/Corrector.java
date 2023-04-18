@@ -2,6 +2,7 @@ package sii.ms_corrector.entities;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,7 +34,7 @@ public class Corrector {
     @Column(nullable = false)
     private Integer maximasCorrecciones;
 
-    @OneToMany(mappedBy = "corrector")
+    @OneToMany(mappedBy = "corrector", cascade = CascadeType.ALL)
     List<MateriaEnConvocatoria> matEnConv;
     private Long idUsuario;
     private String telefono;

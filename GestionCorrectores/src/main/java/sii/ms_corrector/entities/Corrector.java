@@ -1,12 +1,13 @@
 package sii.ms_corrector.entities;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)
-@ToString(doNotUseGetters = true, exclude = {"materiaEspecialista", "examenes"})
+@ToString(doNotUseGetters = true, exclude = {"materiaEspecialista"})
 @NoArgsConstructor
 public class Corrector {
     /*
@@ -31,10 +32,11 @@ public class Corrector {
     private Long id;
     @Column(nullable = false)
     private Long materiaEspecialista; // Un corrector sólo es especialista de una materia (id de la materia)
-    private ArrayList<Long> examenes; // Un corrector puede corregir varios exámenes (lista de ids de los exámenes)
     @Column(nullable = false)
     private Integer maximasCorrecciones;
 
+    @OneToMany(mappedBy = "corrector")
+    List<MateriaEnConvocatoria> matEnConv;
     private Long idConvocatoria;
     private Long idUsuario;
     private String telefono;

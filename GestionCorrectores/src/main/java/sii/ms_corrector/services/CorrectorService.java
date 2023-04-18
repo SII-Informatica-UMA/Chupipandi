@@ -1,7 +1,7 @@
 package sii.ms_corrector.services;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +56,9 @@ public class CorrectorService {
         if (corRepo.existsByIdUsuario(nuevoCorrector.getIdUsuario())) {
             throw new CorrectorYaExiste();
         }
+        // [ ] Gestionar las nuevas materias por separado
+        // (falta comprobar que la materia no exista ya)
+        
         // Guardamos la nueva materia en su correspondiente repositorio
         // Capaz habria que comprobar que exista o que pertenezca a un conjunto de posibilidades
         Materia mat = nuevoCorrectorDTO.getMateria().materia();
@@ -77,21 +80,43 @@ public class CorrectorService {
 		return nuevoCorrector.getId();
     }
 
-	public void modificarCorrector(Corrector corrector) {
-		if (!corRepo.existsById(corrector.getId())) {
+	public void modificarCorrector(Long id, CorrectorNuevoDTO correctorMod) {
+        Corrector entidadCorrector = correctorMod.corrector();
+        entidadCorrector.setId(id);
+		if (!corRepo.existsById(entidadCorrector.getId())) {
 			throw new CorrectorNoEncontrado();
         }
-        Optional<Corrector> correctorRepo = corRepo.findById(corrector.getId());
+        Corrector corrector = corRepo.findById(entidadCorrector.getId()).get();
         
-        // (Campos sacados del esquema de la API)
-        // se permite cambiar el id de la base de datos?
-        // o acaso 'id' en corrector es independiente
-        // y que es 'identificadorUsuario'
-        correctorRepo.ifPresent(c -> c.setId(corrector.getId()));
-        correctorRepo.ifPresent(c -> c.setIdUsuario(corrector.getIdUsuario()));
-        correctorRepo.ifPresent(c -> c.setTelefono(corrector.getTelefono()));
-        correctorRepo.ifPresent(c -> c.setMaximasCorrecciones(corrector.getMaximasCorrecciones()));
-        // que es exactamente la lista de materias en convocatoria?
+        corrector.setIdUsuario(entidadCorrector.getIdUsuario());
+        corrector.setTelefono(entidadCorrector.getTelefono());
+        corrector.setMaximasCorrecciones(entidadCorrector.getMaximasCorrecciones());
+
+        // [ ] Gestionar las nuevas materias por separado
+        // (falta comprobar que la materia no exista ya)
+
+        // Guardamos la nueva materia en su correspondiente repositorio
+        // Capaz habria que comprobar que exista o que pertenezca a un conjunto de posibilidades
+        Materia mat = correctorMod.getMateria().materia();
+        mat.setId(null);
+        matRepo.save(mat);
+        
+        // Guardamos la nueva materia en convocatoria en su correspondiente repositorio
+        Long idConv = correctorMod.getIdentificadorConvocatoria();
+        MateriaEnConvocatoria matConv = new MateriaEnConvocatoria();
+        matConv.setId(null);
+        matConv.setCorrector(entidadCorrector);
+        matConv.setIdConvocatoria(idConv);
+        matConv.setMateria(mat);
+        matConvRepo.save(matConv);
+
+        List<MateriaEnConvocatoria> lista = entidadCorrector.getMatEnConv();
+        if (lista == null) {
+            lista = new ArrayList<>();
+        }
+        lista.add(matConv);
+        corrector.setMatEnConv(lista);;
+        
 	}
 
 	public void eliminarCorrector(Long id) {

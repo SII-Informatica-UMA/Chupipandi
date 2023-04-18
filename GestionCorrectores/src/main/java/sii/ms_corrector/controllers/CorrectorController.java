@@ -45,13 +45,10 @@ public class CorrectorController {
 		return ResponseEntity.ok(CorrectorDTO.fromCorrector(contactoById));
 	}
 
-	// FIXME
 	@PutMapping("{id}")
 	// 200, 403, 404
-	public ResponseEntity<?> modificaCorrector(@PathVariable Long id, @RequestBody CorrectorDTO corrector) {
-		Corrector entidadCorrector = corrector.corrector();
-		entidadCorrector.setId(id);
-		service.modificarCorrector(entidadCorrector);
+	public ResponseEntity<?> modificaCorrector(@PathVariable Long id, @RequestBody CorrectorNuevoDTO corrector) {
+		service.modificarCorrector(id, corrector);
 		return ResponseEntity.ok().build();
 	}
 

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import sii.ms_corrector.entities.Materia;
 import sii.ms_corrector.entities.MateriaEnConvocatoria;
 
@@ -13,6 +14,7 @@ import sii.ms_corrector.entities.MateriaEnConvocatoria;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString   // para debug
 public class MateriaEnConvocatoriaDTO {
     private Long idMateria;
     private Long idConvocatoria;

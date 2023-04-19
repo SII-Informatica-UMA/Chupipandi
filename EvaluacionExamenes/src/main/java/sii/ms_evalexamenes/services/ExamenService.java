@@ -49,4 +49,8 @@ public class ExamenService {
     public Optional<List<Examen>> getExamenByDniAndApellido(Long dni, String apellido) {
         return repo.findByAlumnoId(dni);
     }
+
+    public Optional<List<Examen>> getCorrectoresById(Long correctorId) {
+        return repo.findByCorrectorId(correctorId);
+    }
 }

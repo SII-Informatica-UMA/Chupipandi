@@ -34,4 +34,11 @@ public class Materia {
     @OneToMany(mappedBy = "materia")
     @JsonIgnoreProperties("materia")
     private List<Examen> examenes; // Una materia puede tener varios exámenes
+
+    public Materia (long id, String nombre, List<Long> correctores, List<Examen> examenes){
+        this.id = id;
+        this.nombre = nombre;
+        this.correctores = correctores;
+        this.examenes = examenes;
+    }
 }

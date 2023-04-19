@@ -129,11 +129,15 @@ public class CorrectorService {
         // Guardamos la nueva materia en convocatoria en su correspondiente repositorio
         Long idConv = correctorMod.getIdentificadorConvocatoria();
         MateriaEnConvocatoria matConv = new MateriaEnConvocatoria();
-        matConv.setId(null);
-        matConv.setCorrector(entidadCorrector);
-        matConv.setIdConvocatoria(idConv);
-        matConv.setMateria(mat);
-        matConvRepo.save(matConv);
+        if (!matConvRepo.existsByIdConvocatoria(idConv)) {
+            matConv.setId(null);
+            matConv.setCorrector(entidadCorrector);
+            matConv.setIdConvocatoria(idConv);
+            matConv.setMateria(mat);
+            matConvRepo.save(matConv);
+        } else {
+            matConv = matConvRepo.findByIdConvocatoria(idConv);
+        }
 
         // [ ] Si la materia en convocatoria ya esta asociada, no la vuelvo a incluir
         // [ ] Qué hace que dos materias en convocatoria sean iguales?
@@ -142,16 +146,12 @@ public class CorrectorService {
             lista.add(matConv);
         }
         corrector.setMatEnConv(lista);
-        
 	}
 
 	public void eliminarCorrector(Long id) {
 		if (corRepo.existsById(id)) {
 			corRepo.deleteById(id);
 		} else {
-            // seria AccesoNoAutorizado? cuando salta esta excepcion?
-            // gestion de usuarios se encarga de los roles, nos importa en algo a nosotros?
-            // como diferencio quien puede acceder y quien no?
 			throw new CorrectorNoEncontrado();
 		}
 	}

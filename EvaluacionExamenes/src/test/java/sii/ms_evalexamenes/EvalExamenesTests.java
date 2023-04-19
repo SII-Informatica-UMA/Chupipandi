@@ -4,6 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
 import java.util.List;
+import java.util.ArrayList;
+import java.time.Instant;  
+import java.sql.Timestamp;
+
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +29,11 @@ import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriBuilderFactory;
 
 import sii.ms_evalexamenes.dtos.ExamenDTO;
+import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.repositories.ExamenRepository;
+import sii.ms_evalexamenes.repositories.MateriaRepository;
+import sii.ms_evalexamenes.entities.Examen;
+import sii.ms_evalexamenes.entities.Materia;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -41,9 +49,12 @@ public class EvalExamenesTests {
 	@Autowired
 	private ExamenRepository examenRepository;
 
+	@Autowired
+	private MateriaRepository materiaRepository;
+
 	@BeforeEach
 	public void initializeDatabase() {
-		examenRepository.deleteAll();
+		// examenRepository.deleteAll();
 	}
 
 	
@@ -92,11 +103,11 @@ public class EvalExamenesTests {
 	
 	@Nested
 	@DisplayName("cuando no hay examenes")
-	public class ListaVacia {
+	public class ExamenesVacios {
 		
 		@Test
 		@DisplayName("No devuelve ningún examen")
-		public void devuelveLista() {
+		public void noDevuelveExamen() {
 			
 			var peticion = get("http", "localhost",port, "/examenes/1");
 			
@@ -105,6 +116,34 @@ public class EvalExamenesTests {
 			
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
 			assertThat(respuesta.getBody()).isNull();
+		}
+	}
+
+	@Nested
+	@DisplayName("cuando hay examenes")
+	public class ExamenesLlenos {
+		@BeforeEach
+		public void aniadirDatos() {
+			// examenRepository.deleteAll();
+			materiaRepository.save(new Materia(1L, "Materia1", new ArrayList<Long>(), new ArrayList<Examen>()));
+			examenRepository.save(new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()),
+									 new Materia(1L, "Materia1", new ArrayList<Long>(), new ArrayList<Examen>())
+									 ,  1L, 1L));    
+			examenRepository.save(new Examen(0L, (float)5.0, new Timestamp(System.currentTimeMillis()),
+									 new Materia(1L, "Materia1", new ArrayList<Long>(), new ArrayList<Examen>())
+									 ,  1L, 1L));    
+		}
+		
+		@Test
+		@DisplayName("examen encontrado")
+		public void DevuelveExamen() {
+
+			var peticion = get("http", "localhost",port, "/examenes/1");
+			var respuesta = restTemplate.exchange(peticion,
+				new ParameterizedTypeReference<ExamenDTO>() {});
+	
+				assertThat(respuesta.getBody());
+				assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 		}
 	}
 }

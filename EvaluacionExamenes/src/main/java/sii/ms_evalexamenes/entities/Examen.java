@@ -2,6 +2,7 @@ package sii.ms_evalexamenes.entities;
 
 import java.sql.Timestamp;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
@@ -37,6 +38,15 @@ public class Examen {
     private Long correctorId; // Id del corrector del examen (un examen sólo tiene un corrector)
     @Column(nullable = false)
     private Long alumnoId; // Id del alumno al que pertenece el examen (un examen sólo tiene un alumno)
+
+    public Examen (long id, float calificacion, Timestamp fechaYHora, Materia materia, long correctorId, long alumnoId){
+        this.id = id;
+        this.calificacion = calificacion;
+        this.fechaYHora = fechaYHora;
+        this.materia = materia;
+        this.correctorId = correctorId;
+        this.alumnoId = alumnoId;
+    }
 
     /*  
         Para fecha:

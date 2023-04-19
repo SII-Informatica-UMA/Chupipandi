@@ -38,10 +38,11 @@ public class CorrectorService {
         return corRepo.findAll();
     }
 
-    // TODO
     public List<Corrector> getTodosCorrectoresByConvocatoria(Long idConvocatoria) {
-        // return corRepo.findAllByIdConvocatoria(idConvocatoria);
-        return null;
+        List<Corrector> lista = corRepo.findAllByIdConvocatoria(idConvocatoria);
+        // Para cada corrector, actualizo su lista de convocatorias para mostrar unicamente aquellas que coinciden con el id pasado por parametro
+        lista.forEach(corrector -> corrector.setMatEnConv(corrector.getMatEnConv().stream().filter(materia -> materia.getIdConvocatoria() == idConvocatoria).toList()));
+        return lista;
     }
 
     public Corrector getCorrectorById(Long id) {
@@ -126,6 +127,9 @@ public class CorrectorService {
         }
         matRepo.save(mat);
         
+        // [x] Comprobar que la convocatoria no exista ya
+        // (ASUMIMOS QUE DOS CONVOCATORIAS SON IGUALES SI COINCIDEN UNICAMENTE EN EL IDCONVOCATORIA)
+        // Compruebo si ya existe la convocatoria (por idConvocatoria), y en caso contrario la creo
         // Guardamos la nueva materia en convocatoria en su correspondiente repositorio
         Long idConv = correctorMod.getIdentificadorConvocatoria();
         MateriaEnConvocatoria matConv = new MateriaEnConvocatoria();
@@ -139,7 +143,7 @@ public class CorrectorService {
             matConv = matConvRepo.findByIdConvocatoria(idConv);
         }
 
-        // [ ] Si la materia en convocatoria ya esta asociada, no la vuelvo a incluir
+        // [x] Si la materia en convocatoria ya esta asociada, no la vuelvo a incluir
         // [ ] Qué hace que dos materias en convocatoria sean iguales?
         List<MateriaEnConvocatoria> lista = corrector.getMatEnConv();
         if (!lista.contains(matConv)) {

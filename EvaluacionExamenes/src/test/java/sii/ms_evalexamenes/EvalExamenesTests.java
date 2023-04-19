@@ -3,10 +3,10 @@ package sii.ms_evalexamenes;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
-import java.util.List;
 import java.util.ArrayList;
-import java.time.Instant;  
 import java.sql.Timestamp;
+import java.lang.Float;
+
 
 
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +37,7 @@ import sii.ms_evalexamenes.entities.Materia;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@DisplayName("En el servicio de agenda")
+@DisplayName("En el servicio de Evaluación de Examenes")
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public class EvalExamenesTests {
 	@Autowired
@@ -54,7 +54,7 @@ public class EvalExamenesTests {
 
 	@BeforeEach
 	public void initializeDatabase() {
-		// examenRepository.deleteAll();
+		examenRepository.deleteAll();
 	}
 
 	
@@ -100,6 +100,16 @@ public class EvalExamenesTests {
 		return peticion;
 	}
 
+	private boolean compararExamen(Examen examen1, Examen examen2) {
+		// return examen1.getId() == examen2.getId() &&
+		// 		Float.compare(examen1.getCalificacion(), examen2.getCalificacion()) == 0 &&
+		// 		examen1.getFechaYHora().equals(examen2.getFechaYHora()) &&
+		// 		examen1.getMateria().getId() == examen2.getMateria().getId() &&
+		// 		examen1.getAlumnoId() == examen2.getAlumnoId() &&
+		// 		examen1.getCorrectorId() == examen2.getCorrectorId();
+		return examen1.toString().equals(examen2.toString());
+	}
+
 	
 	@Nested
 	@DisplayName("cuando no hay examenes")
@@ -110,9 +120,9 @@ public class EvalExamenesTests {
 		public void noDevuelveExamen() {
 			
 			var peticion = get("http", "localhost",port, "/examenes/1");
-			
+
 			var respuesta = restTemplate.exchange(peticion,
-					new ParameterizedTypeReference<ExamenDTO>() {});
+					new ParameterizedTypeReference<Examen>() {});
 			
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
 			assertThat(respuesta.getBody()).isNull();
@@ -122,28 +132,63 @@ public class EvalExamenesTests {
 	@Nested
 	@DisplayName("cuando hay examenes")
 	public class ExamenesLlenos {
+		Materia materiaEjemplo = new Materia(1L, "Materia1", new ArrayList<Long>(), new ArrayList<Examen>()); 
+		Examen examenEjemplo = new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), materiaEjemplo,  1L, 1L);
 		@BeforeEach
 		public void aniadirDatos() {
 			// examenRepository.deleteAll();
-			materiaRepository.save(new Materia(1L, "Materia1", new ArrayList<Long>(), new ArrayList<Examen>()));
-			examenRepository.save(new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()),
-									 new Materia(1L, "Materia1", new ArrayList<Long>(), new ArrayList<Examen>())
-									 ,  1L, 1L));    
-			examenRepository.save(new Examen(0L, (float)5.0, new Timestamp(System.currentTimeMillis()),
-									 new Materia(1L, "Materia1", new ArrayList<Long>(), new ArrayList<Examen>())
-									 ,  1L, 1L));    
+			materiaRepository.save(materiaEjemplo);
+			examenRepository.save(examenEjemplo);    
+			// examenRepository.save(new Examen(0L, (float)5.0, new Timestamp(System.currentTimeMillis()),
+			// 						 new Materia(1L, "Materia1", new ArrayList<Long>(), new ArrayList<Examen>())
+			// 						 ,  1L, 1L));    
 		}
 		
 		@Test
 		@DisplayName("examen encontrado")
-		public void DevuelveExamen() {
+		public void devuelveExamen() {
 
 			var peticion = get("http", "localhost",port, "/examenes/1");
 			var respuesta = restTemplate.exchange(peticion,
-				new ParameterizedTypeReference<ExamenDTO>() {});
+				new ParameterizedTypeReference<Examen>() {});
 	
-				assertThat(respuesta.getBody());
-				assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.getBody()).isNotNull();
+			assertThat(compararExamen(respuesta.getBody(), examenEjemplo)).isTrue();
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+		}
+
+		@Test
+		@DisplayName("examen no encontrado")
+		public void noDevuelveExamen() {
+
+			var peticion = get("http", "localhost",port, "/examenes/4");
+			var respuesta = restTemplate.exchange(peticion,
+				new ParameterizedTypeReference<Examen>() {});
+	
+			assertThat(respuesta.getBody()).isNull();
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
+		}
+
+		@Test
+		@DisplayName("Nota del examen modificada")
+		public void modificarNota() {
+
+			Examen examenModificado = examenEjemplo;
+			examenModificado.setCalificacion((float) 7.0);
+
+			var peticion = put("http", "localhost",port, "/examenes/1", examenModificado);
+			var respuesta = restTemplate.exchange(peticion,
+				new ParameterizedTypeReference<Examen>() {});
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			
+			var peticion2 = get("http", "localhost",port, "/examenes/1");
+			var respuesta2 = restTemplate.exchange(peticion2,
+			new ParameterizedTypeReference<Examen>() {});
+			
+			assertThat(respuesta2.getBody()).isNotNull();
+			assertThat(compararExamen(respuesta2.getBody(), examenEjemplo)).isFalse();
+			assertThat(compararExamen(respuesta2.getBody(), examenModificado)).isTrue();
+			assertThat(respuesta2.getStatusCode().value()).isEqualTo(200);
 		}
 	}
 }

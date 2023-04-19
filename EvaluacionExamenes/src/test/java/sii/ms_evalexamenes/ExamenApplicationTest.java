@@ -44,6 +44,9 @@ class ExamenApplicationTest {
 
     @Autowired
     private ExamenRepository examenrepository;
+    
+
+
 
 	@Nested
 	@DisplayName("cuando la base de datos está vacía")
@@ -100,7 +103,11 @@ class ExamenApplicationTest {
         @Nested
         @DisplayName("Cuando no hay Examenes")
         public class checkExamenes {
-
+            
+            @BeforeEach
+            public void initializeDatabase() {
+                examenrepository.deleteAll();
+            }
 
             @Test
             @DisplayName("Devuelve 404 al acceder a un Examen Concreto cuando no hay Examenes")

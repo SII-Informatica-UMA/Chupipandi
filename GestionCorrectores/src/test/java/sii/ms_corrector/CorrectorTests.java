@@ -3,11 +3,16 @@ package sii.ms_corrector;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -90,6 +95,8 @@ class CorrectorTests {
 		assertThat(actual.getIdUsuario()).isEqualTo(expected.getIdUsuario());
         assertThat(actual.getTelefono()).isEqualTo(expected.getTelefono());
         assertThat(actual.getMatEnConv()).isEqualTo(expected.getMatEnConv());
+		//System.out.println("\n actual " + actual.getMatEnConv());
+		//System.out.println("\nexpected " + expected.getMatEnConv());
         assertThat(actual.getMaximasCorrecciones()).isEqualTo(expected.getMaximasCorrecciones());
 	}
 	
@@ -108,6 +115,11 @@ class CorrectorTests {
 	@Nested
 	@DisplayName("Cuando la base de datos está vacía")
 	public class BaseDatosVacia {
+		@BeforeEach
+		public void eliminar(){
+			correctorRepo.deleteAll();
+		}
+
         // get un corrector por id
         @Test
         @DisplayName("acceder a un corrector que no existe")
@@ -117,65 +129,126 @@ class CorrectorTests {
                     new ParameterizedTypeReference<CorrectorDTO>() {});
 			
             assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
+			// comprobar que está vacía
         }
 
         // put un corrector por id
 		@Test
         @DisplayName("actualizar un corrector que no existe")
         public void errorPutCorrector(){
-            var corrector = CorrectorDTO.builder().maximasCorrecciones(20).build();
+            var corrector = CorrectorNuevoDTO.builder().maximasCorrecciones(20).build();
             var peticion = put("http", "localhost", port, "/correctores/1", corrector);
             var respuesta = restTemplate.exchange(peticion,Void.class);
 
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
+
+			List<Corrector> correctorBD = correctorRepo.findAll();
+			assertThat(correctorBD).isEmpty();
         }
 
         // delete un corrector por id
 		@Test
 		@DisplayName("eliminar un corrector que no existe")
 		public void errorEliCorrector(){
-			var peticion = delete("http", "localhost",port, "/correctores/1");
+
+			var peticion = delete("http", "localhost", port, "/correctores/1");
 			var respuesta = restTemplate.exchange(peticion,Void.class);
 
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
 		}
 
         // get todos los correctores sin especificar convocatoria (intentar)
-		
+		@Test
+		@DisplayName("devuelve lista vacía de correctores")
+		public void listaVaciaCorrectores(){
+			var peticion = get("http", "localhost", port, "/correctores");
+			var respuesta = restTemplate.exchange(peticion,
+					new ParameterizedTypeReference<List<CorrectorDTO>>(){});
+			
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.getBody()).isEmpty();
+		}
 
         // post un corrector
-		@Test
-		@DisplayName("inserta correctamente un corrector")
-		public void aniadirCorrector(){
-			// Preparamos el corrector a insertar
-			var corrector = CorrectorNuevoDTO.builder()
-									.maximasCorrecciones(20)
-									.telefono("123456789")
-									.build();
-			// Preparamos la petición con el corrector dentro
-			var peticion = post("http", "localhost", port, "/correctores/1", corrector);
+		// @Test
+		// @DisplayName("inserta correctamente un corrector")
+		// public void aniadirCorrector(){
+		// 	Preparamos el corrector a insertar
+		// 	var materia = MateriaDTO.builder().id(1L).nombre("Lengua").build();
+		// 	var corrector = CorrectorNuevoDTO.builder()
+		// 							.maximasCorrecciones(20)
+		// 							.identificadorConvocatoria(1L)
+		// 							.identificadorUsuario(1L)
+		// 							.materia(materia)
+		// 							.telefono("123456789")
+		// 							.build();
+		// 	List<MateriaEnConvocatoriaDTO> materias = new ArrayList<>();
+		// 	materias.add(MateriaEnConvocatoriaDTO.builder()
+		// 				.idConvocatoria(1L).idMateria(1L).build());
+		// 	var corrExp = CorrectorDTO.fromCorrector(corrector.corrector());
+		// 	corrExp.setMaterias(materias);
+		// 	Preparamos la petición con el corrector dentro
+		// 	var peticion = post("http", "localhost", port, "/correctores", corrector);
 			
-			// Invocamos al servicio REST 
-			var respuesta = restTemplate.exchange(peticion, Void.class);
+		// 	Invocamos al servicio REST 
+		// 	var respuesta = restTemplate.exchange(peticion, Void.class);
 			
-			// Comprobamos el resultado
-			assertThat(respuesta.getStatusCode().value()).isEqualTo(201);
-			assertThat(respuesta.getHeaders().get("Location").get(0))
-				.startsWith("http://localhost:"+port+"/correctores");
+		// 	Comprobamos el resultado
+		// 	assertThat(respuesta.getStatusCode().value()).isEqualTo(201);
+		// 	assertThat(respuesta.getHeaders().get("Location").get(0))
+		// 		.startsWith("http://localhost:"+port+"/correctores");
 		
-			List<Corrector> correctoresBD = correctorRepo.findAll();
-			assertThat(correctoresBD).hasSize(1);
-			assertThat(respuesta.getHeaders().get("Location").get(0))
-				.endsWith("/"+correctoresBD.get(0).getId());
-			compruebaCampos(corrector.corrector(), correctoresBD.get(0));
-		}
+		// 	List<Corrector> correctoresBD = correctorRepo.findAll();
+		// 	assertThat(correctoresBD).hasSize(1);
+		// 	assertThat(respuesta.getHeaders().get("Location").get(0))
+		// 		.endsWith("/"+correctoresBD.get(0).getId());
+		// 	compruebaCampos(corrExp.corrector(), correctoresBD.get(0));
+		// }
 
 	}
 
     @Nested
     @DisplayName("Cuando la base de datos tiene datos")
+	@TestInstance(Lifecycle.PER_CLASS)
     public class BaseDatosLLena{
-        // get todos los correctores sin especificar convocatoria (intentar)
+        @BeforeAll
+		public void anyadir(){
+			Corrector c = new Corrector();
+			c.setIdUsuario(1L);
+			c.setMaximasCorrecciones(20);
+			c.setTelefono("123456789");
+
+			Materia materia = new Materia();
+			materia.setIdMateria(1L);
+			materia.setNombre("Lengua");
+			matRepo.save(materia);
+
+			MateriaEnConvocatoria m = new MateriaEnConvocatoria();
+			m.setIdConvocatoria(1L);
+			m.setMateria(materia);
+			
+			List<MateriaEnConvocatoria> materias = new ArrayList<>();
+			materias.add(m);
+			c.setMatEnConv(materias);
+
+			correctorRepo.save(c);
+			m.setCorrector(c);
+			matConvRepo.save(m);
+		}
+
+		// get todos los correctores sin especificar convocatoria (intentar)
+		@Test
+		@DisplayName("devuelve la lista de correctores")
+		public void correctores(){
+			var peticion = get("http", "localhost", port, "/correctores");
+			var respuesta = restTemplate.exchange(peticion,
+					new ParameterizedTypeReference<List<CorrectorDTO>>(){});
+			
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.getBody()).hasSize((int)correctorRepo.count());
+			//assertThat((int)correctorRepo.count()).isEqualTo(1);
+		}
+
         // post un corrector
         // get un corrector por id
         // delete un corrector

@@ -5,6 +5,7 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,7 +35,7 @@ public class Corrector {
     @Column(nullable = false)
     private Integer maximasCorrecciones;
 
-    @OneToMany(mappedBy = "corrector", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "corrector", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     List<MateriaEnConvocatoria> matEnConv;
     private Long idUsuario;
     private String telefono;

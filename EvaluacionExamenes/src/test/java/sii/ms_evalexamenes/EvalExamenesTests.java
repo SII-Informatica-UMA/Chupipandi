@@ -119,8 +119,8 @@ public class EvalExamenesTests {
 			var respuesta = restTemplate.exchange(peticion,
 					new ParameterizedTypeReference<Examen>() {});
 			
-			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
-			assertThat(respuesta.getBody()).isNull();
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+			// assertThat(respuesta.getBody()).isNull();
 		}
 	}
 

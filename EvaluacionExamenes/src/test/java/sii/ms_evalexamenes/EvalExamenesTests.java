@@ -31,6 +31,7 @@ import sii.ms_evalexamenes.dtos.ExamenDTO;
 import sii.ms_evalexamenes.dtos.AsignacionDTO;
 import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.repositories.ExamenRepository;
+import sii.ms_evalexamenes.util.JwtGenerator;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -51,8 +52,9 @@ public class EvalExamenesTests {
 		examenRepository.deleteAll();
 	}
 
-	String token = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODQ1MDI1ODgsInJvbGVzIjpbIkNPUlJFQ1RPUiJdfQ.5cWDJdzmurLrtipgtCyikuccojcIeup6aioNwCgTlPU";
-	
+	// String token = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODQ1MDI1ODgsInJvbGVzIjpbIkNPUlJFQ1RPUiJdfQ.o6KxDDdxhnGwzvNom1n8pZ9KwUUNKBogLgASOrLQoYI";
+	String token = JwtGenerator.createToken("user", 24*30*2, "CORRECTOR", "VICERRECTORADO");
+
 	private URI uri(String scheme, String host, int port, String ...paths) {
 		UriBuilderFactory ubf = new DefaultUriBuilderFactory();
 		UriBuilder ub = ubf.builder()

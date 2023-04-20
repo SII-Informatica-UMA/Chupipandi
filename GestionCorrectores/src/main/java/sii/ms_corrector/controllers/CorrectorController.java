@@ -1,7 +1,9 @@
 package sii.ms_corrector.controllers;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -23,6 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import sii.ms_corrector.dtos.CorrectorDTO;
 import sii.ms_corrector.dtos.CorrectorNuevoDTO;
 import sii.ms_corrector.entities.Corrector;
+import sii.ms_corrector.security.TokenUtils;
 import sii.ms_corrector.services.CorrectorService;
 import sii.ms_corrector.services.exceptions.AccesoNoAutorizado;
 import sii.ms_corrector.services.exceptions.CorrectorNoEncontrado;
@@ -40,14 +44,18 @@ public class CorrectorController {
 
 	@GetMapping("{id}")
 	// 200, 403, 404
-	public ResponseEntity<CorrectorDTO> obtenerCorrector(@PathVariable Long id) {
+	public ResponseEntity<CorrectorDTO> obtenerCorrector(@PathVariable Long id, @RequestHeader Map<String,String> header) {
+		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
+			throw new AccesoNoAutorizado();
 		Corrector contactoById = service.getCorrectorById(id);
 		return ResponseEntity.ok(CorrectorDTO.fromCorrector(contactoById));
 	}
 
 	@PutMapping("{id}")
 	// 200, 403, 404
-	public ResponseEntity<?> modificaCorrector(@PathVariable Long id, @RequestBody CorrectorNuevoDTO corrector) {
+	public ResponseEntity<?> modificaCorrector(@PathVariable Long id, @RequestBody CorrectorNuevoDTO corrector, @RequestHeader Map<String,String> header) {
+		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
+			throw new AccesoNoAutorizado();
 		service.modificarCorrector(id, corrector);
 		return ResponseEntity.ok().build();
 	}
@@ -55,13 +63,17 @@ public class CorrectorController {
 	@DeleteMapping("{id}")
 	@ResponseStatus(code = HttpStatus.OK)
 	// 200, 403, 404
-	public void eliminarCorrector(@PathVariable Long id) {
+	public void eliminarCorrector(@PathVariable Long id, @RequestHeader Map<String,String> header) {
+		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
+			throw new AccesoNoAutorizado();
 		service.eliminarCorrector(id);
 	}
 
     @GetMapping
 	// 200, 403
-    public ResponseEntity<List<CorrectorDTO>> obtieneCorrectores(@RequestParam(required = false) Long idConvocatoria) {
+    public ResponseEntity<List<CorrectorDTO>> obtieneCorrectores(@RequestParam(required = false) Long idConvocatoria, @RequestHeader Map<String,String> header) {
+		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
+			throw new AccesoNoAutorizado();
 		List<Corrector> correctores;
 		if (idConvocatoria == null) {
 			correctores = service.getTodosCorrectores();
@@ -74,7 +86,9 @@ public class CorrectorController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)	// "aplication/json"
 	// 201, 403, 409
-	public ResponseEntity<?> añadirCorrector(@RequestBody CorrectorNuevoDTO nuevoCorrector, UriComponentsBuilder builder) {
+	public ResponseEntity<?> añadirCorrector(@RequestBody CorrectorNuevoDTO nuevoCorrector, UriComponentsBuilder builder, @RequestHeader Map<String,String> header) {
+		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
+			throw new AccesoNoAutorizado();
 		Long id = service.añadirCorrector(nuevoCorrector);
 		URI uri = builder
 				.path("/correctores")

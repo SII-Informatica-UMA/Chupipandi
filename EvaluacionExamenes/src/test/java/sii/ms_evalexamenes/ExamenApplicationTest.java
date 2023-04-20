@@ -138,26 +138,28 @@ class ExamenApplicationTest {
 
             @Test
             @DisplayName("Devuelve 403 al acceder a un Examen Concreto Sin Autenticacion")
-            public void getExamenConcreto() {
+            public void testgetExamen1() {
                 var peticion = get("http", "localhost",port, "/examenes/1",false);
-                var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});              
+                var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});   
+                assertThat(respuesta.getStatusCode().is4xxClientError());           
                 assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
             }
 
             @Test
             @DisplayName("Devuelve 200 al acceder a un Examen Concreto SI Existente CON Autenticacion")
-            public void getExamenConcreto1() { 
+            public void testgetExamen2() { 
                 ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
                 examenrepository.save(examen.examen());
                 var peticion = get("http", "localhost",port, "/examenes/1",false);
                 var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});   
                 assertThat(respuesta.getStatusCode().is2xxSuccessful());
+                assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 
             }
 
             @Test
             @DisplayName("Devuelve 404 al acceder a un Examen Concreto NO Existente CON Autenticacion")
-            public void getExamenConcreto2() { 
+            public void testgetExamen3() { 
                 var peticion = get("http", "localhost",port, "/examenes/1",true);
                 var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});   
                 assertThat(respuesta.getStatusCode().is4xxClientError());
@@ -165,15 +167,22 @@ class ExamenApplicationTest {
 
             }
             
-
-
     
             @Test
-            @DisplayName("Devuelve correctamente Lista al acceder a una Asignacion en concreto")
-            public void getAsignaciones() {
+            @DisplayName("Devuelve 200 lista correctamente Lista al acceder a una Asignacion en concreto CON Autenticacion")
+            public void testgetasignacion1() {
                 var peticion = get("http", "localhost",port, "/examenes/asignacion",true);
                 var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<AsignacionDTO>>() {});                 
                 assertThat(respuesta.getStatusCode().is2xxSuccessful());    
+            }
+
+            @Test
+            @DisplayName("Devuelve 403 lista correctamente Lista al acceder a una Asignacion en concreto SIN Autenticacion")
+            public void testgetasignacion2() {
+                var peticion = get("http", "localhost",port, "/examenes/asignacion",false);
+                var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<AsignacionDTO>>() {});                 
+                assertThat(respuesta.getStatusCode().is4xxClientError());
+                assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
             }
 
 

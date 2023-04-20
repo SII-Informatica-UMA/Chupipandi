@@ -31,9 +31,7 @@ import org.springframework.web.util.UriBuilderFactory;
 import sii.ms_evalexamenes.dtos.ExamenDTO;
 import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.repositories.ExamenRepository;
-import sii.ms_evalexamenes.repositories.MateriaRepository;
 import sii.ms_evalexamenes.entities.Examen;
-import sii.ms_evalexamenes.entities.Materia;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -48,9 +46,6 @@ public class EvalExamenesTests {
 	
 	@Autowired
 	private ExamenRepository examenRepository;
-
-	@Autowired
-	private MateriaRepository materiaRepository;
 
 	@BeforeEach
 	public void initializeDatabase() {
@@ -132,12 +127,10 @@ public class EvalExamenesTests {
 	@Nested
 	@DisplayName("cuando hay examenes")
 	public class ExamenesLlenos {
-		Materia materiaEjemplo = new Materia(1L, "Materia1", new ArrayList<Long>(), new ArrayList<Examen>()); 
-		Examen examenEjemplo = new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), materiaEjemplo,  1L, 1L);
+		Examen examenEjemplo = new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), 1L,  1L, 1L);
 		@BeforeEach
 		public void aniadirDatos() {
 			// examenRepository.deleteAll();
-			materiaRepository.save(materiaEjemplo);
 			examenRepository.save(examenEjemplo);    
 			// examenRepository.save(new Examen(0L, (float)5.0, new Timestamp(System.currentTimeMillis()),
 			// 						 new Materia(1L, "Materia1", new ArrayList<Long>(), new ArrayList<Examen>())
@@ -176,12 +169,13 @@ public class EvalExamenesTests {
 			Examen examenModificado = examenEjemplo;
 			examenModificado.setCalificacion((float) 7.0);
 
-			var peticion = put("http", "localhost",port, "/examenes/1", examenModificado.toJson());
+			var peticion = put("http", "localhost",port, "/examenes/1", examenModificado);
 			System.out.println("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");			
 			System.out.println(peticion);
-			var respuesta = restTemplate.exchange(peticion,
-				new ParameterizedTypeReference<Examen>() {});
+			var respuesta = restTemplate.exchange(peticion,Void.class);
+				
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.hasBody()).isEqualTo(false);
 			
 			var peticion2 = get("http", "localhost",port, "/examenes/1");
 			var respuesta2 = restTemplate.exchange(peticion2,

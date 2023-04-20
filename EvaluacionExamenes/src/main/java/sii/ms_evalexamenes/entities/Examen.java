@@ -33,11 +33,11 @@ public class Examen {
     @Column(nullable = false)
     private Long alumnoId; // Id del alumno al que pertenece el examen (un examen sólo tiene un alumno)
 
-    public Examen (long id, float calificacion, Timestamp fechaYHora, Materia materia, long correctorId, long alumnoId){
+    public Examen (long id, float calificacion, Timestamp fechaYHora, Long materiaId, long correctorId, long alumnoId){
         this.id = id;
         this.calificacion = calificacion;
         this.fechaYHora = fechaYHora;
-        this.materia = materia;
+        this.materiaId = materiaId;
         this.correctorId = correctorId;
         this.alumnoId = alumnoId;
     }

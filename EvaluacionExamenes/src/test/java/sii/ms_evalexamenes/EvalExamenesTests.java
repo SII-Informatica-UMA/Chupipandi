@@ -3,10 +3,9 @@ package sii.ms_evalexamenes;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
+import java.util.List;
 import java.util.ArrayList;
 import java.sql.Timestamp;
-import java.lang.Float;
-
 
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +20,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+// import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -29,9 +28,9 @@ import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriBuilderFactory;
 
 import sii.ms_evalexamenes.dtos.ExamenDTO;
+import sii.ms_evalexamenes.dtos.AsignacionDTO;
 import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.repositories.ExamenRepository;
-import sii.ms_evalexamenes.entities.Examen;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -74,20 +73,20 @@ public class EvalExamenesTests {
 		return peticion;
 	}
 	
-	private RequestEntity<Void> delete(String scheme, String host, int port, String path) {
-		URI uri = uri(scheme, host,port, path);
-		var peticion = RequestEntity.delete(uri)
-			.build();
-		return peticion;
-	}
+	// private RequestEntity<Void> delete(String scheme, String host, int port, String path) {
+	// 	URI uri = uri(scheme, host,port, path);
+	// 	var peticion = RequestEntity.delete(uri)
+	// 		.build();
+	// 	return peticion;
+	// }
 	
-	private <T> RequestEntity<T> post(String scheme, String host, int port, String path, T object) {
-		URI uri = uri(scheme, host,port, path);
-		var peticion = RequestEntity.post(uri)
-			.contentType(MediaType.APPLICATION_JSON)
-			.body(object);
-		return peticion;
-	}
+	// private <T> RequestEntity<T> post(String scheme, String host, int port, String path, T object) {
+	// 	URI uri = uri(scheme, host,port, path);
+	// 	var peticion = RequestEntity.post(uri)
+	// 		.contentType(MediaType.APPLICATION_JSON)
+	// 		.body(object);
+	// 	return peticion;
+	// }
 	
 	private <T> RequestEntity<T> put(String scheme, String host, int port, String path, T object, String tk) {
 		URI uri = uri(scheme, host,port, path);
@@ -103,7 +102,11 @@ public class EvalExamenesTests {
 				(examen1.getNota() - examen2.getNota() == 0) &&
 				examen1.getMateria() == examen2.getMateria() &&
 				examen1.getCodigoAlumno() == examen2.getCodigoAlumno();
-		// return examen1.toString().equals(examen2.toString());
+	}
+
+	public boolean compararAsignacionDTO(AsignacionDTO asignacion1, AsignacionDTO asignacion2) {
+		return asignacion1.getIdCorrector().equals(asignacion2.getIdCorrector()) &&
+				asignacion1.getIdExamen() == asignacion2.getIdExamen();
 	}
 	
 	@Nested
@@ -127,15 +130,24 @@ public class EvalExamenesTests {
 	@Nested
 	@DisplayName("Cuando hay examenes")
 	public class ExamenesLlenos {
-		Examen examenEjemplo = new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), 1L,  1L, 1L);
-		ExamenDTO examenDTOEjemplo = new ExamenDTO().fromExamen(examenEjemplo);
+		Examen examenEjemplo[] = {
+			new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), 1L,  1L, 1L),
+			new Examen(2L, (float)2.0, new Timestamp(System.currentTimeMillis()), 2L,  2L, 2L),
+			new Examen(3L, (float)3.0, new Timestamp(System.currentTimeMillis()), 3L,  3L, 3L),
+			new Examen(4L, (float)4.0, new Timestamp(System.currentTimeMillis()), 4L,  4L, 4L),
+			new Examen(5L, (float)5.0, new Timestamp(System.currentTimeMillis()), 5L,  5L, 5L),
+			new Examen(6L, (float)6.0, new Timestamp(System.currentTimeMillis()), 6L,  6L, 6L)
+		};
+		ExamenDTO examenDTOEjemplo = ExamenDTO.fromExamen(examenEjemplo[0]);
+		
 		@BeforeEach
 		public void aniadirDatos() {
-			// examenRepository.deleteAll();
-			examenRepository.save(examenEjemplo);    
-			// examenRepository.save(new Examen(0L, (float)5.0, new Timestamp(System.currentTimeMillis()),
-			// 						 new Materia(1L, "Materia1", new ArrayList<Long>(), new ArrayList<Examen>())
-			// 						 ,  1L, 1L));    
+			examenRepository.save(examenEjemplo[0]);    
+			examenRepository.save(examenEjemplo[1]);    
+			examenRepository.save(examenEjemplo[2]);    
+			examenRepository.save(examenEjemplo[3]);    
+			examenRepository.save(examenEjemplo[4]);    
+			examenRepository.save(examenEjemplo[5]);    
 		}
 		
 		@Test
@@ -155,7 +167,7 @@ public class EvalExamenesTests {
 		@DisplayName("Examen no encontrado")
 		public void noDevuelveExamen() {
 
-			var peticion = get("http", "localhost",port, "/examenes/4", token);
+			var peticion = get("http", "localhost",port, "/examenes/9999", token);
 			var respuesta = restTemplate.exchange(peticion,
 				new ParameterizedTypeReference<ExamenDTO>() {});
 	
@@ -167,9 +179,9 @@ public class EvalExamenesTests {
 		@DisplayName("Nota del examen modificada")
 		public void modificarNota() {
 
-			Examen examenModificado = examenEjemplo;
+			Examen examenModificado = examenEjemplo[0];
 			examenModificado.setCalificacion((float) 7.0);
-			ExamenDTO examenDTOModificado = new ExamenDTO().fromExamen(examenModificado);
+			ExamenDTO examenDTOModificado = ExamenDTO.fromExamen(examenModificado);
 
 			var peticion = put("http", "localhost",port, "/examenes/1", examenDTOModificado, token);
 		
@@ -186,6 +198,41 @@ public class EvalExamenesTests {
 			assertThat(respuesta2.getBody()).isNotNull();
 			assertThat(compararExamenDTO(respuesta2.getBody(), examenDTOEjemplo)).isFalse();
 			assertThat(compararExamenDTO(respuesta2.getBody(), examenDTOModificado)).isTrue();
+		}
+
+		@Test
+		@DisplayName("Asignacion encontrada")
+		public void asignacionEncontrada() {
+			var peticion = get("http", "localhost",port, "/examenes/asignacion", token);
+			var respuesta = restTemplate.exchange(peticion,
+				new ParameterizedTypeReference<List<AsignacionDTO>>() {});
+			
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(compararAsignacionDTO(respuesta.getBody().get(0), AsignacionDTO.fromExamen(examenEjemplo[0]))).isTrue();
+			assertThat(respuesta.getBody().size()).isEqualTo(examenEjemplo.length);
+		}
+
+		@Test
+		@DisplayName("Modificar asignacion")
+		public void modificarAsignacion() {
+			AsignacionDTO asignacionModificada = AsignacionDTO.fromExamen(examenEjemplo[0]);
+			asignacionModificada.setIdCorrector(9999L);
+			
+			ArrayList<AsignacionDTO> asignaciones = new ArrayList<AsignacionDTO>();
+			asignaciones.add(asignacionModificada);
+			
+			var peticion = put("http", "localhost",port, "/examenes/asignacion", asignaciones, token);
+			var respuesta = restTemplate.exchange(peticion,Void.class);
+			
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.hasBody()).isEqualTo(false);
+			
+			var peticion2 = get("http", "localhost",port, "/examenes/asignacion", token);
+			var respuesta2 = restTemplate.exchange(peticion2,
+				new ParameterizedTypeReference<List<AsignacionDTO>>() {});
+			
+			assertThat(respuesta2.getStatusCode().value()).isEqualTo(200);
+			assertThat(compararAsignacionDTO(respuesta2.getBody().get(0), asignacionModificada)).isTrue();
 		}
 	}
 }

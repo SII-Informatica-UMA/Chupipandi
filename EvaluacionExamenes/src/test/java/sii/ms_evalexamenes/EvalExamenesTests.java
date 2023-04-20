@@ -5,8 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.net.URI;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.sql.Timestamp;
-
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,11 +28,13 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriBuilderFactory;
 
+import sii.ms_evalexamenes.util.JwtGenerator;
 import sii.ms_evalexamenes.dtos.ExamenDTO;
+import sii.ms_evalexamenes.dtos.ExamenNuevoDTO;
 import sii.ms_evalexamenes.dtos.AsignacionDTO;
+import sii.ms_evalexamenes.dtos.NotificacionNotasDTO;
 import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.repositories.ExamenRepository;
-import sii.ms_evalexamenes.util.JwtGenerator;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -82,13 +85,14 @@ public class EvalExamenesTests {
 	// 	return peticion;
 	// }
 	
-	// private <T> RequestEntity<T> post(String scheme, String host, int port, String path, T object) {
-	// 	URI uri = uri(scheme, host,port, path);
-	// 	var peticion = RequestEntity.post(uri)
-	// 		.contentType(MediaType.APPLICATION_JSON)
-	// 		.body(object);
-	// 	return peticion;
-	// }
+	private <T> RequestEntity<T> post(String scheme, String host, int port, String path, T object, String tk) {
+		URI uri = uri(scheme, host,port, path);
+		var peticion = RequestEntity.post(uri)
+			.header("Authorization", "Bearer " + tk)
+			.contentType(MediaType.APPLICATION_JSON)
+			.body(object);
+		return peticion;
+	}
 	
 	private <T> RequestEntity<T> put(String scheme, String host, int port, String path, T object, String tk) {
 		URI uri = uri(scheme, host,port, path);
@@ -130,7 +134,7 @@ public class EvalExamenesTests {
 	}
 
 	@Nested
-	@DisplayName("Cuando hay examenes")
+	@DisplayName("Tests Examenes cuando hay examenes")
 	public class ExamenesLlenos {
 		Examen examenEjemplo[] = {
 			new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), 1L,  1L, 1L),
@@ -236,5 +240,56 @@ public class EvalExamenesTests {
 			assertThat(respuesta2.getStatusCode().value()).isEqualTo(200);
 			assertThat(compararAsignacionDTO(respuesta2.getBody().get(0), asignacionModificada)).isTrue();
 		}
+
+		// TODO - Internal server error - 500
+		// @Test
+		// @DisplayName("Post examen")
+		// public void postExamen() {
+		// 	ExamenNuevoDTO examenNuevoDTO = new ExamenNuevoDTO(1L, 1L);
+			
+		// 	var peticion = post("http", "localhost",port, "/examenes", examenNuevoDTO, token);
+		// 	var respuesta = restTemplate.exchange(peticion,Void.class);
+			
+		// 	assertThat(respuesta.getStatusCode().value()).isEqualTo(201);
+		// 	assertThat(respuesta.hasBody()).isEqualTo(false);
+		// }
+	}
+
+	@Nested
+	@DisplayName("Tests Notificaciones")
+	public class notificacionesTests {
+		@Test
+		@DisplayName("Post notificacion de notas")
+		public void notificaciones() {
+			NotificacionNotasDTO notificacion = 
+				new NotificacionNotasDTO(	"Asunto", 
+											"Cuerpo", 
+											LocalDateTime.now(), 
+											new ArrayList<String>(Arrays.asList("SMS"))
+										);
+
+			var peticion = post("http", "localhost",port, "/notificaciones/notas", notificacion, token);
+			var respuesta = restTemplate.exchange(peticion,Void.class);
+			
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(201);
+			assertThat(respuesta.hasBody()).isEqualTo(false);
+		}
+
+	}
+
+	@Nested
+	@DisplayName("Tests notas")
+	public class notasTests {
+
+		//	TODO - No devuelve una lista de ExamenDTO 
+		// @Test
+		// @DisplayName("Get notas por dni y apellidos")
+		// public void getNotas() {
+		// 	var peticion = get("http", "localhost",port, "/notas?dni=12345678Y&apellido=rodriguez", token);
+		// 	var respuesta = restTemplate.exchange(peticion,
+		// 		new ParameterizedTypeReference<List<ExamenDTO>>() {});
+			
+		// 	assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+		// }
 	}
 }

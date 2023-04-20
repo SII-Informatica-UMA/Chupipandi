@@ -2,7 +2,9 @@ package sii.ms_evalexamenes.controllers;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +31,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import sii.ms_evalexamenes.dtos.AsignacionDTO;
 import sii.ms_evalexamenes.dtos.EstadoCorrecionesDTO;
 import sii.ms_evalexamenes.dtos.ExamenDTO;
+import sii.ms_evalexamenes.dtos.ExamenNuevoDTO;
 import sii.ms_evalexamenes.entities.Examen;
+import sii.ms_evalexamenes.security.TokenUtils;
 import sii.ms_evalexamenes.services.ExamenService;
 import sii.ms_evalexamenes.services.exceptions.AlreadyExistsException;
 import sii.ms_evalexamenes.services.exceptions.NotFoundException;
@@ -65,13 +70,17 @@ public class ExamenController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ExamenDTO> getExamen(@PathVariable Long id) {
+    public ResponseEntity<ExamenDTO> getExamen(@PathVariable Long id, @RequestHeader Map<String, String> header) {
+        if (!TokenUtils.comprobarAcceso(header, Arrays.asList("CORRECTOR")))
+            throw new UnauthorizedAccessException();
         ExamenDTO examen = ExamenDTO.fromExamen(service.getExamenById(id).orElseThrow(NotFoundException::new));
         return ResponseEntity.ok(examen);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> updateExamen(@PathVariable Long id, @RequestBody ExamenDTO examen) {
+    public ResponseEntity<?> updateExamen(@PathVariable Long id, @RequestBody ExamenDTO examen, @RequestHeader Map<String, String> header) {
+        if (!TokenUtils.comprobarAcceso(header, Arrays.asList("CORRECTOR")))
+            throw new UnauthorizedAccessException();
         Examen ex = examen.examen();
         ex.setId(id);
         service.updateExamen(ex);
@@ -79,7 +88,9 @@ public class ExamenController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addExamen(@RequestBody ExamenDTO examen, UriComponentsBuilder builder) {
+    public ResponseEntity<?> addExamen(@RequestBody ExamenNuevoDTO examen, UriComponentsBuilder builder, @RequestHeader Map<String, String> header) {
+        if (!TokenUtils.comprobarAcceso(header, Arrays.asList("CORRECTOR")))
+            throw new UnauthorizedAccessException();
         Examen examenNuevo = examen.examen();
         var peticion = get("http", "localhost", 8081, "/correctores");
     
@@ -89,14 +100,17 @@ public class ExamenController {
 
         JSONArray correctores = new JSONArray(respuesta.getBody());
 
+        corrLoop:
         for (int i = 0; i < correctores.length(); ++i) {
             JSONObject corrector = correctores.getJSONObject(i);
-            if (service.getCorrectoresById(examen.getId()).get().size() + 1 <= corrector.getInt("maximasCorrecciones")) {
+            if (service.getCorrectoresById(examenNuevo.getId()).get().size() + 1 <= corrector.getInt("maximasCorrecciones")) {
                 JSONArray materias = corrector.getJSONArray("materias");
                 for (int j = 0; j < materias.length(); ++j) {
                     JSONObject materia = materias.getJSONObject(j);
-                    if (materia.getLong("idMateria") == examen.getMateria())
+                    if (materia.getLong("idMateria") == examen.getMateria()) {
                         examenNuevo.setCorrectorId(corrector.getLong("id"));
+                        break corrLoop;
+                    }
                     else
                         examenNuevo.setCorrectorId(-1L);
                 }
@@ -115,7 +129,9 @@ public class ExamenController {
     }
 
     @GetMapping("/asignacion")
-    public ResponseEntity<List<AsignacionDTO>> getAsignacion() {
+    public ResponseEntity<List<AsignacionDTO>> getAsignacion(@RequestHeader Map<String, String> header) {
+        if (!TokenUtils.comprobarAcceso(header, Arrays.asList("CORRECTOR")))
+            throw new UnauthorizedAccessException();
         List<AsignacionDTO> response = new ArrayList<>();
         for (Examen ex : service.getAllExamenes().get()) {
             AsignacionDTO dto = AsignacionDTO.fromExamen(ex);
@@ -125,7 +141,9 @@ public class ExamenController {
     }
 
     @PutMapping("/asignacion")
-    public ResponseEntity<?> updateAsignacion(@RequestBody List<AsignacionDTO> asignacion) {
+    public ResponseEntity<?> updateAsignacion(@RequestBody List<AsignacionDTO> asignacion, @RequestHeader Map<String, String> header) {
+        if (!TokenUtils.comprobarAcceso(header, Arrays.asList("CORRECTOR")))
+            throw new UnauthorizedAccessException();
         for (AsignacionDTO asig : asignacion) {
             Examen ex = service.getExamenById(asig.getIdExamen()).get();
             ex.setCorrectorId(asig.getIdCorrector());
@@ -135,7 +153,9 @@ public class ExamenController {
     }
 
     @GetMapping("/correcciones")
-    public ResponseEntity<EstadoCorrecionesDTO> getCorreciones() {
+    public ResponseEntity<EstadoCorrecionesDTO> getCorreciones(@RequestHeader Map<String, String> header) {
+        if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTOR", "CORRECTOR")))
+            throw new UnauthorizedAccessException();
         List<Long> corregidos = new ArrayList<>();
         List<Long> pendientes = new ArrayList<>();
 

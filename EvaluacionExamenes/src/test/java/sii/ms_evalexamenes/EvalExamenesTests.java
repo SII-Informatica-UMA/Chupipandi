@@ -52,6 +52,7 @@ public class EvalExamenesTests {
 		examenRepository.deleteAll();
 	}
 
+	String token = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODQ1MDI1ODgsInJvbGVzIjpbIkNPUlJFQ1RPUiJdfQ.5cWDJdzmurLrtipgtCyikuccojcIeup6aioNwCgTlPU";
 	
 	private URI uri(String scheme, String host, int port, String ...paths) {
 		UriBuilderFactory ubf = new DefaultUriBuilderFactory();
@@ -64,9 +65,10 @@ public class EvalExamenesTests {
 		return ub.build();
 	}
 	
-	private RequestEntity<Void> get(String scheme, String host, int port, String path) {
+	private RequestEntity<Void> get(String scheme, String host, int port, String path, String tk) {
 		URI uri = uri(scheme, host,port, path);
 		var peticion = RequestEntity.get(uri)
+			.header("Authorization", "Bearer " + tk)
 			.accept(MediaType.APPLICATION_JSON)
 			.build();
 		return peticion;
@@ -87,47 +89,46 @@ public class EvalExamenesTests {
 		return peticion;
 	}
 	
-	private <T> RequestEntity<T> put(String scheme, String host, int port, String path, T object) {
+	private <T> RequestEntity<T> put(String scheme, String host, int port, String path, T object, String tk) {
 		URI uri = uri(scheme, host,port, path);
 		var peticion = RequestEntity.put(uri)
+			.header("Authorization", "Bearer " + tk)
 			.contentType(MediaType.APPLICATION_JSON)
 			.body(object);
 		return peticion;
 	}
 
-	private boolean compararExamen(Examen examen1, Examen examen2) {
-		// return examen1.getId() == examen2.getId() &&
-		// 		Float.compare(examen1.getCalificacion(), examen2.getCalificacion()) == 0 &&
-		// 		examen1.getFechaYHora().equals(examen2.getFechaYHora()) &&
-		// 		examen1.getMateria().getId() == examen2.getMateria().getId() &&
-		// 		examen1.getAlumnoId() == examen2.getAlumnoId() &&
-		// 		examen1.getCorrectorId() == examen2.getCorrectorId();
-		return examen1.toString().equals(examen2.toString());
+	private boolean compararExamenDTO(ExamenDTO examen1, ExamenDTO examen2) {
+		return examen1.getId() == examen2.getId() &&
+				(examen1.getNota() - examen2.getNota() == 0) &&
+				examen1.getMateria() == examen2.getMateria() &&
+				examen1.getCodigoAlumno() == examen2.getCodigoAlumno();
+		// return examen1.toString().equals(examen2.toString());
 	}
-
 	
 	@Nested
-	@DisplayName("cuando no hay examenes")
+	@DisplayName("Cuando no hay examenes")
 	public class ExamenesVacios {
 		
 		@Test
 		@DisplayName("No devuelve ningún examen")
 		public void noDevuelveExamen() {
 			
-			var peticion = get("http", "localhost",port, "/examenes/1");
+			var peticion = get("http", "localhost",port, "/examenes/1", token);
 
 			var respuesta = restTemplate.exchange(peticion,
-					new ParameterizedTypeReference<Examen>() {});
+					new ParameterizedTypeReference<ExamenDTO>() {});
 			
-			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
-			// assertThat(respuesta.getBody()).isNull();
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
+			assertThat(respuesta.getBody()).isNull();
 		}
 	}
 
 	@Nested
-	@DisplayName("cuando hay examenes")
+	@DisplayName("Cuando hay examenes")
 	public class ExamenesLlenos {
 		Examen examenEjemplo = new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), 1L,  1L, 1L);
+		ExamenDTO examenDTOEjemplo = new ExamenDTO().fromExamen(examenEjemplo);
 		@BeforeEach
 		public void aniadirDatos() {
 			// examenRepository.deleteAll();
@@ -138,28 +139,28 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("examen encontrado")
+		@DisplayName("Examen encontrado")
 		public void devuelveExamen() {
 
-			var peticion = get("http", "localhost",port, "/examenes/1");
+			var peticion = get("http", "localhost",port, "/examenes/1", token);
 			var respuesta = restTemplate.exchange(peticion,
-				new ParameterizedTypeReference<Examen>() {});
-	
-			assertThat(respuesta.getBody()).isNotNull();
-			assertThat(compararExamen(respuesta.getBody(), examenEjemplo)).isTrue();
+				new ParameterizedTypeReference<ExamenDTO>() {});
+			
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.getBody()).isNotNull();
+			assertThat(compararExamenDTO(respuesta.getBody(), examenDTOEjemplo)).isTrue();
 		}
 
 		@Test
-		@DisplayName("examen no encontrado")
+		@DisplayName("Examen no encontrado")
 		public void noDevuelveExamen() {
 
-			var peticion = get("http", "localhost",port, "/examenes/4");
+			var peticion = get("http", "localhost",port, "/examenes/4", token);
 			var respuesta = restTemplate.exchange(peticion,
-				new ParameterizedTypeReference<Examen>() {});
+				new ParameterizedTypeReference<ExamenDTO>() {});
 	
-			assertThat(respuesta.getBody()).isNull();
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
+			assertThat(respuesta.getBody()).isNull();
 		}
 
 		@Test
@@ -168,23 +169,23 @@ public class EvalExamenesTests {
 
 			Examen examenModificado = examenEjemplo;
 			examenModificado.setCalificacion((float) 7.0);
+			ExamenDTO examenDTOModificado = new ExamenDTO().fromExamen(examenModificado);
 
-			var peticion = put("http", "localhost",port, "/examenes/1", examenModificado);
-			System.out.println("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");			
-			System.out.println(peticion);
+			var peticion = put("http", "localhost",port, "/examenes/1", examenDTOModificado, token);
+		
 			var respuesta = restTemplate.exchange(peticion,Void.class);
 				
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			assertThat(respuesta.hasBody()).isEqualTo(false);
 			
-			var peticion2 = get("http", "localhost",port, "/examenes/1");
+			var peticion2 = get("http", "localhost",port, "/examenes/1", token);
 			var respuesta2 = restTemplate.exchange(peticion2,
-			new ParameterizedTypeReference<Examen>() {});
-			
-			assertThat(respuesta2.getBody()).isNotNull();
-			assertThat(compararExamen(respuesta2.getBody(), examenEjemplo)).isFalse();
-			assertThat(compararExamen(respuesta2.getBody(), examenModificado)).isTrue();
+				new ParameterizedTypeReference<ExamenDTO>() {});
+				
 			assertThat(respuesta2.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta2.getBody()).isNotNull();
+			assertThat(compararExamenDTO(respuesta2.getBody(), examenDTOEjemplo)).isFalse();
+			assertThat(compararExamenDTO(respuesta2.getBody(), examenDTOModificado)).isTrue();
 		}
 	}
 }

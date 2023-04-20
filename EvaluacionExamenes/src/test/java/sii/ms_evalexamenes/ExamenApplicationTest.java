@@ -150,7 +150,7 @@ class ExamenApplicationTest {
             public void testgetExamen2() { 
                 ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
                 examenrepository.save(examen.examen());
-                var peticion = get("http", "localhost",port, "/examenes/1",false);
+                var peticion = get("http", "localhost",port, "/examenes/1",true);
                 var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});   
                 assertThat(respuesta.getStatusCode().is2xxSuccessful());
                 assertThat(respuesta.getStatusCode().value()).isEqualTo(200);

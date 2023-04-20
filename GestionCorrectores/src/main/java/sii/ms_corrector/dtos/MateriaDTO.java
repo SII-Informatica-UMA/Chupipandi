@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import sii.ms_corrector.entities.Materia;
 
 @Getter
@@ -12,6 +13,7 @@ import sii.ms_corrector.entities.Materia;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString   // para debug
 public class MateriaDTO {
     private Long id;
     private String nombre;

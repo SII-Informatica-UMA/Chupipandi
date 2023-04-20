@@ -16,8 +16,8 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)
-@ToString(doNotUseGetters = true)
+@EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)   // deberia ser por idMateria | nombre ¿?
+@ToString(doNotUseGetters = true, exclude = {"id"}) // para debug
 @NoArgsConstructor
 public class Materia {
     @Id @GeneratedValue(strategy = GenerationType.AUTO) @EqualsAndHashCode.Include

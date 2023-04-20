@@ -1,7 +1,10 @@
 package sii.ms_evalexamenes.entities;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +28,10 @@ public class Materia {
     private Long id;
     @Column(nullable = false)
     private String nombre;
-    private ArrayList<Long> correctores; // Una materia puede tener varios correctores (lista de ids de los correctores)
+    @CollectionTable
+    @Column(name = "CORRECTOR_ID", nullable = false)
+    private List<Long> correctores; // Una materia puede tener varios correctores (lista de ids de los correctores)
     @OneToMany(mappedBy = "materia")
-    private ArrayList<Examen> examenes; // Una materia puede tener varios exámenes
+    @JsonIgnoreProperties("materia")
+    private List<Examen> examenes; // Una materia puede tener varios exámenes
 }

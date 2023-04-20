@@ -1,7 +1,8 @@
 package sii.ms_evalexamenes.entities;
 
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,11 +26,12 @@ import lombok.ToString;
 public class Examen {
     @Id @GeneratedValue(strategy = GenerationType.AUTO) @EqualsAndHashCode.Include
     private Long id;
-    private Integer calificacion;
+    private Float calificacion;
     @Column(nullable = false)
     @Getter(AccessLevel.NONE)   // mantengo getter por si mas adelante distinguimos hora/fecha
     private Timestamp fechaYHora;
     @ManyToOne(optional = false)
+    @JsonIgnoreProperties("examenes")
     private Materia materia; // Un examen sólo pertenece a una materia
     @Column(nullable = false)
     private Long correctorId; // Id del corrector del examen (un examen sólo tiene un corrector)

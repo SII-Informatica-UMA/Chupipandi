@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import sii.ms_corrector.entities.Corrector;
 
 @Getter
@@ -12,11 +13,8 @@ import sii.ms_corrector.entities.Corrector;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString   // para debug
 public class CorrectorNuevoDTO {
-    /*
-     * Puede ser que se simplifique el problema usando ModelMapper,
-     * tanto para entidades locales como externas quiero pensar
-     */
     private Long identificadorUsuario;
     private Long identificadorConvocatoria;
     private String telefono;
@@ -27,8 +25,6 @@ public class CorrectorNuevoDTO {
         var dto = new CorrectorNuevoDTO();
         dto.setIdentificadorUsuario(corrector.getIdUsuario());
         dto.setTelefono(corrector.getTelefono());
-        // de donde obtenemos el nombre de la materia? (capaz no usamos este metodo 'fromCorrector')
-        // (de momento no se usa)
         dto.setMaximasCorrecciones(corrector.getMaximasCorrecciones());
         return dto;
     }

@@ -15,11 +15,11 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)
-@ToString(doNotUseGetters = true)
+@EqualsAndHashCode(doNotUseGetters = true, of = {"idConvocatoria"})
+@ToString(doNotUseGetters = true, exclude = {"materia", "corrector"})   // para debug
 @NoArgsConstructor
 public class MateriaEnConvocatoria {
-    @Id @GeneratedValue(strategy = GenerationType.AUTO) @EqualsAndHashCode.Include
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;                // id propio de la entidad
 
     @ManyToOne

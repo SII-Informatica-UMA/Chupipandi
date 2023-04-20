@@ -2,7 +2,9 @@ package sii.ms_evalexamenes.controllers;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,12 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import sii.ms_evalexamenes.dtos.NotificacionNotasDTO;
+import sii.ms_evalexamenes.security.TokenUtils;
 import sii.ms_evalexamenes.services.exceptions.AlreadyExistsException;
 import sii.ms_evalexamenes.services.exceptions.NotFoundException;
 import sii.ms_evalexamenes.services.exceptions.UnauthorizedAccessException;
@@ -32,7 +36,9 @@ public class NotificacionNotasController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addNotificacion(@RequestBody NotificacionNotasDTO notificacion, UriComponentsBuilder builder) {
+    public ResponseEntity<?> addNotificacion(@RequestBody NotificacionNotasDTO notificacion, UriComponentsBuilder builder, @RequestHeader Map<String, String> header) {
+        if (!TokenUtils.comprobarAcceso(header, Arrays.asList("CORRECTOR")))
+            throw new UnauthorizedAccessException();
         if (!medios.containsAll(notificacion.getMedios())) {
             System.out.println(medios);
             System.out.println(notificacion.getMedios());

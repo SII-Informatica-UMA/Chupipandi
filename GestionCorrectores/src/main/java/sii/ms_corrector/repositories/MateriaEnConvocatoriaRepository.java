@@ -6,4 +6,7 @@ import sii.ms_corrector.entities.MateriaEnConvocatoria;
 
 public interface MateriaEnConvocatoriaRepository extends JpaRepository<MateriaEnConvocatoria, Long> {
     
+    boolean existsByIdConvocatoria(Long id);
+
+    MateriaEnConvocatoria findByIdConvocatoria(Long id);
 }

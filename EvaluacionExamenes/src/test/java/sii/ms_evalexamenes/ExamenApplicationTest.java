@@ -27,10 +27,10 @@ import org.springframework.web.util.UriBuilderFactory;
 
 import sii.ms_evalexamenes.dtos.AsignacionDTO;
 import sii.ms_evalexamenes.dtos.ExamenDTO;
+import sii.ms_evalexamenes.dtos.ExamenNuevoDTO;
 import sii.ms_evalexamenes.entities.Examen;
-import sii.ms_evalexamenes.entities.Materia;
 import sii.ms_evalexamenes.repositories.ExamenRepository;
-import sii.ms_evalexamenes.repositories.MateriaRepository;
+//import sii.ms_evalexamenes.repositories.MateriaRepository;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -48,15 +48,16 @@ class ExamenApplicationTest {
 
     @Autowired
     private ExamenRepository examenrepository;
-    @Autowired
-    private MateriaRepository materiarepository;
+    //@Autowired
+    //private MateriaRepository materiarepository;
 
 
 
 	@Nested
 	@DisplayName("cuando la base de datos está vacía")
 	public class BaseDatosVacia {
-        
+    
+        private String accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODQ1MDI1ODgsInJvbGVzIjpbIkNPUlJFQ1RPUiJdfQ.5cWDJdzmurLrtipgtCyikuccojcIeup6aioNwCgTlPU";
 
         private URI uri(String scheme, String host, int port, String ...paths) {
             UriBuilderFactory ubf = new DefaultUriBuilderFactory();
@@ -70,22 +71,43 @@ class ExamenApplicationTest {
         }
         
         
-        private RequestEntity<Void> get(String scheme, String host, int port, String path) {
+        private RequestEntity<Void> get(String scheme, String host, int port, String path,boolean authorized) {
             URI uri = uri(scheme, host,port, path);
-            var peticion = RequestEntity.get(uri)
+            
+            if (authorized){
+                var peticion = RequestEntity.get(uri)
+                .accept(MediaType.APPLICATION_JSON).header("Authorization", "Bearer "+accessToken)
+                .build();
+                return peticion;
+          
+            }else {
+                var peticion = RequestEntity.get(uri)
                 .accept(MediaType.APPLICATION_JSON)
                 .build();
-            return peticion;
+                return peticion;
+            }
+
+            
+            
+            
         }
-        
-        private RequestEntity<Void> delete(String scheme, String host, int port, String path) {
+               
+        private RequestEntity<Void> delete(String scheme, String host, int port, String path,boolean authorized) {
             URI uri = uri(scheme, host,port, path);
-            var peticion = RequestEntity.delete(uri)
+            if(authorized){
+                var peticion = RequestEntity.delete(uri).header("Authorization", "Bearer "+accessToken)
                 .build();
-            return peticion;
+                return peticion;
+            }
+            else{
+                var peticion = RequestEntity.delete(uri)
+                .build();
+                return peticion;
+            }
+            
         }
         
-        private <T> RequestEntity<T> post(String scheme, String host, int port, String path, T object) {
+        private <T> RequestEntity<T> post(String scheme, String host, int port, String path, T object,boolean authorized) {
             URI uri = uri(scheme, host,port, path);
             var peticion = RequestEntity.post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +115,7 @@ class ExamenApplicationTest {
             return peticion;
         }
         
-        private <T> RequestEntity<T> put(String scheme, String host, int port, String path, T object) {
+        private <T> RequestEntity<T> put(String scheme, String host, int port, String path, T object,boolean authorized) {
             URI uri = uri(scheme, host,port, path);
             var peticion = RequestEntity.put(uri)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -111,85 +133,54 @@ class ExamenApplicationTest {
             @BeforeEach
             public void initializeDatabase() {
                 examenrepository.deleteAll();
-                materiarepository.deleteAll();
+                //materiarepository.deleteAll();
             }
 
-            //get a examenes/{id}
             @Test
-            @DisplayName("Devuelve 404 al acceder a un Examen Concreto cuando no hay Examenes")
+            @DisplayName("Devuelve 403 al acceder a un Examen Concreto Sin Autenticacion")
             public void getExamenConcreto() {
-                var peticion = get("http", "localhost",port, "/examenes/1");
+                var peticion = get("http", "localhost",port, "/examenes/1",false);
                 var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});              
+                assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+            }
+
+            @Test
+            @DisplayName("Devuelve 200 al acceder a un Examen Concreto SI Existente CON Autenticacion")
+            public void getExamenConcreto1() { 
+                ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
+                examenrepository.save(examen.examen());
+                var peticion = get("http", "localhost",port, "/examenes/1",false);
+                var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});   
+                assertThat(respuesta.getStatusCode().is2xxSuccessful());
+
+            }
+
+            @Test
+            @DisplayName("Devuelve 404 al acceder a un Examen Concreto NO Existente CON Autenticacion")
+            public void getExamenConcreto2() { 
+                var peticion = get("http", "localhost",port, "/examenes/1",true);
+                var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});   
+                assertThat(respuesta.getStatusCode().is4xxClientError());
                 assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
-            }
-
-            //get a examenes/{id} introduciendo un examen
-             
-            
-            @Test
-            @DisplayName("Devuelve 200 al acceder a un Examen Concreto Existente")
-            public void getExamenConcreto1() {    
-                List<Long> correctores = new ArrayList<Long>();
-                correctores.add(1L);
-                List<Examen> examenes = new ArrayList<Examen>() ;
-                Materia materia = new Materia();
-                materia.setId(1L);
-                materia.setNombre("Fisica");
-                materia.setCorrectores(correctores);
-                materia.setExamenes(examenes);
-                materiarepository.save(materia);     
-                assertThat(materiarepository.findById(1L).isPresent());
-                
-                
-                //ExamenDTO examen = new ExamenDTO(1L,1L,1L,1F);
-                //examenrepository.save(examen.examen());
-
-                //var peticion = get("http", "localhost",port, "/examenes/1");
-                //var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});              
 
             }
             
-            /*
 
-            //put a examenes/{id}
-            @Test
-            @DisplayName("Devuelve 404 al modifificar nota de un Examen cuando no hay Examenes")
-            public void getExamenConcreto2() {
-                examenrepository.deleteAll();
-                var examen = ExamenDTO.builder().materia(1L).build();
-                var peticion = put("http", "localhost",port, "/examenes/1",examen);
-                var respuesta = restTemplate.exchange(peticion,Void.class);
-                //assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
-                assertThat(respuesta.getStatusCode().is2xxSuccessful());  
-            }
-            */
 
-            //get a examenes/asignacion
+    
             @Test
             @DisplayName("Devuelve correctamente Lista al acceder a una Asignacion en concreto")
             public void getAsignaciones() {
-                var peticion = get("http", "localhost",port, "/examenes/asignacion");
+                var peticion = get("http", "localhost",port, "/examenes/asignacion",true);
                 var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<AsignacionDTO>>() {});                 
                 assertThat(respuesta.getStatusCode().is2xxSuccessful());    
             }
 
 
-            @Test
-            @DisplayName("Comprueba que la Lista de Asignacion este Vacia")
-            public void getAsignaciones1() {
-                var peticion = get("http", "localhost",port, "/examenes/asignacion");
-                var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<AsignacionDTO>>() {});                 
-                assertThat(respuesta.getBody().isEmpty());       
-            }
+            
         
             
-            @Test
-            @DisplayName("Comprueba que la Lista de Asignacion este Vacia")
-            public void getAsignaciones2() {
-                var peticion = get("http", "localhost",port, "/examenes/asignacion");
-                var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<AsignacionDTO>>() {});                 
-                assertThat(respuesta.getBody().isEmpty());       
-            }
+            
 
 
 

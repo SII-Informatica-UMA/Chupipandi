@@ -1,4 +1,3 @@
-start cmd.exe @cmd /k "java -cp h2-2.1.210.jar org.h2.tools.Server -ifNotExists"
 :: CALL mvn clean install -U
 start cmd.exe @cmd /k "java -cp h2-2.1.210.jar org.h2.tools.Server -ifNotExists"
 CALL mvn clean package

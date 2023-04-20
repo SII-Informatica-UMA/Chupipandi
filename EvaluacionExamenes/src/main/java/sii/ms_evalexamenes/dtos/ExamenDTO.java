@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sii.ms_evalexamenes.entities.Examen;
-import sii.ms_evalexamenes.entities.Materia;
 
 @Getter
 @Setter
@@ -26,7 +25,7 @@ public class ExamenDTO {
         var dto = new ExamenDTO();
 
         dto.setId(examen.getId());
-        dto.setMateria(examen.getMateria().getId());
+        dto.setMateria(examen.getMateriaId());
         dto.setNota(examen.getCalificacion());
         dto.setCodigoAlumno(examen.getAlumnoId());
 
@@ -35,12 +34,9 @@ public class ExamenDTO {
 
     public Examen examen() {
         var examen = new Examen();
-        examen.setId(id);
         examen.setCalificacion(nota);
         // ¿Se podría obtener teniendo una variable de tipo MateriaRepository?
-        Materia mat = new Materia();
-        mat.setId(materia);
-        examen.setMateria(mat);
+        examen.setMateriaId(materia);
         examen.setAlumnoId(codigoAlumno);
         // Se tendría que obtener del microservicio de Correctores de alguna forma
         examen.setCorrectorId(0L);

@@ -176,7 +176,9 @@ public class EvalExamenesTests {
 			Examen examenModificado = examenEjemplo;
 			examenModificado.setCalificacion((float) 7.0);
 
-			var peticion = put("http", "localhost",port, "/examenes/1", examenModificado);
+			var peticion = put("http", "localhost",port, "/examenes/1", examenModificado.toJson());
+			System.out.println("wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww");			
+			System.out.println(peticion);
 			var respuesta = restTemplate.exchange(peticion,
 				new ParameterizedTypeReference<Examen>() {});
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);

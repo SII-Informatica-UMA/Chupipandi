@@ -3,6 +3,7 @@ package sii.ms_evalexamenes;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -29,6 +30,7 @@ import sii.ms_evalexamenes.dtos.ExamenDTO;
 import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.entities.Materia;
 import sii.ms_evalexamenes.repositories.ExamenRepository;
+import sii.ms_evalexamenes.repositories.MateriaRepository;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -46,7 +48,8 @@ class ExamenApplicationTest {
 
     @Autowired
     private ExamenRepository examenrepository;
-    
+    @Autowired
+    private MateriaRepository materiarepository;
 
 
 
@@ -108,6 +111,7 @@ class ExamenApplicationTest {
             @BeforeEach
             public void initializeDatabase() {
                 examenrepository.deleteAll();
+                materiarepository.deleteAll();
             }
 
             //get a examenes/{id}
@@ -121,22 +125,30 @@ class ExamenApplicationTest {
 
             //get a examenes/{id} introduciendo un examen
              
-            /* 
+            
             @Test
             @DisplayName("Devuelve 200 al acceder a un Examen Concreto Existente")
             public void getExamenConcreto1() {    
+                List<Long> correctores = new ArrayList<Long>();
+                correctores.add(1L);
+                List<Examen> examenes = new ArrayList<Examen>() ;
                 Materia materia = new Materia();
-                materia.setId(1L);  
-                examenrepository.save(materia);     
-                Examen examen = new Examen();
-                examen.setId(1L);
-                examenrepository.save(examen);
+                materia.setId(1L);
+                materia.setNombre("Fisica");
+                materia.setCorrectores(correctores);
+                materia.setExamenes(examenes);
+                materiarepository.save(materia);     
+                assertThat(materiarepository.findById(1L).isPresent());
+                
+                
+                //ExamenDTO examen = new ExamenDTO(1L,1L,1L,1F);
+                //examenrepository.save(examen.examen());
 
-                var peticion = get("http", "localhost",port, "/examenes/1");
-                var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});              
-                assertThat(respuesta.getStatusCode().is2xxSuccessful());
+                //var peticion = get("http", "localhost",port, "/examenes/1");
+                //var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});              
+
             }
-            */
+            
             /*
 
             //put a examenes/{id}

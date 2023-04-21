@@ -117,10 +117,20 @@ class ExamenApplicationTest {
         
         private <T> RequestEntity<T> put(String scheme, String host, int port, String path, T object,boolean authorized) {
             URI uri = uri(scheme, host,port, path);
-            var peticion = RequestEntity.put(uri)
+
+            if(authorized){
+                var peticion = RequestEntity.put(uri)
+                .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer "+accessToken)
+                .body(object);
+            return peticion;
+
+            } else {
+                var peticion = RequestEntity.put(uri)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(object);
             return peticion;
+            }
+           
         }
 		
 
@@ -167,17 +177,55 @@ class ExamenApplicationTest {
 
             }
             
+            @Test
+            @DisplayName("Devuelve 200 al cambiar nota a un Examen Concreto SI Existente CON Autenticacion")
+            public void testputexamenes() {
+                ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
+                examenrepository.save(examen.examen());
+                ExamenDTO nuevoexamen = new ExamenDTO(1L, 1L, 1L, 2F);
+
+                var peticion = put("http", "localhost",port, "/examenes/1",nuevoexamen,true);
+                var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<ExamenDTO>>() {});                 
+                assertThat(respuesta.getStatusCode().is2xxSuccessful());
+                assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+            } 
+
+            @Test
+            @DisplayName("Devuelve 404 al cambiar nota a un Examen Concreto NO Existente CON Autenticacion")
+            public void testputexamenes1() {
+                ExamenDTO nuevoexamen = new ExamenDTO(1L, 1L, 1L, 2F);
+
+                var peticion = put("http", "localhost",port, "/examenes/1",nuevoexamen,true);
+                var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<ExamenDTO>>() {});                 
+                assertThat(respuesta.getStatusCode().is4xxClientError());
+                assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
+            } 
+
+            @Test
+            @DisplayName("Devuelve 403 al cambiar nota a un Examen Concreto SI Existente SIN Autenticacion")
+            public void testputexamenes2() {
+                ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
+                examenrepository.save(examen.examen());
+                ExamenDTO nuevoexamen = new ExamenDTO(1L, 1L, 1L, 2F);
+
+                var peticion = put("http", "localhost",port, "/examenes/1",nuevoexamen,false);
+                var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<AsignacionDTO>>() {});                 
+                assertThat(respuesta.getStatusCode().is4xxClientError());
+                assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+            } 
     
             @Test
-            @DisplayName("Devuelve 200 lista correctamente Lista al acceder a una Asignacion en concreto CON Autenticacion")
+            @DisplayName("Devuelve 200 al acceder a una Asignacion en concreto SI Existente CON Autenticacion")
             public void testgetasignacion1() {
                 var peticion = get("http", "localhost",port, "/examenes/asignacion",true);
                 var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<AsignacionDTO>>() {});                 
-                assertThat(respuesta.getStatusCode().is2xxSuccessful());    
+                assertThat(respuesta.getStatusCode().is2xxSuccessful()); 
+                assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+   
             }
 
             @Test
-            @DisplayName("Devuelve 403 lista correctamente Lista al acceder a una Asignacion en concreto SIN Autenticacion")
+            @DisplayName("Devuelve 403 al acceder a una Asignacion en concreto SI Existente SIN Autenticacion")
             public void testgetasignacion2() {
                 var peticion = get("http", "localhost",port, "/examenes/asignacion",false);
                 var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<AsignacionDTO>>() {});                 
@@ -185,6 +233,35 @@ class ExamenApplicationTest {
                 assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
             }
 
+
+
+            /* 
+            @Test
+            @DisplayName("Devuelve 200 al modificar una Asignacion en concreto CON Autenticacion")
+            public void testputasignacion1() {
+                ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
+                examenrepository.save(examen.examen());
+
+                AsignacionDTO asignacion = new AsignacionDTO(1L, 1L);
+                var peticion = put("http", "localhost",port, "/examenes/asignacion",asignacion,true);
+                var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <AsignacionDTO>() {});                 
+                assertThat(respuesta.getStatusCode().is2xxSuccessful());
+                assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+            }
+
+            @Test
+            @DisplayName("Devuelve 403 al modificar una Asignacion en concreto SIN Autenticacion")
+            public void testputasignacion2() {
+                ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
+                examenrepository.save(examen.examen());
+
+                AsignacionDTO asignacion = new AsignacionDTO(1L, 1L);
+                var peticion = put("http", "localhost",port, "/examenes/asignacion",asignacion,false);
+                var respuesta = restTemplate.exchange(peticion, new ParameterizedTypeReference <AsignacionDTO>() {}); 
+                assertThat(respuesta.getStatusCode().is4xxClientError());
+                assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+            }
+             */
 
             
         

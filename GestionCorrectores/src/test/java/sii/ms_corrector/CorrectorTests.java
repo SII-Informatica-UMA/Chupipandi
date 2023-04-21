@@ -207,6 +207,9 @@ class CorrectorTests {
     @Nested
     @DisplayName("Cuando la base de datos tiene datos")
     public class BaseDatosLLena{
+
+		Long idCorrector, idMateria, idMatConv;
+
         @BeforeEach
 		public void introduceDatos(){
 			Corrector c = new Corrector();
@@ -215,24 +218,27 @@ class CorrectorTests {
 			c.setMaximasCorrecciones(20);
 			c.setTelefono("123456789");
 			correctorRepo.save(c);
-
+			
 			Materia materia = new Materia();
 			materia.setId(null);
 			materia.setIdMateria(1L);
 			materia.setNombre("Lengua");
-			matRepo.save(materia);
-
+			Materia m2 = matRepo.save(materia);
+			idMateria = m2.getId();
+			
 			MateriaEnConvocatoria m = new MateriaEnConvocatoria();
 			m.setId(null);
 			m.setCorrector(c);
 			m.setIdConvocatoria(1L);
 			m.setMateria(materia);
-			matConvRepo.save(m);
-
+			MateriaEnConvocatoria mc2 = matConvRepo.save(m);
+			idMatConv = mc2.getId();
+			
 			List<MateriaEnConvocatoria> materias = new ArrayList<>();
 			materias.add(m);
 			c.setMatEnConv(materias);
-			correctorRepo.save(c);
+			Corrector c2 = correctorRepo.save(c);
+			idCorrector = c2.getId();
 		}
 
 		// get todos los correctores sin especificar convocatoria (intentar)
@@ -251,7 +257,7 @@ class CorrectorTests {
 		@Test
         @DisplayName("acceder a un corrector por id existente")
         public void getCorrector(){
-            var peticion = get("http", "localhost", port, "/correctores/1");
+            var peticion = get("http", "localhost", port, "/correctores/"+idCorrector.toString());
             var respuesta = restTemplate.exchange(peticion,
                     new ParameterizedTypeReference<CorrectorDTO>() {});
 			
@@ -274,7 +280,7 @@ class CorrectorTests {
 		@Test
 		@DisplayName("elimina un corrector cuando existe")
 		public void eliminarCorrector(){
-			var peticion = delete("http", "localhost",port, "/correctores/1");
+			var peticion = delete("http", "localhost",port, "/correctores/"+idCorrector.toString());
 			var respuesta = restTemplate.exchange(peticion,Void.class);
 
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);

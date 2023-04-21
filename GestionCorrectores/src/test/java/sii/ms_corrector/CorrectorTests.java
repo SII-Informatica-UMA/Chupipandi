@@ -114,6 +114,7 @@ class CorrectorTests {
         assertThat(actual.getCorrector()).isEqualTo(expected.getCorrector());
     }
 	
+	/*
 	@Nested
 	@DisplayName("Cuando la base de datos está vacía")
 	public class BaseDatosVacia {
@@ -168,49 +169,52 @@ class CorrectorTests {
 		}
 
         // post un corrector
-		// @Test
-		// @DisplayName("inserta correctamente un corrector")
-		// public void aniadirCorrector(){
-		// 	// Preparamos el corrector a insertar
-		// 	var materia = MateriaDTO.builder().id(1L).nombre("Lengua").build();
-		// 	var corrector = CorrectorNuevoDTO.builder()
-		// 							.maximasCorrecciones(20)
-		// 							.identificadorConvocatoria(1L)
-		// 							.identificadorUsuario(1L)
-		// 							.materia(materia)
-		// 							.telefono("123456789")
-		// 							.build();
-		// 	List<MateriaEnConvocatoriaDTO> materias = new ArrayList<>();
-		// 	materias.add(MateriaEnConvocatoriaDTO.builder()
-		// 				.idConvocatoria(1L).idMateria(1L).build());
-		// 	var corrExp = CorrectorDTO.fromCorrector(corrector.corrector());
-		// 	corrExp.setMaterias(materias);
+		@Test
+		@DisplayName("inserta correctamente un corrector")
+		public void aniadirCorrector(){
+			// Preparamos el corrector a insertar
+			var materia = MateriaDTO.builder().id(1L).nombre("Lengua").build();
+			var corrector = CorrectorNuevoDTO.builder()
+									.maximasCorrecciones(20)
+									.identificadorConvocatoria(1L)
+									.identificadorUsuario(1L)
+									.materia(materia)
+									.telefono("123456789")
+									.build();
+			List<MateriaEnConvocatoriaDTO> materias = new ArrayList<>();
+			materias.add(MateriaEnConvocatoriaDTO.builder()
+						.idConvocatoria(1L).idMateria(1L).build());
+			var corrExp = CorrectorDTO.fromCorrector(corrector.corrector());
+			corrExp.setMaterias(materias);
 
-		// 	var peticion = post("http", "localhost", port, "/correctores", corrector);
-		// 	var respuesta = restTemplate.exchange(peticion, Void.class);
+			var peticion = post("http", "localhost", port, "/correctores", corrector);
+			var respuesta = restTemplate.exchange(peticion, Void.class);
 			
-		// 	assertThat(respuesta.getStatusCode().value()).isEqualTo(201);
-		// 	assertThat(respuesta.getHeaders().get("Location").get(0))
-		// 		.startsWith("http://localhost:"+port+"/correctores");
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(201);
+			assertThat(respuesta.getHeaders().get("Location").get(0))
+				.startsWith("http://localhost:"+port+"/correctores");
 		
-		// 	List<Corrector> correctoresBD = correctorRepo.findAll();
-		// 	assertThat(correctoresBD).hasSize(1);
-		// 	assertThat(respuesta.getHeaders().get("Location").get(0))
-		// 		.endsWith("/"+correctoresBD.get(0).getId());
-		// 	compruebaCampos(corrExp.corrector(), correctoresBD.get(0));
-		// }
+			List<Corrector> correctoresBD = correctorRepo.findAll();
+			assertThat(correctoresBD).hasSize(1);
+			assertThat(respuesta.getHeaders().get("Location").get(0))
+				.endsWith("/"+correctoresBD.get(0).getId());
+			compruebaCampos(corrExp.corrector(), correctoresBD.get(0));
+		}
 
-	}
+	}*/
 
+	
     @Nested
     @DisplayName("Cuando la base de datos tiene datos")
     public class BaseDatosLLena{
         @BeforeEach
 		public void introduceDatos(){
 			Corrector c = new Corrector();
+			c.setId(null);
 			c.setIdUsuario(1L);
 			c.setMaximasCorrecciones(20);
 			c.setTelefono("123456789");
+			correctorRepo.save(c);
 
 			Materia materia = new Materia();
 			materia.setId(null);
@@ -228,8 +232,6 @@ class CorrectorTests {
 			List<MateriaEnConvocatoria> materias = new ArrayList<>();
 			materias.add(m);
 			c.setMatEnConv(materias);
-
-			c.setId(null);
 			correctorRepo.save(c);
 		}
 

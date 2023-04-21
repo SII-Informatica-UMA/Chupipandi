@@ -32,6 +32,7 @@ import sii.ms_evalexamenes.util.JwtGenerator;
 import sii.ms_evalexamenes.dtos.ExamenDTO;
 import sii.ms_evalexamenes.dtos.ExamenNuevoDTO;
 import sii.ms_evalexamenes.dtos.AsignacionDTO;
+import sii.ms_evalexamenes.dtos.EstadoCorrecionesDTO;
 import sii.ms_evalexamenes.dtos.NotificacionNotasDTO;
 import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.repositories.ExamenRepository;
@@ -253,6 +254,29 @@ public class EvalExamenesTests {
 		// 	assertThat(respuesta.getStatusCode().value()).isEqualTo(201);
 		// 	assertThat(respuesta.hasBody()).isEqualTo(false);
 		// }
+		
+		@Test
+		@DisplayName("Get Estado correciones")
+		public void getCorrecciones() {
+			Examen examenModificado = examenEjemplo[0];
+			examenModificado.setCalificacion(null);
+			ExamenDTO examenDTOModificado = ExamenDTO.fromExamen(examenModificado);
+
+			var peticion = put("http", "localhost",port, "/examenes/1", examenDTOModificado, token);
+		
+			var respuesta = restTemplate.exchange(peticion,Void.class);
+				
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.hasBody()).isEqualTo(false);
+
+			var peticion2 = get("http", "localhost", port, "/examenes/correcciones", token);
+			var respuesta2 = restTemplate.exchange(peticion2,
+				new ParameterizedTypeReference<EstadoCorrecionesDTO>() {});
+			
+			assertThat(respuesta2.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta2.getBody().getCorregidos().size()).isEqualTo(examenEjemplo.length - 1);
+			assertThat(respuesta2.getBody().getPendientes().size()).isEqualTo(1);
+		}
 	}
 
 	@Nested
@@ -291,5 +315,65 @@ public class EvalExamenesTests {
 			
 		// 	assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 		// }
+	}
+
+	@Nested
+	@DisplayName("Tests sin autorizacion")
+	public class noAutorizacion{
+		@Test
+		@DisplayName("Get examen")
+		public void getExamen() {
+			var peticion = get("http", "localhost",port, "/examenes/1", "");
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+		}
+		
+		@Test
+		@DisplayName("Put examen")
+		public void putExamen() {
+			var peticion = put("http", "localhost",port, "/examenes/1", new ExamenDTO(), "");
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+		}
+
+		@Test
+		@DisplayName("Get examenes asignacion")
+		public void getExamenesAsignacion() {
+			var peticion = get("http", "localhost",port, "/examenes/asignacion", "");
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+		}
+		
+		@Test
+		@DisplayName("Put examenes asignacion")
+		public void putExamenesAsignacion() {
+			var peticion = put("http", "localhost",port, "/examenes/asignacion", new ArrayList<AsignacionDTO>(), "");
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+		}
+
+		@Test
+		@DisplayName("Post notificacion de notas")
+		public void postNotas() {
+			var peticion = post("http", "localhost",port, "/notificaciones/notas", new NotificacionNotasDTO(), "");
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+		}
+
+		@Test
+		@DisplayName("Post examenes")
+		public void postExamene() {
+			var peticion = post("http", "localhost",port, "/examenes", new ExamenNuevoDTO(), "");
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+		}
+
+		@Test
+		@DisplayName("Get correcciones")
+		public void getCorrecciones() {
+			var peticion = get("http", "localhost",port, "/examenes/correcciones", "");
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+		}
 	}
 }

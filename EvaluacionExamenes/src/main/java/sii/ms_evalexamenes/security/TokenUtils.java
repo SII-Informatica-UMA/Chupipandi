@@ -10,12 +10,16 @@ import io.jsonwebtoken.security.SignatureException;
 
 @SuppressWarnings("unchecked")  // saltaba un aviso por la no comprobacion de tipos (en 'claims.get()')
 public class TokenUtils {
-    private final static String KEY = "4qhq8LrEBfYcaRHxhdb9zURb2rf87Ud9";
+    private final static String KEY = "sistemasinformacioninternet20222023sistemasinformacioninternet20222023";
 
-    public static boolean comprobarAcceso(Map<String,String> header, List<String> userRoles) {
+    public static boolean comprobarAcceso(Map<String,String> header, List<String> allowedRoles) {
         // Falta definir un formato estandar para el token
         // Cuando el microservicio que deba ocuparse lo haga, se cambiará el código
-        String token = header.get("authorization").substring(7);	// Empieza por 'Bearer: ' (por postman)
+        // Postman añade la cabecera como 'authorization', si fuera nula, pruebo con 'Authorization' para confirmar
+        String tokenHeader = header.get("authorization") == null ? header.get("Authorization") : header.get("authorization");
+        if (tokenHeader == null || !tokenHeader.startsWith("Bearer "))
+            return false;
+        String token = tokenHeader.substring(7);
         Claims claims;
         try {
             // Si el token no es valido (por firma incorrecta o por fecha exp) salta la excepcion
@@ -23,7 +27,7 @@ public class TokenUtils {
         } catch (SignatureException | ExpiredJwtException e) {
             return false;
         }
-        List<String> allowedRoles = claims.get("roles", List.class).stream().map(rol -> (String) rol).toList();
+        List<String> userRoles = claims.get("roles", List.class).stream().map(rol -> (String) rol).toList();
         return userRoles.stream().anyMatch(rol -> allowedRoles.contains(rol));
     }
 

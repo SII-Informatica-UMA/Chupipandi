@@ -32,7 +32,7 @@ public class ExamenService {
     }
 
     public Long addExamen(Examen examen) {
-        if (repo.existsById(examen.getId()))
+        if (examen.getId() != null && repo.existsById(examen.getId()))
             throw new AlreadyExistsException();
         examen.setId(null);
         repo.save(examen);

@@ -2,14 +2,11 @@ package sii.ms_evalexamenes.entities;
 
 import java.sql.Timestamp;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -21,7 +18,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)
-@ToString(doNotUseGetters = true, exclude = {"materia", "correctorId", "alumnoId"})
+@ToString(doNotUseGetters = true, exclude = {"correctorId", "alumnoId"})
 @NoArgsConstructor
 public class Examen {
     @Id @GeneratedValue(strategy = GenerationType.AUTO) @EqualsAndHashCode.Include
@@ -30,9 +27,7 @@ public class Examen {
     @Column(nullable = false)
     @Getter(AccessLevel.NONE)   // mantengo getter por si mas adelante distinguimos hora/fecha
     private Timestamp fechaYHora;
-    @ManyToOne(optional = false)
-    @JsonIgnoreProperties("examenes")
-    private Materia materia; // Un examen sólo pertenece a una materia
+    private Long materiaId; // Un examen sólo pertenece a una materia
     @Column(nullable = false)
     private Long correctorId; // Id del corrector del examen (un examen sólo tiene un corrector)
     @Column(nullable = false)

@@ -73,9 +73,8 @@ public class EvalExamenesTests {
 		UriBuilderFactory ubf = new DefaultUriBuilderFactory();
 		UriBuilder ub = ubf.builder()
 				.scheme(scheme)
-				.queryParam("dni", 1)
-				.queryParam("apellido", 1)
-				.host(host).port(port);
+				.host(host)
+				.port(port);
 		for (String path: paths) {
 			ub = ub.path(path);
 		}
@@ -419,12 +418,16 @@ public class EvalExamenesTests {
 		@Test
 		@DisplayName("Devuelve 200 al añadir un Examen CON Autenticacion")
 		public void testpostExamen() { 
+			
 			ExamenNuevoDTO examen = new ExamenNuevoDTO(1L, 1L);
 			var peticion = post("http", "localhost",port, "/examenes",examen,token);
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});
 
-			//assertThat(respuesta.getStatusCode().is2xxSuccessful());
-			//assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.getStatusCode().is2xxSuccessful());
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(201);
+			assertEquals(respuesta.getHeaders().getContentLength(),0);
+			assertFalse(respuesta.hasBody());
+
 
 		}
 		
@@ -472,7 +475,7 @@ public class EvalExamenesTests {
 		public void testgetnotas1() { 
 
 			
-			var peticion = get("http", "localhost",port, "/notas", token, "1", "rodriguez");
+			var peticion = get("http", "localhost",port, "/notas", token, "1", "Cocainomano");
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<List<ExamenDTO>>() {});
 
 			assertThat(respuesta.getStatusCode().is4xxClientError());
@@ -498,8 +501,9 @@ public class EvalExamenesTests {
 			assertThat(respuesta.getBody().getPendientes().isEmpty());
 			assertThat(respuesta.getBody().getCorregidos().isEmpty());
 		 }
+
 		 @Test
-		 @DisplayName("Devuelve 403 al acceder a las correcciones CON Autenticacion")
+		 @DisplayName("Devuelve 403 al acceder a las correcciones SIN Autenticacion")
 		 public void getCorrecciones1() {
 			var peticion = get("http", "localhost", port, "/examenes/correcciones", "");
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<EstadoCorrecionesDTO>() {});

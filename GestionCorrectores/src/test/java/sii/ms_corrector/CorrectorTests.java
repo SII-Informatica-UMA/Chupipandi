@@ -180,6 +180,16 @@ class CorrectorTests {
 			assertThat(respuesta.getBody()).isNull();
         }
 
+		// get un corrector por id
+        @Test
+        @DisplayName("acceder a un corrector sin permisos")
+        public void getCorrectorNoAutorizacion() {
+            var peticion = get("http", "localhost", port, "/correctores/1", tokenCaducado);
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+			
+            assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+        }
+
         // put un corrector por id
 		@Test
         @DisplayName("actualizar un corrector que no existe")
@@ -189,6 +199,19 @@ class CorrectorTests {
             var respuesta = restTemplate.exchange(peticion,Void.class);
 
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
+
+			List<Corrector> correctorBD = correctorRepo.findAll();
+			assertThat(correctorBD).isEmpty();
+        }
+
+		@Test
+        @DisplayName("actualizar un corrector sin permisos")
+        public void putCorrectorNoAutorizacion() {
+            var corrector = CorrectorNuevoDTO.builder().maximasCorrecciones(20).build();
+            var peticion = put("http", "localhost", port, "/correctores/1", corrector, tokenCaducado);
+            var respuesta = restTemplate.exchange(peticion, Void.class);
+
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
 
 			List<Corrector> correctorBD = correctorRepo.findAll();
 			assertThat(correctorBD).isEmpty();
@@ -205,6 +228,15 @@ class CorrectorTests {
 			assertThat(respuesta.getBody()).isNull();
 		}
 
+		@Test
+		@DisplayName("eliminar un corrector sin permisos")
+		public void deleteCorrectorNoAutorizacion() {
+			var peticion = delete("http", "localhost", port, "/correctores/1", tokenCaducado);
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+		}
+
         // get todos los correctores sin especificar convocatoria
 		@Test
 		@DisplayName("devuelve lista vacia de correctores")
@@ -217,6 +249,15 @@ class CorrectorTests {
 			assertThat(respuesta.getBody()).isEmpty();
 		}
 
+		@Test
+		@DisplayName("acceder a la lista de correctores sin permisos")
+		public void getCorrectoresNoAutorizacion() {
+			var peticion = get("http", "localhost", port, "/correctores", tokenCaducado);
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+			
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+		}
+
 		// get todos los correctores especificando convocatoria
 		@Test
 		@DisplayName("devuelve la lista vacia de correctores de una convocatoria")
@@ -227,6 +268,15 @@ class CorrectorTests {
 			
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			assertThat(respuesta.getBody()).isEmpty();
+		}
+
+		@Test
+		@DisplayName("acceder a los correctores de una convocatoria sin autorizacion")
+		public void getCorrectoresConvNoAutorizacion() {
+			var peticion = getConv("http", "localhost", port, "/correctores", 1L, tokenCaducado);
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+			
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
 		}
 
         // post un corrector
@@ -273,9 +323,30 @@ class CorrectorTests {
 			compruebaCampos(correctorNuevoDTO, corrBD);
 		}
 
+		@Test
+		@DisplayName("no inserta un corrector porque no tiene permisos")
+		public void postCorrectorSinPermisos() {
+			// crear corrector
+			var materia = MateriaDTO.builder().id(2L).nombre("Matematicas").build();
+			var c = CorrectorNuevoDTO.builder()
+									.identificadorUsuario(1L)
+									.identificadorConvocatoria(1L)
+									.maximasCorrecciones(20)
+									.materia(materia)
+									.telefono("112233445")
+									.build();
+
+			var peticion = post("http", "localhost", port, "/correctores", c, tokenCaducado);
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+			
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+			
+			List<Corrector> correctores = correctorRepo.findAll();
+			assertThat(correctores).isEmpty();
+		}
+
 	}
 
-	
     @Nested
     @DisplayName("Cuando la base de datos tiene datos:")
     public class BaseDatosLLena {

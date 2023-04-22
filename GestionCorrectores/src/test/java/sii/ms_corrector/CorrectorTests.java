@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import org.springframework.web.util.UriBuilderFactory;
 
 import sii.ms_corrector.entities.*;
 import sii.ms_corrector.repositories.*;
+import sii.ms_corrector.util.JwtGenerator;
 import sii.ms_corrector.dtos.*;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -48,6 +50,10 @@ class CorrectorTests {
     @Autowired
     private MateriaRepository matRepo;
 
+	String tokenValido = JwtGenerator.createToken("user", 5, "VICERRECTORADO");    // valido por 5 horas
+    String tokenCaducado = JwtGenerator.createToken("user", -1, "VICERRECTORADO");            // caducado hace 1 hora
+    String tokenNoAuth = JwtGenerator.createToken("user", 5, "CORRECTOR");            // rol incorrecto
+
 	@BeforeEach
 	public void initializeDatabase(){
 		correctorRepo.deleteAll();
@@ -64,32 +70,36 @@ class CorrectorTests {
 		return ub.build();
 	}
 	
-	private RequestEntity<Void> get(String scheme, String host, int port, String path) {
+	private RequestEntity<Void> get(String scheme, String host, int port, String path, String token) {
 		URI uri = uri(scheme, host,port, path);
 		var peticion = RequestEntity.get(uri)
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.accept(MediaType.APPLICATION_JSON)
 			.build();
 		return peticion;
 	}
 	
-	private RequestEntity<Void> delete(String scheme, String host, int port, String path) {
+	private RequestEntity<Void> delete(String scheme, String host, int port, String path, String token) {
 		URI uri = uri(scheme, host,port, path);
 		var peticion = RequestEntity.delete(uri)
+		    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.build();
 		return peticion;
 	}
 	
-	private <T> RequestEntity<T> post(String scheme, String host, int port, String path, T object) {
+	private <T> RequestEntity<T> post(String scheme, String host, int port, String path, T object, String token) {
 		URI uri = uri(scheme, host,port, path);
 		var peticion = RequestEntity.post(uri)
+		    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
 			.body(object);
 		return peticion;
 	}
 	
-	private <T> RequestEntity<T> put(String scheme, String host, int port, String path, T object) {
+	private <T> RequestEntity<T> put(String scheme, String host, int port, String path, T object, String token) {
 		URI uri = uri(scheme, host,port, path);
 		var peticion = RequestEntity.put(uri)
+		    .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 			.contentType(MediaType.APPLICATION_JSON)
 			.body(object);
 		return peticion;
@@ -249,7 +259,7 @@ class CorrectorTests {
 		@Test
 		@DisplayName("devuelve la lista de correctores")
 		public void correctores(){
-			var peticion = get("http", "localhost", port, "/correctores");
+			var peticion = get("http", "localhost", port, "/correctores", tokenValido);
 			var respuesta = restTemplate.exchange(peticion,
 					new ParameterizedTypeReference<List<CorrectorDTO>>(){});
 			
@@ -264,7 +274,7 @@ class CorrectorTests {
 		@Test
         @DisplayName("acceder a un corrector por id existente")
         public void getCorrector(){
-            var peticion = get("http", "localhost", port, "/correctores/"+idCorrector.toString());
+            var peticion = get("http", "localhost", port, "/correctores/"+idCorrector.toString(), tokenValido);
             var respuesta = restTemplate.exchange(peticion,
                     new ParameterizedTypeReference<CorrectorDTO>() {});
 			
@@ -275,7 +285,7 @@ class CorrectorTests {
 		@Test
         @DisplayName("acceder a un corrector por id no existente")
         public void getCorrNoExiste(){
-            var peticion = get("http", "localhost", port, "/correctores/24");
+            var peticion = get("http", "localhost", port, "/correctores/24", tokenValido);
             var respuesta = restTemplate.exchange(peticion,
                     new ParameterizedTypeReference<CorrectorDTO>() {});
 			
@@ -287,7 +297,7 @@ class CorrectorTests {
 		@Test
 		@DisplayName("elimina un corrector cuando existe")
 		public void eliminarCorrector(){
-			var peticion = delete("http", "localhost", port, "/correctores/"+idCorrector.toString());
+			var peticion = delete("http", "localhost", port, "/correctores/"+idCorrector.toString(), tokenValido);
 			var respuesta = restTemplate.exchange(peticion,Void.class);
 
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
@@ -300,7 +310,7 @@ class CorrectorTests {
 		@Test
 		@DisplayName("elimina un corrector cuando no existe")
 		public void elimCorrNoExiste(){
-			var peticion = delete("http", "localhost",port, "/correctores/24");
+			var peticion = delete("http", "localhost",port, "/correctores/24", tokenValido);
 			var respuesta = restTemplate.exchange(peticion,Void.class);
 
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
@@ -336,7 +346,7 @@ class CorrectorTests {
 			corrector.setMaximasCorrecciones(25);
 			corrector.setTelefono("123456789");*/
 
-			var peticion = put("http", "localhost", port, "/correctores/24", corrector);
+			var peticion = put("http", "localhost", port, "/correctores/24", corrector, tokenValido);
 			var respuesta = restTemplate.exchange(peticion,Void.class);
 					
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
@@ -371,7 +381,7 @@ class CorrectorTests {
 		public void conIDEx() {
 			Corrector c = crearCorrector();
 
-			var peticion = post("http", "localhost", port, "/correctores", c);
+			var peticion = post("http", "localhost", port, "/correctores", c, tokenValido);
 			var respuesta = restTemplate.exchange(peticion, Void.class);
 			
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(409);

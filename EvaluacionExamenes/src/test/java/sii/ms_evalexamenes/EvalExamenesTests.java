@@ -320,6 +320,22 @@ public class EvalExamenesTests {
 			assertThat(respuesta.hasBody()).isEqualTo(false);
 		}
 
+		@Test
+		@DisplayName("Post notificacion de notas todos los medios")
+		public void notificacionesTodosMedios() {
+			NotificacionNotasDTO notificacion = 
+				new NotificacionNotasDTO(	"Asunto", 
+											"Cuerpo", 
+											LocalDateTime.now(), 
+											new ArrayList<String>(Arrays.asList("MySpace"))
+										);
+
+			var peticion = post("http", "localhost",port, "/notificaciones/notas", notificacion, token);
+			var respuesta = restTemplate.exchange(peticion,Void.class);
+			
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(400);
+		}
+
 	}
 
 	@Nested
@@ -333,7 +349,7 @@ public class EvalExamenesTests {
 			examenRepository.save(examenEjemplo);    
 		}
 		
-		@Test	// TODO - No encuentra la nota
+		@Test
 		@DisplayName("Get notas por dni y apellidos")
 		public void getNotas() {
 			var peticion = get("http", "localhost",port, "/notas", token, "1", "rodriguez");

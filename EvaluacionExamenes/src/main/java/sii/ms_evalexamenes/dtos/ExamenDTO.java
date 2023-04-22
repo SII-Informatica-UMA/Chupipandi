@@ -11,9 +11,7 @@ import sii.ms_evalexamenes.entities.Examen;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class ExamenDTO {
     
     private Long id;

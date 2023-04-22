@@ -16,7 +16,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class NotificacionNotasDTO {
     
     private String plantillaAsunto;

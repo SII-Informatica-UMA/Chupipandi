@@ -13,7 +13,6 @@ import sii.ms_evalexamenes.entities.Examen;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ExamenNuevoDTO {
     private Long materia;
     private Long codigoAlumno;

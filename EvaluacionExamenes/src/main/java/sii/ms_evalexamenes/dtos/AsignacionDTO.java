@@ -10,8 +10,6 @@ import sii.ms_evalexamenes.entities.Examen;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class AsignacionDTO {
 
     private Long idCorrector;

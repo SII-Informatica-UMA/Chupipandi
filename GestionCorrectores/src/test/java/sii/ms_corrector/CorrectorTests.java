@@ -10,7 +10,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import org.assertj.core.util.Arrays;
+//import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -145,18 +145,18 @@ class CorrectorTests {
 		return peticion;
 	}
 	
-	private void compruebaCamposDTO(CorrectorNuevoDTO expected, CorrectorNuevoDTO actual) {
-		assertThat(actual.getIdentificadorUsuario()).isEqualTo(expected.getIdentificadorUsuario());
-		assertThat(actual.getTelefono()).isEqualTo(expected.getTelefono());
-		assertThat(actual.getMaximasCorrecciones()).isEqualTo(expected.getMaximasCorrecciones());
+	// private void compruebaCamposDTO(CorrectorNuevoDTO expected, CorrectorNuevoDTO actual) {
+	// 	assertThat(actual.getIdentificadorUsuario()).isEqualTo(expected.getIdentificadorUsuario());
+	// 	assertThat(actual.getTelefono()).isEqualTo(expected.getTelefono());
+	// 	assertThat(actual.getMaximasCorrecciones()).isEqualTo(expected.getMaximasCorrecciones());
 
-		// Al convertir una entidad Corrector a un CorrectorNuevoDTO para compararlos, estos atributos no estan disponibles
-		assertThat(actual.getIdentificadorConvocatoria()).isEqualTo(expected.getIdentificadorConvocatoria());
-		// No debemos comprobar materia, pues solamente se usa internamente para guardar en la BD
-		// un corrector a traves del POST y asociar dicha materia a su lista de materias en convocatoria
-		// (un CorrectorNuevoDTO la tiene, pero un Corrector almacenado en la base de datos no)
-		// assertThat(actual.getMateria()).isEqualTo(expected.getMateria());
-	}
+	// 	// Al convertir una entidad Corrector a un CorrectorNuevoDTO para compararlos, estos atributos no estan disponibles
+	// 	assertThat(actual.getIdentificadorConvocatoria()).isEqualTo(expected.getIdentificadorConvocatoria());
+	// 	// No debemos comprobar materia, pues solamente se usa internamente para guardar en la BD
+	// 	// un corrector a traves del POST y asociar dicha materia a su lista de materias en convocatoria
+	// 	// (un CorrectorNuevoDTO la tiene, pero un Corrector almacenado en la base de datos no)
+	// 	// assertThat(actual.getMateria()).isEqualTo(expected.getMateria());
+	// }
 
 	private void compruebaCampos(CorrectorNuevoDTO expected, Corrector actual) {
 		assertThat(expected.getIdentificadorUsuario()).isEqualTo(actual.getIdUsuario());
@@ -164,6 +164,7 @@ class CorrectorTests {
 		assertThat(expected.getMaximasCorrecciones()).isEqualTo(actual.getMaximasCorrecciones());
 		assertThat(expected.getTelefono()).isEqualTo(actual.getTelefono());
 	}
+	
 	
 	@Nested
 	@DisplayName("Cuando la base de datos esta vacia:")
@@ -228,7 +229,7 @@ class CorrectorTests {
         public void errorPutCorrector() {
             var corrector = CorrectorNuevoDTO.builder().maximasCorrecciones(20).build();
             var peticion = put("http", "localhost", port, "/correctores/1", corrector, tokenValido);
-            var respuesta = restTemplate.exchange(peticion,Void.class);
+            var respuesta = restTemplate.exchange(peticion, Void.class);
 
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
 
@@ -414,7 +415,11 @@ class CorrectorTests {
                         .build();
             //Corrector corrector2 = correctorRepo.save(correctorDTO2.corrector());
 			correctorRepo.save(correctorDTO2.corrector());
+			LOG.warning("Existe (en inicializar): " + matRepo.existsByIdMateria(materiaDTOconNombre.materia().getId()));
+			LOG.warning("Su id es: " + materiaDTOconNombre.materia().getIdMateria());
+			LOG.warning("Todas las materias: " + matRepo.findAll());
 			Materia materia2 = matRepo.save(materiaDTOconNombre.materia());
+			LOG.warning("Todas las materias despues de guardar: " + matRepo.findAll());
             //idCorrector2 = corrector2.getId();
 			//idMatConv2 = correctorDTO2.getIdentificadorConvocatoria();
 			nombreMateria = materia2.getNombre();
@@ -444,7 +449,7 @@ class CorrectorTests {
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			// assertThat(respuesta.getBody()).isNotNull();
 			// assertThat(respuesta.getBody()).hasSize(1);
-			LOG.warning(respuesta.getBody().toString());
+			// LOG.warning(respuesta.getBody().toString());
 			respuesta.getBody().stream().forEach(c -> assertThat(c.getMaterias().stream().allMatch(materia -> materia.getIdConvocatoria() == idMatConv)).isTrue());
 		}
 
@@ -619,11 +624,38 @@ class CorrectorTests {
 			compruebaCampos(correctorDTO, corrBD);
 			// assertThat(CorrectorDTO.fromCorrector(corrBD).getMaterias()).hasSize(2);
 		}
+
+		@Test
+		@DisplayName("put corrector con ID existente y materia existente con id y nombre nulos")
+		// este caso no se va a dar, siempre debemos proporcionar o el idMateria o el nombre para una Materia
+		public void putIdNombreNulos() {
+			// crear corrector
+			Materia materia = new Materia();
+			// materia.setId(null);
+			// materia.setIdMateria(null);
+			// materia.setNombre(null);
+			matRepo.save(materia);
+
+			var materiaNula = MateriaDTO.builder().build();
+			var c = CorrectorNuevoDTO.builder()
+									.identificadorUsuario(3L)
+									.identificadorConvocatoria(1L)
+									.materia(materiaNula)
+									.telefono("112-233-445")
+									.maximasCorrecciones(20)
+									.build();
+
+			var peticion = put("http", "localhost", port, "/correctores/" + idCorrector, c, tokenValido);
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+				
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.hasBody()).isFalse();
+		}
 		
 		@Test
 		@DisplayName("modifica un corrector cuando no existe")
 		public void modCorrNoExiste() {
-			Corrector corrector = new Corrector();
+			CorrectorNuevoDTO corrector = CorrectorNuevoDTO.builder().build();
 
 			var peticion = put("http", "localhost", port, "/correctores/24", corrector, tokenValido);
 			var respuesta = restTemplate.exchange(peticion, Corrector.class);
@@ -671,12 +703,16 @@ class CorrectorTests {
 				
 			compruebaRespuesta(c, respuesta);
 		}
-
+		
 		@Test
 		@DisplayName("post corrector con ID nuevo y materia existente buscandola por nombre")
 		public void postConIDNuevoMateriaExistentePorNombre() {
 			// crear corrector
 			var materia = MateriaDTO.fromMateria(matRepo.findByNombre(nombreMateria));
+			LOG.warning("Id materia: " + materia.getId());	// nulo
+			LOG.warning("Existe Id?: " + matRepo.existsByIdMateria(null));	// true
+			LOG.warning("Nombre materia: " + materia.materia().getNombre());	// mates
+			LOG.warning("Existe materia?: " + matRepo.existsByNombre(materia.materia().getNombre())); // true
 			//var materia = MateriaDTO.builder().nombre(nombreMateria).build();
 			var c = CorrectorNuevoDTO.builder()
 									.identificadorUsuario(3L)
@@ -701,6 +737,32 @@ class CorrectorTests {
 									.identificadorUsuario(3L)
 									.identificadorConvocatoria(1L)
 									.materia(materia)
+									.telefono("112-233-445")
+									.maximasCorrecciones(20)
+									.build();
+
+			var peticion = post("http", "localhost", port, "/correctores", c, tokenValido);
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+				
+			compruebaRespuesta(c, respuesta);
+		}
+
+		@Test
+		@DisplayName("post corrector con ID nuevo y nueva materia (id y nombre a nulo)")
+		// este caso no se va a dar, siempre debemos proporcionar o el idMateria o el nombre para una Materia
+		public void postIdNombreNulos() {
+			// crear corrector
+			Materia materia = new Materia();
+			// materia.setId(null);
+			// materia.setIdMateria(null);
+			// materia.setNombre(null);
+			matRepo.save(materia);
+
+			var materiaNula = MateriaDTO.builder().build();
+			var c = CorrectorNuevoDTO.builder()
+									.identificadorUsuario(3L)
+									.identificadorConvocatoria(1L)
+									.materia(materiaNula)
 									.telefono("112-233-445")
 									.maximasCorrecciones(20)
 									.build();

@@ -69,9 +69,31 @@ public class EvalExamenesTests {
 		}
 		return ub.build();
 	}
+
+	private URI uri(String scheme, String host, String dni, String ap, int port, String ...paths) {
+		UriBuilderFactory ubf = new DefaultUriBuilderFactory();
+		UriBuilder ub = ubf.builder()
+				.scheme(scheme)
+				.queryParam("dni", dni)
+				.queryParam("apellido", ap)
+				.host(host).port(port);
+		for (String path: paths) {
+			ub = ub.path(path);
+		}
+		return ub.build();
+	}
 	
 	private RequestEntity<Void> get(String scheme, String host, int port, String path, String tk) {
 		URI uri = uri(scheme, host,port, path);
+		var peticion = RequestEntity.get(uri)
+			.header("Authorization", "Bearer " + tk)
+			.accept(MediaType.APPLICATION_JSON)
+			.build();
+		return peticion;
+	}
+
+	private RequestEntity<Void> get(String scheme, String host, int port, String path, String tk, String dni, String ap) {
+		URI uri = uri(scheme, host, dni, ap, port, path);
 		var peticion = RequestEntity.get(uri)
 			.header("Authorization", "Bearer " + tk)
 			.accept(MediaType.APPLICATION_JSON)
@@ -242,11 +264,10 @@ public class EvalExamenesTests {
 			assertThat(compararAsignacionDTO(respuesta2.getBody().get(0), asignacionModificada)).isTrue();
 		}
 
-		// TODO - Internal server error - 500
-		// @Test
+		// @Test	// TODO - Internal server error - 500
 		// @DisplayName("Post examen")
 		// public void postExamen() {
-		// 	ExamenNuevoDTO examenNuevoDTO = new ExamenNuevoDTO(1L, 1L);
+		// 	ExamenNuevoDTO examenNuevoDTO = new ExamenNuevoDTO(99L, 99L);
 			
 		// 	var peticion = post("http", "localhost",port, "/examenes", examenNuevoDTO, token);
 		// 	var respuesta = restTemplate.exchange(peticion,Void.class);
@@ -305,16 +326,25 @@ public class EvalExamenesTests {
 	@DisplayName("Tests notas")
 	public class notasTests {
 
-		//	TODO - No devuelve una lista de ExamenDTO 
-		// @Test
-		// @DisplayName("Get notas por dni y apellidos")
-		// public void getNotas() {
-		// 	var peticion = get("http", "localhost",port, "/notas?dni=12345678Y&apellido=rodriguez", token);
-		// 	var respuesta = restTemplate.exchange(peticion,
-		// 		new ParameterizedTypeReference<List<ExamenDTO>>() {});
+		Examen examenEjemplo = new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), 1L,  1L, 1L);
+		
+		@BeforeEach
+		public void aniadirDatos() {
+			examenRepository.save(examenEjemplo);    
+		}
+		
+		@Test	// TODO - No encuentra la nota
+		@DisplayName("Get notas por dni y apellidos")
+		public void getNotas() {
+			var peticion = get("http", "localhost",port, "/notas", token, "1", "rodriguez");
+			var respuesta = restTemplate.exchange(peticion,
+			new ParameterizedTypeReference<List<ExamenDTO>>() {});
+			// Void.class);
 			
-		// 	assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
-		// }
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.getBody().size()).isEqualTo(1);
+			assertThat(compararExamenDTO(respuesta.getBody().get(0), ExamenDTO.fromExamen(examenEjemplo))).isTrue();
+		}
 	}
 
 	@Nested

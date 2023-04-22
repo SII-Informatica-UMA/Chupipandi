@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 import java.util.ArrayList;
@@ -26,12 +27,16 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 // import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriBuilderFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import sii.ms_evalexamenes.util.JwtGenerator;
 import sii.ms_evalexamenes.dtos.ExamenDTO;
@@ -68,6 +73,8 @@ public class EvalExamenesTests {
 		UriBuilderFactory ubf = new DefaultUriBuilderFactory();
 		UriBuilder ub = ubf.builder()
 				.scheme(scheme)
+				.queryParam("dni", 1)
+				.queryParam("apellido", 1)
 				.host(host).port(port);
 		for (String path: paths) {
 			ub = ub.path(path);
@@ -75,6 +82,28 @@ public class EvalExamenesTests {
 		return ub.build();
 	}
 	
+	private URI uri(String scheme, String host, String dni, String ap, int port, String ...paths) {
+		UriBuilderFactory ubf = new DefaultUriBuilderFactory();
+		UriBuilder ub = ubf.builder()
+				.scheme(scheme)
+				.queryParam("dni", dni)
+				.queryParam("apellido", ap)
+				.host(host).port(port);
+		for (String path: paths) {
+			ub = ub.path(path);
+		}
+		return ub.build();
+	}
+
+	private RequestEntity<Void> get(String scheme, String host, int port, String path, String tk, String dni, String ap) {
+		URI uri = uri(scheme, host, dni, ap, port, path);
+		var peticion = RequestEntity.get(uri)
+			.header("Authorization", "Bearer " + tk)
+			.accept(MediaType.APPLICATION_JSON)
+			.build();
+		return peticion;
+	}
+
 	private RequestEntity<Void> get(String scheme, String host, int port, String path, String tk) {
 		URI uri = uri(scheme, host,port, path);
 		var peticion = RequestEntity.get(uri)
@@ -257,6 +286,8 @@ public class EvalExamenesTests {
 			var peticion = get("http", "localhost",port, "/examenes/asignacion",token);
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<AsignacionDTO>>() {});  
 
+
+
 			assertThat(respuesta.getStatusCode().is2xxSuccessful()); 
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			assertThat(respuesta.hasBody());
@@ -414,42 +445,71 @@ public class EvalExamenesTests {
 
 		/**
 		 * Pruebas GET /notas
+		 * @throws URISyntaxException
 		 */
 		
 		
 		 @Test
 		@DisplayName("Devuelve 200 al acceder a las Notas de un estudiante CON Autenticacion")
-		public void testgetnotas() { 
-			/* 
-			var peticion = get("http", "localhost",port, "/notas?dni=1&apellido=1",token);
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <Object>(){});
+		public void testgetnotas() throws URISyntaxException { 
+			Examen examenEjemplo = new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), 1L,  1L, 1L);
+			examenRepository.save(examenEjemplo);   
 
-			assertThat(respuesta.getStatusCode().is2xxSuccessful());
+			var peticion = get("http", "localhost",port, "/notas", token, "1", "rodriguez");
+			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<List<ExamenDTO>>() {});
+	
+			
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
-			assertThat(respuesta.hasBody());
-	 		*/
+			assertThat(respuesta.getBody().size()).isEqualTo(1);
+			assertThat(compararExamenDTO(respuesta.getBody().get(0), ExamenDTO.fromExamen(examenEjemplo))).isTrue();
+	 		
 		}
+
+		
 
 		@Test
 		@DisplayName("Devuelve 404 al acceder a las Notas de un estudiante CON Autenticacion")
 		public void testgetnotas1() { 
+
 			
-			var peticion = get("http", "localhost",port, "/notas?dni=1&apellido=Alonso",token);
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <Object>() {});
+			var peticion = get("http", "localhost",port, "/notas", token, "1", "rodriguez");
+			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<List<ExamenDTO>>() {});
 
 			assertThat(respuesta.getStatusCode().is4xxClientError());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
-			
+			assertEquals(respuesta.getHeaders().getContentLength(),0);
+			assertFalse(respuesta.hasBody());
 		}
 
 		/**
 		 * Pruebas GET /examenes/correcciones
 		 */
 		
+		 @Test
+		 @DisplayName("Devuelve 200 al acceder a las correcciones CON Autenticacion")
+		 public void getCorrecciones() {
+			var peticion = get("http", "localhost", port, "/examenes/correcciones", token);
+			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<EstadoCorrecionesDTO>() {});
+			 
 
+			assertThat(respuesta.getStatusCode().is2xxSuccessful());
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.hasBody());
+			assertThat(respuesta.getBody().getPendientes().isEmpty());
+			assertThat(respuesta.getBody().getCorregidos().isEmpty());
+		 }
+		 @Test
+		 @DisplayName("Devuelve 403 al acceder a las correcciones CON Autenticacion")
+		 public void getCorrecciones1() {
+			var peticion = get("http", "localhost", port, "/examenes/correcciones", "");
+			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<EstadoCorrecionesDTO>() {});
+			 
 
-
-
+			assertThat(respuesta.getStatusCode().is4xxClientError());
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+			assertEquals(respuesta.getHeaders().getContentLength(),0);
+			assertFalse(respuesta.hasBody());
+		 }
 
 	}
 

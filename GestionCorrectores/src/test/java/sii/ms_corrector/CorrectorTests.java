@@ -168,6 +168,38 @@ class CorrectorTests {
 	@Nested
 	@DisplayName("Cuando la base de datos esta vacia:")
 	public class BaseDatosVacia {
+
+		// Usamos GET pero podriamos utilizar cualquiera es indiferente del metodo
+		// Vamos a comprobar que si no proporcionamos un token no tenemos acceso
+		@Test
+        @DisplayName("acceso sin token")
+        public void accesoSinToken() {
+			URI uri = uri("http", "localhost", port, "/correctores");
+			var peticion = RequestEntity.get(uri)
+				.accept(MediaType.APPLICATION_JSON)
+				.build();
+			
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+			
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+
+		}
+
+		@Test
+        @DisplayName("cabecera incorrecta")
+        public void cabeceraIncorrecta() {
+			URI uri = uri("http", "localhost", port, "/correctores");
+			var peticion = RequestEntity.get(uri)
+				.header(HttpHeaders.AUTHORIZATION, "Papa " + tokenValido)
+				.accept(MediaType.APPLICATION_JSON)
+				.build();
+			
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+			
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+
+		}
+
         // get un corrector por id
         @Test
         @DisplayName("acceder a un corrector que no existe")

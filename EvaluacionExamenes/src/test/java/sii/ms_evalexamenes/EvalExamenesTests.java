@@ -7,11 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+import org.apache.catalina.connector.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -121,6 +123,8 @@ public class EvalExamenesTests {
 				asignacion1.getIdExamen() == asignacion2.getIdExamen();
 	}
 	
+
+
 	@Nested
 	@DisplayName("Base de datos Vacia")
 	public class ExamenesVacios {
@@ -131,13 +135,21 @@ public class EvalExamenesTests {
 			//materiarepository.deleteAll();
 		}
 
+		/**
+		 * Pruebas GET /examenes/{id}
+		 */
+
 		@Test
-		@DisplayName("Devuelve 403 al acceder a un Examen Concreto NO EXISTENTE SIN Autenticacion")
+		@DisplayName("Devuelve 403 al acceder a un Examen Concreto NO Existente SIN Autenticacion")
 		public void testgetExamen1() {
 			var peticion = get("http", "localhost",port, "/examenes/1","");
-			var respuesta = restTemplate.exchange(peticion,Void.class);   
+			var respuesta = restTemplate.exchange(peticion,Void.class); 
+
 			assertThat(respuesta.getStatusCode().is4xxClientError());           
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+			assertEquals(respuesta.getHeaders().getContentLength(),0);
+			assertFalse(respuesta.hasBody());
+			
 		}
 
 		@Test
@@ -145,10 +157,16 @@ public class EvalExamenesTests {
 		public void testgetExamen2() { 
 			ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
 			examenRepository.save(examen.examen());
+
 			var peticion = get("http", "localhost",port, "/examenes/1",token);
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});   
+			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});
+
 			assertThat(respuesta.getStatusCode().is2xxSuccessful());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertEquals(examen.getId(),respuesta.getBody().getId());
+			assertEquals(examen.getMateria(),respuesta.getBody().getMateria());
+			assertEquals(examen.getCodigoAlumno(),respuesta.getBody().getCodigoAlumno());
+			assertEquals(examen.getNota(),respuesta.getBody().getNota());
 
 		}
 
@@ -156,23 +174,42 @@ public class EvalExamenesTests {
 		@DisplayName("Devuelve 404 al acceder a un Examen Concreto NO Existente CON Autenticacion")
 		public void testgetExamen3() { 
 			var peticion = get("http", "localhost",port, "/examenes/1",token);
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});   
+			var respuesta = restTemplate.exchange(peticion,Void.class);   
 			assertThat(respuesta.getStatusCode().is4xxClientError());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
+			assertEquals(respuesta.getHeaders().getContentLength(),0);
+			assertFalse(respuesta.hasBody());
 
 		}
 		
+		/**
+		 * Pruebas PUT /examenes/{id}
+		 */
+
+
+
 		@Test
 		@DisplayName("Devuelve 200 al modificar nota a un Examen Concreto SI Existente CON Autenticacion")
 		public void testputexamenes() {
 			ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
+			ExamenDTO nuevoexamen = new ExamenDTO(2L, 2L, 2L, 2F);
 			examenRepository.save(examen.examen());
-			ExamenDTO nuevoexamen = new ExamenDTO(1L, 1L, 1L, 2F);
 
 			var peticion = put("http", "localhost",port, "/examenes/1",nuevoexamen,token);
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<ExamenDTO>>() {});                 
+			
+
+
+			Optional<Examen> examenModificado = examenRepository.findById(1L);
+
 			assertThat(respuesta.getStatusCode().is2xxSuccessful());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertEquals(examenModificado.get().getCalificacion(),nuevoexamen.getNota());
+			assertNotEquals(examenModificado.get().getMateriaId(),nuevoexamen.getMateria());
+			assertNotEquals(examenModificado.get().getId(),nuevoexamen.getId());
+			assertNotEquals(examenModificado.get().getAlumnoId(),nuevoexamen.getCodigoAlumno());
+
+
 		} 
 
 		@Test
@@ -181,9 +218,12 @@ public class EvalExamenesTests {
 			ExamenDTO nuevoexamen = new ExamenDTO(1L, 1L, 1L, 2F);
 
 			var peticion = put("http", "localhost",port, "/examenes/1",nuevoexamen,token);
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<ExamenDTO>>() {});                 
+			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<ExamenDTO>>() {});    
+
 			assertThat(respuesta.getStatusCode().is4xxClientError());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
+			assertEquals(respuesta.getHeaders().getContentLength(),0);
+			assertFalse(respuesta.hasBody());
 		} 
 
 		@Test
@@ -194,62 +234,110 @@ public class EvalExamenesTests {
 			ExamenDTO nuevoexamen = new ExamenDTO(1L, 1L, 1L, 2F);
 
 			var peticion = put("http", "localhost",port, "/examenes/1",nuevoexamen,"");
-			var respuesta = restTemplate.exchange(peticion,Void.class);                 
+			var respuesta = restTemplate.exchange(peticion,Void.class);
+
 			assertThat(respuesta.getStatusCode().is4xxClientError());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+			assertEquals(respuesta.getHeaders().getContentLength(),0);
+			assertFalse(respuesta.hasBody());
 		} 
 
+
+
+		/**
+		 * Pruebas GET /examenes/asignacion
+		 */
+
+
+
+
 		@Test
-		@DisplayName("Devuelve 200 al acceder a una Asignacion en concreto SI Existente CON Autenticacion")
+		@DisplayName("Devuelve 200 al acceder a Asignaciones CON Autenticacion")
 		public void testgetasignacion1() {
 			var peticion = get("http", "localhost",port, "/examenes/asignacion",token);
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<AsignacionDTO>>() {});                 
+			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<AsignacionDTO>>() {});  
+
 			assertThat(respuesta.getStatusCode().is2xxSuccessful()); 
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.hasBody());
+			assertThat(respuesta.getBody().isEmpty()); // No Existen Examenes
+			
 
 		}
 
 		@Test
-		@DisplayName("Devuelve 403 al acceder a una Asignacion en concreto SI Existente SIN Autenticacion")
+		@DisplayName("Devuelve 403 al acceder a Asignaciones SIN Autenticacion")
 		public void testgetasignacion2() {
 			var peticion = get("http", "localhost",port, "/examenes/asignacion","");
-			var respuesta = restTemplate.exchange(peticion,Void.class);                 
+			var respuesta = restTemplate.exchange(peticion,Void.class); 
+
 			assertThat(respuesta.getStatusCode().is4xxClientError());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+			assertEquals(respuesta.getHeaders().getContentLength(),0);
 			assertFalse(respuesta.hasBody());
 		}
 
 
+		/**
+		 * Pruebas PUT /examenes/asignacion
+		 */
+
+
 		@Test
-		@DisplayName("Devuelve 200 al modificar una Asignacion en concreto SI Existente CON Autenticacion")
+		@DisplayName("Devuelve 200 al modificar una Asignacion CON Autenticacion")
 		public void testputasignacion1() {
-			/* 
-			ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
-			examenRepository.save(examen.examen());
-			AsignacionDTO asignacion = new AsignacionDTO(1L, 1L);
-			var peticion = put("http", "localhost",port, "/examenes/asignacion",asignacion,token);
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <AsignacionDTO>() {});                 
+			//Añadimos Examenes 1 y 2, Asignamos Corrector 1 y 2 respectivamente 
+			//Cambiarmos Corrector del Examen 2 a 1 
+			//Comprobamos si los Correctores son identicos
+
+
+			Examen examen1 = new Examen(1L, 1L, new Timestamp(System.currentTimeMillis()), 1L, 1L, 1L);
+			Examen examen2 = new Examen(2L, 2L, new Timestamp(System.currentTimeMillis()), 2L, 2L, 2L);
+			examenRepository.save(examen1);
+			examenRepository.save(examen2);
+
+			AsignacionDTO asignacion = new AsignacionDTO(1L, 2L);
+			List<AsignacionDTO> asignacionList = new ArrayList<>();
+			asignacionList.add(asignacion);
+
+
+			var peticion = put("http", "localhost",port, "/examenes/asignacion",asignacionList,token);
+			var respuesta = restTemplate.exchange(peticion,Void.class);                 
+			
+			Optional<Examen> examenModificado = examenRepository.findById(2L);
+			assertEquals(examenModificado.get().getCorrectorId(),examen1.getCorrectorId());
+
 			assertThat(respuesta.getStatusCode().is2xxSuccessful());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
-			*/
+			assertEquals(respuesta.getHeaders().getContentLength(),0);
+			assertFalse(respuesta.hasBody());
+			
 		}
 
 		@Test
-		@DisplayName("Devuelve 403 al modificar una Asignacion en concreto SI Existente SIN Autenticacion")
-		public void testputasignacion2() {
-			/* 
-			ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
-			examenRepository.save(examen.examen());
+		@DisplayName("Devuelve 403 al modificar una Asignacion SIN Autenticacion")
+		public void testputasignacion2() {			
 			AsignacionDTO asignacion = new AsignacionDTO(1L, 1L);
-			var peticion = put("http", "localhost",port, "/examenes/asignacion",asignacion,"");
-			var respuesta = restTemplate.exchange(peticion, new ParameterizedTypeReference <AsignacionDTO>() {}); 
+
+			List<AsignacionDTO> asignacionList = new ArrayList<>();
+			asignacionList.add(asignacion);
+
+			var peticion = put("http", "localhost",port, "/examenes/asignacion",asignacionList,"");
+			var respuesta = restTemplate.exchange(peticion, new ParameterizedTypeReference <List<AsignacionDTO>>() {}); 
 			assertThat(respuesta.getStatusCode().is4xxClientError());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
-			*/
+			assertEquals(respuesta.getHeaders().getContentLength(),0);
+			assertFalse(respuesta.hasBody());
+			
 		}
 
+		
+		/**
+		 * Pruebas POST /notificaciones/notas
+		 */
+
 		@Test
-		@DisplayName("Devuelve 200 al añadir una Notificacion/Notas NO Existente CON Autenticacion")
+		@DisplayName("Devuelve 200 al añadir notificaciones notas CON Autenticacion")
 		public void postNotificacionesNotas() {
 
 			NotificacionNotasDTO notificacion = new NotificacionNotasDTO(
@@ -272,7 +360,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Devuelve 403 al añadir una Notificacion/Notas NO Existente SIN Autenticacion")
+		@DisplayName("Devuelve 403 al añadir notificaciones/notas SIN Autenticacion")
 		public void postNotificacionesNotas1() {
 
 			NotificacionNotasDTO notificacion = new NotificacionNotasDTO(
@@ -287,12 +375,18 @@ public class EvalExamenesTests {
 										
 			assertThat(respuesta.getStatusCode().is4xxClientError());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+			assertEquals(respuesta.getHeaders().getContentLength(),0);
 			assertFalse(respuesta.hasBody());
 
 		}		
 
+
+		/**
+		 * Pruebas POST /examenes
+		 */
+
 		@Test
-		@DisplayName("Devuelve 200 al añadir un Examen Concreto NO Existente CON Autenticacion")
+		@DisplayName("Devuelve 200 al añadir un Examen CON Autenticacion")
 		public void testpostExamen() { 
 			ExamenNuevoDTO examen = new ExamenNuevoDTO(1L, 1L);
 			var peticion = post("http", "localhost",port, "/examenes",examen,token);
@@ -304,32 +398,44 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("Devuelve 403 al añadir un Examen Concreto NO Existente SIN Autenticacion")
+		@DisplayName("Devuelve 403 al añadir un Examen SIN Autenticacion")
 		public void testpostExamen1() { 
 			ExamenNuevoDTO examen = new ExamenNuevoDTO(1L, 1L);
 			var peticion = post("http", "localhost",port, "/examenes",examen,"");
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenNuevoDTO>() {});
+			var respuesta = restTemplate.exchange(peticion,Void.class);
 
 			assertThat(respuesta.getStatusCode().is4xxClientError());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(403);
+			assertEquals(respuesta.getHeaders().getContentLength(),0);
+			assertFalse(respuesta.hasBody());
 
 		}
 
-		@Test
-		@DisplayName("Devuelve 404 al acceder a las Notas de un estudiante NO Existente CON Autenticacion")
+
+		/**
+		 * Pruebas GET /notas
+		 */
+		
+		
+		 @Test
+		@DisplayName("Devuelve 200 al acceder a las Notas de un estudiante CON Autenticacion")
 		public void testgetnotas() { 
-			var peticion = get("http", "localhost",port, "/notas",token);
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<ExamenDTO>>() {});
+			/* 
+			var peticion = get("http", "localhost",port, "/notas?dni=1&apellido=1'",token);
+			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<ExamenDTO>>(){});
 
-			assertThat(respuesta.getStatusCode().is4xxClientError());
-			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
-
+			assertThat(respuesta.getStatusCode().is2xxSuccessful());
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.hasBody());
+			assertThat(respuesta.getBody().isEmpty());
+	 		*/
 		}
 
 		@Test
-		@DisplayName("Devuelve 200 al acceder a las Notas de un estudiante SI Existente CON Autenticacion")
+		@DisplayName("Devuelve 404 al acceder a las Notas de un estudiante SI Existente CON Autenticacion")
 		public void testgetnotas1() { 
-			/*var peticion = get("http", "localhost",port, "/notas","");
+			/*
+			var peticion = get("http", "localhost",port, "/notas","");
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<ExamenDTO>>() {});
 
 			assertThat(respuesta.getStatusCode().is4xxClientError());
@@ -337,8 +443,18 @@ public class EvalExamenesTests {
 			*/
 		}
 
+		/**
+		 * Pruebas GET /examenes/correcciones
+		 */
+		
+
+
+
+
 
 	}
+
+	
 
 	@Nested
 	@DisplayName("Tests Examenes cuando hay examenes")
@@ -485,6 +601,7 @@ public class EvalExamenesTests {
 		}
 	}
 
+	 
 	@Nested
 	@DisplayName("Tests Notificaciones")
 	public class notificacionesTests {

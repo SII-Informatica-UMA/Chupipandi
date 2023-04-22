@@ -65,7 +65,7 @@ class CorrectorTests {
 
 	@BeforeAll
 	public static void inicializarLogger() throws SecurityException, IOException {
-		FileHandler fileTxt = new FileHandler("TestCorrectorLogger.txt");
+		FileHandler fileTxt = new FileHandler("src/test/TestCorrectorLogger.txt");
 		SimpleFormatter formatterTxt = new SimpleFormatter();
 		fileTxt.setFormatter(formatterTxt);
 		LOG.addHandler(fileTxt);

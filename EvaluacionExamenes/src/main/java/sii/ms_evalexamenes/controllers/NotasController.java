@@ -1,6 +1,7 @@
 package sii.ms_evalexamenes.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import sii.ms_evalexamenes.dtos.ExamenDTO;
+import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.services.ExamenService;
 import sii.ms_evalexamenes.services.exceptions.AlreadyExistsException;
 import sii.ms_evalexamenes.services.exceptions.UnauthorizedAccessException;
@@ -28,7 +30,16 @@ public class NotasController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ExamenDTO>> getNotas(@RequestParam Long dni, @RequestParam String apellido) {
+    public ResponseEntity<List<ExamenDTO>> getNotas(@RequestParam Long dni, @RequestParam String apellido) throws NotFoundException {
+
+        //El objeto optional que nos devuelve el metodo nunca es null por lo tanto no devulve excepcion
+        //Siempre es una lista aunque esta este vacia 
+        Optional<List<Examen>> notas = service.getExamenByDniAndApellido(dni, apellido);
+        
+        if(notas.get().isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        
         return ResponseEntity.ok(service
                                 .getExamenByDniAndApellido(dni, apellido)
                                 .get()

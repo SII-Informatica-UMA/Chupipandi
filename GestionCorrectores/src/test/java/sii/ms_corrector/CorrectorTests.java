@@ -40,6 +40,7 @@ import sii.ms_corrector.dtos.*;
 @DisplayName("En el servicio de corrector:")
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 class CorrectorTests {
+	// Logger para debugear
 	final static Logger LOG = Logger.getLogger("test.CorrectorTests");
 	
 	@Autowired
@@ -407,18 +408,10 @@ class CorrectorTests {
                         .materia(materiaDTOconNombre)
                         .maximasCorrecciones(20)
                         .build();
-			// correctorRepo.save(correctorDTO2.corrector());
-			// Materia materia2 = matRepo.save(materiaDTOconNombre.materia());
-			// nombreMateria = materia2.getNombre();
 
-            //Corrector corrector2 = correctorRepo.save(correctorDTO2.corrector());
 			Corrector c2 = correctorRepo.save(correctorDTO2.corrector());
             Materia materia2 = matRepo.save(materiaDTOconNombre.materia());
-            //Long idC2 = c2.getId();
             Long idMatConv2 = correctorDTO2.getIdentificadorConvocatoria();
-            //Long idMat2 = materia2.getIdMateria();
-            //idCorrector2 = corrector2.getId();
-			//idMatConv2 = correctorDTO2.getIdentificadorConvocatoria();
             nombreMateria = materia2.getNombre();
 
             MateriaEnConvocatoria materiaConv2 = new MateriaEnConvocatoria();
@@ -486,8 +479,7 @@ class CorrectorTests {
 
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			List<Corrector> corrDesp = correctorRepo.findAll();
-			assertThat(corrDesp).hasSize(1);
-			assertThat(corrDesp).allMatch(c -> !c.getId().equals(idCorrector));
+			assertThat(corrDesp).hasSize(1).allMatch(c -> !c.getId().equals(idCorrector));
 		}
 
         // put un corrector
@@ -514,7 +506,7 @@ class CorrectorTests {
 			// Convertimos el corrector obtenido de la BD a CorrectorNuevoDTO para compararlos
 			// (al añadir un corrector a la BD internamente se le asignan nuevos atributos)
 			compruebaCampos(correctorDTO, corrBD);
-			// assertThat(CorrectorDTO.fromCorrector(corrBD).getMaterias()).hasSize(2);
+			assertThat(CorrectorDTO.fromCorrector(corrBD).getMaterias()).hasSize(2);
 		}
 		
 		@Test
@@ -537,7 +529,7 @@ class CorrectorTests {
 			// Convertimos el corrector obtenido de la BD a CorrectorNuevoDTO para compararlos
 			// (al añadir un corrector a la BD internamente se le asignan nuevos atributos)
 			compruebaCampos(correctorDTO, corrBD);
-			// assertThat(CorrectorDTO.fromCorrector(corrBD).getMaterias()).hasSize(2);
+			assertThat(CorrectorDTO.fromCorrector(corrBD).getMaterias()).hasSize(2);
 		}
 
 		private Long inicializarMatConv() {
@@ -593,7 +585,7 @@ class CorrectorTests {
 			// Convertimos el corrector obtenido de la BD a CorrectorNuevoDTO para compararlos
 			// (al añadir un corrector a la BD internamente se le asignan nuevos atributos)
 			compruebaCampos(correctorDTO, corrBD);
-			// assertThat(CorrectorDTO.fromCorrector(corrBD).getMaterias()).hasSize(2);
+			assertThat(CorrectorDTO.fromCorrector(corrBD).getMaterias()).hasSize(1);
 		}
 		
 		@Test
@@ -616,7 +608,7 @@ class CorrectorTests {
 			// Convertimos el corrector obtenido de la BD a CorrectorNuevoDTO para compararlos
 			// (al añadir un corrector a la BD internamente se le asignan nuevos atributos)
 			compruebaCampos(correctorDTO, corrBD);
-			// assertThat(CorrectorDTO.fromCorrector(corrBD).getMaterias()).hasSize(2);
+			assertThat(CorrectorDTO.fromCorrector(corrBD).getMaterias()).hasSize(2);
 		}
 
 		@Test
@@ -640,11 +632,15 @@ class CorrectorTests {
 			var peticion = put("http", "localhost", port, "/correctores/" + idCorrector, c, tokenValido);
 			var respuesta = restTemplate.exchange(peticion, Void.class);
 				
-			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(400);
 			assertThat(respuesta.hasBody()).isFalse();
 		}
 
-        // TODO: modificar por el mismo idUsuario (disntinto de uno mismo) -> 409
+        
+
+
+		@Test
+		@DisplayName("modifica un corrector poniendo un idUsuario ya existente y que no es el suyo")
 		public void putIdUsuarioExistente(){
 			// crear corrector
 			var materia = MateriaDTO.builder().id(5L).nombre("Fisica").build();
@@ -660,8 +656,32 @@ class CorrectorTests {
 			var respuesta = restTemplate.exchange(peticion, Void.class);
 				
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(409);
-			//assertThat(respuesta.hasBody()).isFalse();
+			assertThat(respuesta.hasBody()).isFalse();
 		}
+
+		@Test
+        @DisplayName("modifica un corrector cuando existe nueva materia con id nulo")
+        public void putIdNuloMateriaNueva() {
+            // crear corrector
+            var materia = MateriaDTO.builder().nombre("Fisica").build();
+            var correctorDTO = CorrectorNuevoDTO.builder()
+                                    .identificadorUsuario(3L)
+                                    .identificadorConvocatoria(1L)
+                                    .materia(materia)
+                                    .telefono("112-233-445")
+                                    .maximasCorrecciones(20)
+                                    .build();
+
+            var peticion = put("http", "localhost", port, "/correctores/" + idCorrector, correctorDTO, tokenValido);
+            var respuesta = restTemplate.exchange(peticion, Void.class);
+
+            assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+            Corrector corrBD = correctorRepo.findById(idCorrector).get();
+            // Convertimos el corrector obtenido de la BD a CorrectorNuevoDTO para compararlos
+            // (al añadir un corrector a la BD internamente se le asignan nuevos atributos)
+            compruebaCampos(correctorDTO, corrBD);
+            assertThat(CorrectorDTO.fromCorrector(corrBD).getMaterias()).hasSize(2);
+        }
 		
 		@Test
 		@DisplayName("modifica un corrector cuando no existe")
@@ -675,6 +695,25 @@ class CorrectorTests {
 			assertThat(respuesta.hasBody()).isFalse();
 		}
 		
+		@Test
+        @DisplayName("post corrector con ID nuevo y nueva materia con id nulo")
+        public void postIdNuloMateriaNueva() {
+            // crear corrector
+            var materia = MateriaDTO.builder().nombre("Fisica").build();
+            var c = CorrectorNuevoDTO.builder()
+                                    .identificadorUsuario(3L)
+                                    .identificadorConvocatoria(1L)
+                                    .materia(materia)
+                                    .telefono("112-233-445")
+                                    .maximasCorrecciones(20)
+                                    .build();
+
+            var peticion = post("http", "localhost", port, "/correctores", c, tokenValido);
+            var respuesta = restTemplate.exchange(peticion, Void.class);
+
+            compruebaRespuesta(c, respuesta);
+        }
+
 		// post un corrector
 		@Test
 		@DisplayName("post corrector con ID existente")
@@ -774,7 +813,7 @@ class CorrectorTests {
 			var peticion = post("http", "localhost", port, "/correctores", c, tokenValido);
 			var respuesta = restTemplate.exchange(peticion, Void.class);
 				
-			compruebaRespuesta(c, respuesta);
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(400);
 		}
 
 		private void compruebaRespuesta(CorrectorNuevoDTO correctorDTO, ResponseEntity<Void> respuesta) {

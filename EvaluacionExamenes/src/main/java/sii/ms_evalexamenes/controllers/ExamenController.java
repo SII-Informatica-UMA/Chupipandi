@@ -95,7 +95,7 @@ public class ExamenController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addExamen(@RequestBody ExamenNuevoDTO examen, UriComponentsBuilder builder, @RequestHeader Map<String, String> header) {
         
-        System.out.println("POST POST POST POST POST POST POST ");
+       
         if (!TokenUtils.comprobarAcceso(header, Arrays.asList("CORRECTOR"))){
             System.out.println("ACCESS DENIED ");
             throw new UnauthorizedAccessException();
@@ -103,25 +103,24 @@ public class ExamenController {
         Examen examenNuevo = examen.examen();
         var peticion = get("http", "localhost", 8081, "/correctores",tokenValido);
     
-        
-        System.out.println("PETICION");
+       
         var respuesta = new RestTemplate().exchange(peticion, String.class);
-        System.out.println("RESPUESTA");
+    
 
         JSONArray correctores = new JSONArray(respuesta.getBody());
-        System.out.println("JSON TO ARRAY ");
+    
         corrLoop:
         for (int i = 0; i < correctores.length(); ++i) {
-            System.out.println("AAAAAAAAAAAAAAAA");
+         
             JSONObject corrector = correctores.getJSONObject(i);
             if (service.getCorrectoresById(examenNuevo.getId()).get().size() + 1 <= corrector.getInt("maximasCorrecciones")) {
-                System.out.println("BBBBBBBBBBBBBB");
+           
                 JSONArray materias = corrector.getJSONArray("materias");
                 for (int j = 0; j < materias.length(); ++j) {
-                    System.out.println("EEEEEEEEEEEEEEEE");
+                   
                     JSONObject materia = materias.getJSONObject(j);
                     if (materia.getLong("idMateria") == examen.getMateria()) {
-                        System.out.println("FFFFFFFFFFFFFFFFFFFFFFFF");
+                     
                         examenNuevo.setCorrectorId(corrector.getLong("id"));
                         break corrLoop;
                     }
@@ -129,7 +128,7 @@ public class ExamenController {
                         examenNuevo.setCorrectorId(-1L);
                 }
             } else {
-                System.out.println("CCCCCCCCCC");
+              
                 examenNuevo.setCorrectorId(-1L);
             }
         }

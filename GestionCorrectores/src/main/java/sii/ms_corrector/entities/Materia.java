@@ -13,7 +13,8 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)   // deberia ser por idMateria | nombre ¿?
+// FIXME: Como implementar el equals??? No sabemos que atributo va a tener disponible
+// @EqualsAndHashCode(doNotUseGetters = true, onlyExplicitlyIncluded = true)   // deberia ser por idMateria | nombre ¿?
 @ToString(doNotUseGetters = true, exclude = {"id"}) // para debug
 @NoArgsConstructor
 public class Materia {

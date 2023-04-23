@@ -31,6 +31,7 @@ import sii.ms_corrector.services.CorrectorService;
 import sii.ms_corrector.services.exceptions.AccesoNoAutorizado;
 import sii.ms_corrector.services.exceptions.CorrectorNoEncontrado;
 import sii.ms_corrector.services.exceptions.CorrectorYaExiste;
+import sii.ms_corrector.services.exceptions.PeticionIncorrecta;
 
 @RestController
 @RequestMapping("/correctores")
@@ -53,6 +54,7 @@ public class CorrectorController {
 
 	@PutMapping("{id}")
 	// 200, 403, 404
+	// [ ]: Preguntar por qué devuelve un PUT (conlleva cambiar tambien los tests)
 	public ResponseEntity<?> modificaCorrector(@PathVariable Long id, @RequestBody CorrectorNuevoDTO corrector, @RequestHeader Map<String,String> header) {
 		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
 			throw new AccesoNoAutorizado();
@@ -109,4 +111,9 @@ public class CorrectorController {
     @ExceptionHandler(CorrectorYaExiste.class)
     @ResponseStatus(code = HttpStatus.CONFLICT)		// 409
     public void correctorYaExiste() {}
+
+    @ExceptionHandler(PeticionIncorrecta.class)
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)		// 400
+	// para cuando se intenta introducir una materia nula
+    public void peticionIncorrecta() {}
 }

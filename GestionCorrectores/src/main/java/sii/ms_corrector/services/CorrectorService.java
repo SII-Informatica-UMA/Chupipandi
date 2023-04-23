@@ -103,10 +103,6 @@ public class CorrectorService {
         matConv.setMateria(mat);
         matConvRepo.save(matConv);
 
-        List<MateriaEnConvocatoria> lista = new ArrayList<>();
-        lista.add(matConv);
-        nuevoCorrector.setMatEnConv(lista);
-
         // Finalmente guardamos el nuevo corrector
         nuevoCorrector.setId(null);
 		corRepo.save(nuevoCorrector);
@@ -168,14 +164,6 @@ public class CorrectorService {
             matConv.setMateria(mat);
             matConvRepo.save(matConv);
         }
-
-        // [x] Si la materia en convocatoria ya esta asociada, no la vuelvo a incluir
-        // [ ] Qué hace que dos materias en convocatoria sean iguales?
-        List<MateriaEnConvocatoria> lista = corrector.getMatEnConv();
-        if (!lista.contains(matConv)) {
-            lista.add(matConv);
-        }
-        corrector.setMatEnConv(lista);
 
 	}
 

@@ -43,6 +43,11 @@ public class CorrectorController {
         this.service = service;
     }
 
+	// Necesitamos una base de datos de Materia solida y predefinida. Donde tengamos tuplas (idMateria, nombre)
+	// para poder consultar si existe o no antes de introducirla (en nuestro POST podemos elegir si especificar
+	// la materia bien por su id o bien por su nombre). Podria implementarse un endpoint fake '/materias' que devuelva
+	// una lista de materias predefinidas, y comprobarlo en base a eso.
+
 	@GetMapping("{id}")
 	// 200, 403, 404
 	public ResponseEntity<CorrectorDTO> obtenerCorrector(@PathVariable Long id, @RequestHeader Map<String,String> header) {

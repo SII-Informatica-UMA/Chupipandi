@@ -1,6 +1,7 @@
 package sii.ms_evalexamenes;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 import java.util.List;
@@ -264,17 +265,19 @@ public class EvalExamenesTests {
 			assertThat(compararAsignacionDTO(respuesta2.getBody().get(0), asignacionModificada)).isTrue();
 		}
 
-		// @Test	// TODO - Internal server error - 500
-		// @DisplayName("Post examen")
-		// public void postExamen() {
-		// 	ExamenNuevoDTO examenNuevoDTO = new ExamenNuevoDTO(99L, 99L);
+		@Test
+		@DisplayName("Post examen")
+		public void postExamen() {
+			ExamenNuevoDTO examenNuevoDTO = new ExamenNuevoDTO(99L, 99L);
 			
-		// 	var peticion = post("http", "localhost",port, "/examenes", examenNuevoDTO, token);
-		// 	var respuesta = restTemplate.exchange(peticion,Void.class);
+			var peticion = post("http", "localhost",port, "/examenes", examenNuevoDTO, token);
+			var respuesta = restTemplate.exchange(peticion,Void.class);
 			
-		// 	assertThat(respuesta.getStatusCode().value()).isEqualTo(201);
-		// 	assertThat(respuesta.hasBody()).isEqualTo(false);
-		// }
+			assertTrue(respuesta.getStatusCode().value() == 201,
+			"El microservicio 'Gestion de correctores' debe estar levantado para pasar este Test."); 
+			// assertThat(respuesta.getStatusCode().value()).isEqualTo(201);
+			assertThat(respuesta.hasBody()).isEqualTo(false);
+		}
 		
 		@Test
 		@DisplayName("Get Estado correciones")

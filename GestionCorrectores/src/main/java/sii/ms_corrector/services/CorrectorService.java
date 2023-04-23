@@ -1,7 +1,9 @@
 package sii.ms_corrector.services;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import sii.ms_corrector.repositories.MateriaEnConvocatoriaRepository;
 import sii.ms_corrector.repositories.MateriaRepository;
 import sii.ms_corrector.services.exceptions.CorrectorNoEncontrado;
 import sii.ms_corrector.services.exceptions.CorrectorYaExiste;
+import sii.ms_corrector.services.exceptions.PeticionIncorrecta;
 
 @Service
 @Transactional
@@ -24,6 +27,8 @@ public class CorrectorService {
     private CorrectorRepository corRepo;
     private MateriaEnConvocatoriaRepository matConvRepo;
     private MateriaRepository matRepo;
+
+    final static Logger LOG = Logger.getLogger("test.CorrectorTests");
 
     @Autowired
     public CorrectorService(CorrectorRepository corRepo,
@@ -40,8 +45,22 @@ public class CorrectorService {
 
     public List<Corrector> getTodosCorrectoresByConvocatoria(Long idConvocatoria) {
         List<Corrector> lista = corRepo.findAllByIdConvocatoria(idConvocatoria);
-        // Para cada corrector, actualizo su lista de convocatorias para mostrar unicamente aquellas que coinciden con el id pasado por parametro
-        lista.forEach(corrector -> corrector.setMatEnConv(corrector.getMatEnConv().stream().filter(materia -> materia.getIdConvocatoria() == idConvocatoria).toList()));
+        // Para cada corrector, actualizo su lista de materias en convocatoria
+        // para mostrar unicamente aquellas que coinciden con la convocatoria pasada por parametro
+        lista.forEach(
+            corrector -> 
+                corrector.setMatEnConv(corrector.getMatEnConv()
+                                                .stream()
+                                                .filter(materia -> materia.getIdConvocatoria() == idConvocatoria)
+                                                .toList()));
+        // Elimino los correctores cuya lista ha quedado vacia (porque no contiene la convocatoria que buscamos)
+        Iterator<Corrector> it = lista.iterator();
+        while (it.hasNext()) {
+            Corrector c = it.next();
+            if (c.getMatEnConv().isEmpty()) {
+                it.remove();
+            }
+        }
         return lista;
     }
 
@@ -62,17 +81,16 @@ public class CorrectorService {
         // Guardamos la nueva materia en su correspondiente repositorio
         // Capaz habria que asegurarse que exista o que pertenezca a un conjunto de posibilidades
         Materia mat = nuevoCorrectorDTO.getMateria().materia();
-        
         // [x] Comprobar que la materia no exista ya
         // Compruebo si ya existe la materia (por id o por nombre), y en caso contrario la creo
-        if (matRepo.existsByIdMateria(mat.getIdMateria())) {
+        if (mat.getIdMateria() != null && matRepo.existsByIdMateria(mat.getIdMateria())) {
             mat = matRepo.findByIdMateria(mat.getIdMateria());
-            mat.setId(mat.getId());
-        } else if (matRepo.existsByNombre(mat.getNombre())) {
+        } else if (mat.getNombre() != null && matRepo.existsByNombre(mat.getNombre())) {
             mat = matRepo.findByNombre(mat.getNombre());
-            mat.setId(mat.getId());
-        } else {
+        } else if (mat.getIdMateria() != null || mat.getNombre() != null) {
             mat.setId(null);
+        } else {
+            throw new PeticionIncorrecta();
         }
         matRepo.save(mat);
         
@@ -84,10 +102,6 @@ public class CorrectorService {
         matConv.setIdConvocatoria(idConv);
         matConv.setMateria(mat);
         matConvRepo.save(matConv);
-
-        List<MateriaEnConvocatoria> lista = new ArrayList<>();
-        lista.add(matConv);
-        nuevoCorrector.setMatEnConv(lista);
 
         // Finalmente guardamos el nuevo corrector
         nuevoCorrector.setId(null);
@@ -103,6 +117,11 @@ public class CorrectorService {
         }
         Corrector corrector = corRepo.findById(entidadCorrector.getId()).get();
         
+        // Si tratamos de cambiarle el idUsuario por uno que ya existia, lanzamos un conflicto
+        // Si 'ese que ya existia' es el propio corrector que se trata de modificar, no pasa nada
+        if (corRepo.existsByIdUsuario(entidadCorrector.getIdUsuario()) && !entidadCorrector.getIdUsuario().equals(corrector.getIdUsuario())) {
+            throw new CorrectorYaExiste();
+        }
         corrector.setIdUsuario(entidadCorrector.getIdUsuario());
         corrector.setTelefono(entidadCorrector.getTelefono());
         corrector.setMaximasCorrecciones(entidadCorrector.getMaximasCorrecciones());
@@ -116,14 +135,14 @@ public class CorrectorService {
 
         // [x] Comprobar que la materia no exista ya
         // Compruebo si ya existe la materia (por id o por nombre), y en caso contrario la creo
-        if (matRepo.existsByIdMateria(mat.getIdMateria())) {
+        if (mat.getIdMateria() != null && matRepo.existsByIdMateria(mat.getIdMateria())) {
             mat = matRepo.findByIdMateria(mat.getIdMateria());
-            mat.setId(mat.getId());
-        } else if (matRepo.existsByNombre(mat.getNombre())) {
+        } else if (mat.getNombre() != null && matRepo.existsByNombre(mat.getNombre())) {
             mat = matRepo.findByNombre(mat.getNombre());
-            mat.setId(mat.getId());
-        } else {
+        } else if (mat.getIdMateria() != null || mat.getNombre() != null) {
             mat.setId(null);
+        } else {
+            throw new PeticionIncorrecta();
         }
         matRepo.save(mat);
         
@@ -133,23 +152,19 @@ public class CorrectorService {
         // Guardamos la nueva materia en convocatoria en su correspondiente repositorio
         Long idConv = correctorMod.getIdentificadorConvocatoria();
         MateriaEnConvocatoria matConv = new MateriaEnConvocatoria();
-        if (!matConvRepo.existsByIdConvocatoria(idConv)) {
-            matConv.setId(null);
+
+        // Comentar
+        List<MateriaEnConvocatoria> listaPrueba = matConvRepo.findByIdConvocatoria(idConv);
+        if (listaPrueba.stream().anyMatch(mater -> mater.getCorrector().getId().equals(corrector.getId()))) {
+            // matConv = matConvRepo.findByIdConvocatoriaAndCorrector(idConv, corrector.getId());
+        } else {
+            matConv.setId(null); 
             matConv.setCorrector(entidadCorrector);
             matConv.setIdConvocatoria(idConv);
             matConv.setMateria(mat);
             matConvRepo.save(matConv);
-        } else {
-            matConv = matConvRepo.findByIdConvocatoria(idConv);
         }
 
-        // [x] Si la materia en convocatoria ya esta asociada, no la vuelvo a incluir
-        // [ ] Qué hace que dos materias en convocatoria sean iguales?
-        List<MateriaEnConvocatoria> lista = corrector.getMatEnConv();
-        if (!lista.contains(matConv)) {
-            lista.add(matConv);
-        }
-        corrector.setMatEnConv(lista);
 	}
 
 	public void eliminarCorrector(Long id) {

@@ -49,7 +49,7 @@ public class ExamenController {
     public ExamenController(ExamenService service) {
         this.service = service;
     }
-    
+
     String tokenValido = JwtGenerator.createToken("user", 5, "VICERRECTORADO");
     
     private URI uri(String scheme, String host, int port, String ...paths) {
@@ -92,35 +92,36 @@ public class ExamenController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addExamen(@RequestBody ExamenNuevoDTO examen, UriComponentsBuilder builder, @RequestHeader Map<String, String> header) {
         
-       
+        
         if (!TokenUtils.comprobarAcceso(header, Arrays.asList("CORRECTOR"))){
-            System.out.println("ACCESS DENIED ");
+       
             throw new UnauthorizedAccessException();
         }
         Examen examenNuevo = examen.examen();
         var peticion = get("http", "localhost", 8081, "/correctores",tokenValido);
     
-       
+        
+        
         var respuesta = new RestTemplate().exchange(peticion, String.class);
-    
+       
 
         JSONArray correctores = new JSONArray(respuesta.getBody());
-    
+        
         corrLoop:
         for (int i = 0; i < correctores.length(); ++i) {
-         
+        
             JSONObject corrector = correctores.getJSONObject(i);
             if (service.getCorrectoresById(examenNuevo.getId()).get().size() + 1 <= corrector.getInt("maximasCorrecciones")) {
-           
+               
                 JSONArray materias = corrector.getJSONArray("materias");
                 for (int j = 0; j < materias.length(); ++j) {
-                   
+                  
                     JSONObject materia = materias.getJSONObject(j);
                     if (materia.getLong("idMateria") == examen.getMateria()) {
-                     
+        
                         examenNuevo.setCorrectorId(corrector.getLong("id"));
                         break corrLoop;
                     }
@@ -128,7 +129,7 @@ public class ExamenController {
                         examenNuevo.setCorrectorId(-1L);
                 }
             } else {
-              
+          
                 examenNuevo.setCorrectorId(-1L);
             }
         }

@@ -31,6 +31,7 @@ import sii.ms_corrector.services.CorrectorService;
 import sii.ms_corrector.services.exceptions.AccesoNoAutorizado;
 import sii.ms_corrector.services.exceptions.CorrectorNoEncontrado;
 import sii.ms_corrector.services.exceptions.CorrectorYaExiste;
+import sii.ms_corrector.services.exceptions.PeticionIncorrecta;
 
 @RestController
 @RequestMapping("/correctores")
@@ -41,6 +42,11 @@ public class CorrectorController {
     public CorrectorController(CorrectorService service) {
         this.service = service;
     }
+
+	// Necesitamos una base de datos de Materia solida y predefinida. Donde tengamos tuplas (idMateria, nombre)
+	// para poder consultar si existe o no antes de introducirla (en nuestro POST podemos elegir si especificar
+	// la materia bien por su id o bien por su nombre). Podria implementarse un endpoint fake '/materias' que devuelva
+	// una lista de materias predefinidas, y comprobarlo en base a eso.
 
 	@GetMapping("{id}")
 	// 200, 403, 404
@@ -53,6 +59,7 @@ public class CorrectorController {
 
 	@PutMapping("{id}")
 	// 200, 403, 404
+	// [ ]: Preguntar por qué devuelve un PUT (conlleva cambiar tambien los tests)
 	public ResponseEntity<?> modificaCorrector(@PathVariable Long id, @RequestBody CorrectorNuevoDTO corrector, @RequestHeader Map<String,String> header) {
 		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
 			throw new AccesoNoAutorizado();
@@ -109,4 +116,9 @@ public class CorrectorController {
     @ExceptionHandler(CorrectorYaExiste.class)
     @ResponseStatus(code = HttpStatus.CONFLICT)		// 409
     public void correctorYaExiste() {}
+
+    @ExceptionHandler(PeticionIncorrecta.class)
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)		// 400
+	// para cuando se intenta introducir una materia nula
+    public void peticionIncorrecta() {}
 }

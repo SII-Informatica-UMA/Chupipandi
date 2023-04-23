@@ -145,6 +145,7 @@ class CorrectorTests {
 		return peticion;
 	}
 	
+	// FIXME: Mirar para funcion lambda
 	// private void compruebaCamposDTO(CorrectorNuevoDTO expected, CorrectorNuevoDTO actual) {
 	// 	assertThat(actual.getIdentificadorUsuario()).isEqualTo(expected.getIdentificadorUsuario());
 	// 	assertThat(actual.getTelefono()).isEqualTo(expected.getTelefono());
@@ -413,15 +414,8 @@ class CorrectorTests {
                         .materia(materiaDTOconNombre)
                         .maximasCorrecciones(20)
                         .build();
-            //Corrector corrector2 = correctorRepo.save(correctorDTO2.corrector());
 			correctorRepo.save(correctorDTO2.corrector());
-			LOG.warning("Existe (en inicializar): " + matRepo.existsByIdMateria(materiaDTOconNombre.materia().getId()));
-			LOG.warning("Su id es: " + materiaDTOconNombre.materia().getIdMateria());
-			LOG.warning("Todas las materias: " + matRepo.findAll());
 			Materia materia2 = matRepo.save(materiaDTOconNombre.materia());
-			LOG.warning("Todas las materias despues de guardar: " + matRepo.findAll());
-            //idCorrector2 = corrector2.getId();
-			//idMatConv2 = correctorDTO2.getIdentificadorConvocatoria();
 			nombreMateria = materia2.getNombre();
 		}
 
@@ -448,8 +442,8 @@ class CorrectorTests {
 			
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			// assertThat(respuesta.getBody()).isNotNull();
-			// assertThat(respuesta.getBody()).hasSize(1);
-			// LOG.warning(respuesta.getBody().toString());
+			// assertThat(respuesta.getBody()).hasSize(1);		// error -> size 0
+			// LOG.warning(respuesta.getBody().toString());		// []
 			respuesta.getBody().stream().forEach(c -> assertThat(c.getMaterias().stream().allMatch(materia -> materia.getIdConvocatoria() == idMatConv)).isTrue());
 		}
 
@@ -487,8 +481,8 @@ class CorrectorTests {
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			List<Corrector> corrDesp = correctorRepo.findAll();
 			assertThat(corrDesp).hasSize(1);
+			assertThat(corrDesp).allMatch(c -> c.getId() != idCorrector);
 			// assertThat(corrDesp).isEmpty();
-			//assertThat(corrDesp).allMatch(c->c.getId()!=idCorrector);
 		}
 
         // put un corrector
@@ -572,11 +566,6 @@ class CorrectorTests {
 			c.setMatEnConv(materias);
 
 			return correctorRepo.save(c).getId();
-		
-			// matRepo.save(MateriaDTO.builder().id(10L).nombre("Historia").build().materia());
-			// matConvRepo.save(MateriaEnConvocatoriaDTO.builder()
-			// 			.idConvocatoria(7L)
-			// 			.idMateria(7L).build().materiaEnConvocatoria());
 		}
 
 		@Test
@@ -614,9 +603,33 @@ class CorrectorTests {
                         .maximasCorrecciones(15)
                         .build();
 
-			var peticion = put("http", "localhost", port, "/correctores/" + idCorrector.toString(), correctorDTO, tokenValido);
+			var peticion = put("http", "localhost", port, "/correctores/" + idCorrector, correctorDTO, tokenValido);
 			var respuesta = restTemplate.exchange(peticion, Corrector.class);
 			
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			Corrector corrBD = correctorRepo.findById(idCorrector).get();
+			// Convertimos el corrector obtenido de la BD a CorrectorNuevoDTO para compararlos
+			// (al añadir un corrector a la BD internamente se le asignan nuevos atributos)
+			compruebaCampos(correctorDTO, corrBD);
+			// assertThat(CorrectorDTO.fromCorrector(corrBD).getMaterias()).hasSize(2);
+		}
+
+		@Test
+		@DisplayName("modifica un corrector cuando existe nueva materia con id nulo")
+		public void putIdNuloMateriaNueva() {
+			// crear corrector
+			var materia = MateriaDTO.builder().nombre("Fisica").build();
+			var correctorDTO = CorrectorNuevoDTO.builder()
+									.identificadorUsuario(3L)
+									.identificadorConvocatoria(1L)
+									.materia(materia)
+									.telefono("112-233-445")
+									.maximasCorrecciones(20)
+									.build();
+
+			var peticion = put("http", "localhost", port, "/correctores/" + idCorrector, correctorDTO, tokenValido);
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+				
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			Corrector corrBD = correctorRepo.findById(idCorrector).get();
 			// Convertimos el corrector obtenido de la BD a CorrectorNuevoDTO para compararlos
@@ -631,9 +644,6 @@ class CorrectorTests {
 		public void putIdNombreNulos() {
 			// crear corrector
 			Materia materia = new Materia();
-			// materia.setId(null);
-			// materia.setIdMateria(null);
-			// materia.setNombre(null);
 			matRepo.save(materia);
 
 			var materiaNula = MateriaDTO.builder().build();
@@ -648,7 +658,7 @@ class CorrectorTests {
 			var peticion = put("http", "localhost", port, "/correctores/" + idCorrector, c, tokenValido);
 			var respuesta = restTemplate.exchange(peticion, Void.class);
 				
-			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(400);
 			assertThat(respuesta.hasBody()).isFalse();
 		}
 		
@@ -709,11 +719,6 @@ class CorrectorTests {
 		public void postConIDNuevoMateriaExistentePorNombre() {
 			// crear corrector
 			var materia = MateriaDTO.fromMateria(matRepo.findByNombre(nombreMateria));
-			LOG.warning("Id materia: " + materia.getId());	// nulo
-			LOG.warning("Existe Id?: " + matRepo.existsByIdMateria(null));	// true
-			LOG.warning("Nombre materia: " + materia.materia().getNombre());	// mates
-			LOG.warning("Existe materia?: " + matRepo.existsByNombre(materia.materia().getNombre())); // true
-			//var materia = MateriaDTO.builder().nombre(nombreMateria).build();
 			var c = CorrectorNuevoDTO.builder()
 									.identificadorUsuario(3L)
 									.identificadorConvocatoria(1L)
@@ -748,14 +753,12 @@ class CorrectorTests {
 		}
 
 		@Test
-		@DisplayName("post corrector con ID nuevo y nueva materia (id y nombre a nulo)")
+		@DisplayName("post corrector con ID nuevo y materia con id y nombre a nulo")
 		// este caso no se va a dar, siempre debemos proporcionar o el idMateria o el nombre para una Materia
+		// es indiferente si la materia existe o no, al ser los dos atributos nulos, salta la excepcion 400
 		public void postIdNombreNulos() {
 			// crear corrector
 			Materia materia = new Materia();
-			// materia.setId(null);
-			// materia.setIdMateria(null);
-			// materia.setNombre(null);
 			matRepo.save(materia);
 
 			var materiaNula = MateriaDTO.builder().build();
@@ -763,6 +766,24 @@ class CorrectorTests {
 									.identificadorUsuario(3L)
 									.identificadorConvocatoria(1L)
 									.materia(materiaNula)
+									.telefono("112-233-445")
+									.maximasCorrecciones(20)
+									.build();
+
+			var peticion = post("http", "localhost", port, "/correctores", c, tokenValido);
+			var respuesta = restTemplate.exchange(peticion, Void.class);
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(400);
+		}
+
+		@Test
+		@DisplayName("post corrector con ID nuevo y nueva materia con id nulo")
+		public void postIdNuloMateriaNueva() {
+			// crear corrector
+			var materia = MateriaDTO.builder().nombre("Fisica").build();
+			var c = CorrectorNuevoDTO.builder()
+									.identificadorUsuario(3L)
+									.identificadorConvocatoria(1L)
+									.materia(materia)
 									.telefono("112-233-445")
 									.maximasCorrecciones(20)
 									.build();

@@ -403,26 +403,43 @@ class CorrectorTests {
 			idMatConv = correctorDTO.getIdentificadorConvocatoria();
 			idMateria = materia.getIdMateria();
 
+			MateriaEnConvocatoria materiaConv = new MateriaEnConvocatoria();
+            materiaConv.setIdConvocatoria(idMatConv);
+            materiaConv.setMateria(materia);
+            materiaConv.setCorrector(corrector);
+            matConvRepo.save(materiaConv);
+
+			// con nombre pero no id
 			MateriaDTO materiaDTOconNombre = MateriaDTO.builder()
 											.nombre("mates")
 											.build();
+											
 			CorrectorNuevoDTO correctorDTO2 = CorrectorNuevoDTO.builder()
                         .identificadorUsuario(2L)
-                        .identificadorConvocatoria(3L)
+                        .identificadorConvocatoria(2L)
                         .telefono("444-555-666")
                         .materia(materiaDTOconNombre)
                         .maximasCorrecciones(20)
                         .build();
+			// correctorRepo.save(correctorDTO2.corrector());
+			// Materia materia2 = matRepo.save(materiaDTOconNombre.materia());
+			// nombreMateria = materia2.getNombre();
+
             //Corrector corrector2 = correctorRepo.save(correctorDTO2.corrector());
-			correctorRepo.save(correctorDTO2.corrector());
-			LOG.warning("Existe (en inicializar): " + matRepo.existsByIdMateria(materiaDTOconNombre.materia().getId()));
-			LOG.warning("Su id es: " + materiaDTOconNombre.materia().getIdMateria());
-			LOG.warning("Todas las materias: " + matRepo.findAll());
-			Materia materia2 = matRepo.save(materiaDTOconNombre.materia());
-			LOG.warning("Todas las materias despues de guardar: " + matRepo.findAll());
+			Corrector c2 = correctorRepo.save(correctorDTO2.corrector());
+            Materia materia2 = matRepo.save(materiaDTOconNombre.materia());
+            //Long idC2 = c2.getId();
+            Long idMatConv2 = correctorDTO2.getIdentificadorConvocatoria();
+            //Long idMat2 = materia2.getIdMateria();
             //idCorrector2 = corrector2.getId();
 			//idMatConv2 = correctorDTO2.getIdentificadorConvocatoria();
-			nombreMateria = materia2.getNombre();
+            nombreMateria = materia2.getNombre();
+
+            MateriaEnConvocatoria materiaConv2 = new MateriaEnConvocatoria();
+            materiaConv2.setIdConvocatoria(idMatConv2);
+            materiaConv2.setMateria(materia2);
+            materiaConv2.setCorrector(c2);
+            matConvRepo.save(materiaConv2);
 		}
 
 		// get todos los correctores sin especificar convocatoria
@@ -438,7 +455,6 @@ class CorrectorTests {
 		}
 
 		// get todos los correctores especificando convocatoria
-		// FIXME: hasSize
 		@Test
 		@DisplayName("devuelve la lista de correctores de una convocatoria")
 		public void correctoresConv() {
@@ -447,9 +463,7 @@ class CorrectorTests {
 					new ParameterizedTypeReference<List<CorrectorDTO>>(){});
 			
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
-			// assertThat(respuesta.getBody()).isNotNull();
-			// assertThat(respuesta.getBody()).hasSize(1);
-			// LOG.warning(respuesta.getBody().toString());
+			assertThat(respuesta.getBody()).hasSize(1);
 			respuesta.getBody().stream().forEach(c -> assertThat(c.getMaterias().stream().allMatch(materia -> materia.getIdConvocatoria() == idMatConv)).isTrue());
 		}
 
@@ -487,8 +501,7 @@ class CorrectorTests {
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			List<Corrector> corrDesp = correctorRepo.findAll();
 			assertThat(corrDesp).hasSize(1);
-			// assertThat(corrDesp).isEmpty();
-			//assertThat(corrDesp).allMatch(c->c.getId()!=idCorrector);
+			assertThat(corrDesp).allMatch(c -> !c.getId().equals(idCorrector));
 		}
 
         // put un corrector
@@ -572,11 +585,6 @@ class CorrectorTests {
 			c.setMatEnConv(materias);
 
 			return correctorRepo.save(c).getId();
-		
-			// matRepo.save(MateriaDTO.builder().id(10L).nombre("Historia").build().materia());
-			// matConvRepo.save(MateriaEnConvocatoriaDTO.builder()
-			// 			.idConvocatoria(7L)
-			// 			.idMateria(7L).build().materiaEnConvocatoria());
 		}
 
 		@Test
@@ -626,14 +634,12 @@ class CorrectorTests {
 		}
 
 		@Test
-		@DisplayName("put corrector con ID existente y materia existente con id y nombre nulos")
+		@DisplayName("modifica corrector con ID existente y materia existente con id y nombre nulos")
 		// este caso no se va a dar, siempre debemos proporcionar o el idMateria o el nombre para una Materia
+        // incluimos este test para contribuir a la completa cobertura de los tests
 		public void putIdNombreNulos() {
 			// crear corrector
 			Materia materia = new Materia();
-			// materia.setId(null);
-			// materia.setIdMateria(null);
-			// materia.setNombre(null);
 			matRepo.save(materia);
 
 			var materiaNula = MateriaDTO.builder().build();
@@ -651,6 +657,8 @@ class CorrectorTests {
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			assertThat(respuesta.hasBody()).isFalse();
 		}
+
+        // TODO: modificar por el mismo idUsuario (disntinto de uno mismo) -> 409
 		
 		@Test
 		@DisplayName("modifica un corrector cuando no existe")
@@ -709,11 +717,6 @@ class CorrectorTests {
 		public void postConIDNuevoMateriaExistentePorNombre() {
 			// crear corrector
 			var materia = MateriaDTO.fromMateria(matRepo.findByNombre(nombreMateria));
-			LOG.warning("Id materia: " + materia.getId());	// nulo
-			LOG.warning("Existe Id?: " + matRepo.existsByIdMateria(null));	// true
-			LOG.warning("Nombre materia: " + materia.materia().getNombre());	// mates
-			LOG.warning("Existe materia?: " + matRepo.existsByNombre(materia.materia().getNombre())); // true
-			//var materia = MateriaDTO.builder().nombre(nombreMateria).build();
 			var c = CorrectorNuevoDTO.builder()
 									.identificadorUsuario(3L)
 									.identificadorConvocatoria(1L)
@@ -750,12 +753,10 @@ class CorrectorTests {
 		@Test
 		@DisplayName("post corrector con ID nuevo y nueva materia (id y nombre a nulo)")
 		// este caso no se va a dar, siempre debemos proporcionar o el idMateria o el nombre para una Materia
+        // incluimos este test para contribuir a la completa cobertura de los tests
 		public void postIdNombreNulos() {
 			// crear corrector
 			Materia materia = new Materia();
-			// materia.setId(null);
-			// materia.setIdMateria(null);
-			// materia.setNombre(null);
 			matRepo.save(materia);
 
 			var materiaNula = MateriaDTO.builder().build();

@@ -16,6 +16,7 @@ import sii.ms_corrector.repositories.MateriaEnConvocatoriaRepository;
 import sii.ms_corrector.repositories.MateriaRepository;
 import sii.ms_corrector.services.exceptions.CorrectorNoEncontrado;
 import sii.ms_corrector.services.exceptions.CorrectorYaExiste;
+import sii.ms_corrector.services.exceptions.PeticionIncorrecta;
 
 @Service
 @Transactional
@@ -38,6 +39,7 @@ public class CorrectorService {
         return corRepo.findAll();
     }
 
+    // FIXME
     public List<Corrector> getTodosCorrectoresByConvocatoria(Long idConvocatoria) {
         List<Corrector> lista = corRepo.findAllByIdConvocatoria(idConvocatoria);
         // Para cada corrector, actualizo su lista de convocatorias para mostrar unicamente aquellas que coinciden con el id pasado por parametro
@@ -62,17 +64,16 @@ public class CorrectorService {
         // Guardamos la nueva materia en su correspondiente repositorio
         // Capaz habria que asegurarse que exista o que pertenezca a un conjunto de posibilidades
         Materia mat = nuevoCorrectorDTO.getMateria().materia();
-        
         // [x] Comprobar que la materia no exista ya
         // Compruebo si ya existe la materia (por id o por nombre), y en caso contrario la creo
-        if (matRepo.existsByIdMateria(mat.getIdMateria())) {
+        if (mat.getIdMateria() != null && matRepo.existsByIdMateria(mat.getIdMateria())) {
             mat = matRepo.findByIdMateria(mat.getIdMateria());
-            mat.setId(mat.getId());
-        } else if (matRepo.existsByNombre(mat.getNombre())) {
+        } else if (mat.getNombre() != null && matRepo.existsByNombre(mat.getNombre())) {
             mat = matRepo.findByNombre(mat.getNombre());
-            mat.setId(mat.getId());
-        } else {
+        } else if (mat.getIdMateria() != null || mat.getNombre() != null) {
             mat.setId(null);
+        } else {
+            throw new PeticionIncorrecta();
         }
         matRepo.save(mat);
         
@@ -116,14 +117,14 @@ public class CorrectorService {
 
         // [x] Comprobar que la materia no exista ya
         // Compruebo si ya existe la materia (por id o por nombre), y en caso contrario la creo
-        if (matRepo.existsByIdMateria(mat.getIdMateria())) {
+        if (mat.getIdMateria() != null && matRepo.existsByIdMateria(mat.getIdMateria())) {
             mat = matRepo.findByIdMateria(mat.getIdMateria());
-            mat.setId(mat.getId());
-        } else if (matRepo.existsByNombre(mat.getNombre())) {
+        } else if (mat.getNombre() != null && matRepo.existsByNombre(mat.getNombre())) {
             mat = matRepo.findByNombre(mat.getNombre());
-            mat.setId(mat.getId());
-        } else {
+        } else if (mat.getIdMateria() != null || mat.getNombre() != null) {
             mat.setId(null);
+        } else {
+            throw new PeticionIncorrecta();
         }
         matRepo.save(mat);
         
@@ -133,6 +134,7 @@ public class CorrectorService {
         // Guardamos la nueva materia en convocatoria en su correspondiente repositorio
         Long idConv = correctorMod.getIdentificadorConvocatoria();
         MateriaEnConvocatoria matConv = new MateriaEnConvocatoria();
+        // FIXME: Es aqui lo del postman (no deja meter convocatoria en otro corrector si esta ya existe) !!!!
         if (!matConvRepo.existsByIdConvocatoria(idConv)) {
             matConv.setId(null);
             matConv.setCorrector(entidadCorrector);

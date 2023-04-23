@@ -49,6 +49,8 @@ public class ExamenController {
         this.service = service;
     }
 
+    String tokenValido = JwtGenerator.createToken("user", 5, "VICERRECTORADO");
+    
     private URI uri(String scheme, String host, int port, String ...paths) {
         UriBuilderFactory ubf = new DefaultUriBuilderFactory();
         UriBuilder ub    = ubf.builder()
@@ -61,13 +63,14 @@ public class ExamenController {
         return ub.build();
     }
 
-    private RequestEntity<Void> get(String scheme, String host, int port, String path) {
-        URI uri = uri(scheme, host, port, path);
-        var peticion = RequestEntity.get(uri)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .build();
-        return peticion;
-    }
+	private RequestEntity<Void> get(String scheme, String host, int port, String path, String tk) {
+		URI uri = uri(scheme, host,port, path);
+		var peticion = RequestEntity.get(uri)
+			.header("Authorization", "Bearer " + tk)
+			.accept(MediaType.APPLICATION_JSON)
+			.build();
+		return peticion;
+	}
 
     @GetMapping("{id}")
     public ResponseEntity<ExamenDTO> getExamen(@PathVariable Long id, @RequestHeader Map<String, String> header) {
@@ -87,27 +90,36 @@ public class ExamenController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+   @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addExamen(@RequestBody ExamenNuevoDTO examen, UriComponentsBuilder builder, @RequestHeader Map<String, String> header) {
-        if (!TokenUtils.comprobarAcceso(header, Arrays.asList("CORRECTOR")))
+        
+        
+        if (!TokenUtils.comprobarAcceso(header, Arrays.asList("CORRECTOR"))){
+       
             throw new UnauthorizedAccessException();
+        }
         Examen examenNuevo = examen.examen();
-        var peticion = get("http", "localhost", 8081, "/correctores");
+        var peticion = get("http", "localhost", 8081, "/correctores",tokenValido);
     
         
-
+        
         var respuesta = new RestTemplate().exchange(peticion, String.class);
+       
 
         JSONArray correctores = new JSONArray(respuesta.getBody());
-
+        
         corrLoop:
         for (int i = 0; i < correctores.length(); ++i) {
+        
             JSONObject corrector = correctores.getJSONObject(i);
             if (service.getCorrectoresById(examenNuevo.getId()).get().size() + 1 <= corrector.getInt("maximasCorrecciones")) {
+               
                 JSONArray materias = corrector.getJSONArray("materias");
                 for (int j = 0; j < materias.length(); ++j) {
+                  
                     JSONObject materia = materias.getJSONObject(j);
                     if (materia.getLong("idMateria") == examen.getMateria()) {
+        
                         examenNuevo.setCorrectorId(corrector.getLong("id"));
                         break corrLoop;
                     }
@@ -115,6 +127,7 @@ public class ExamenController {
                         examenNuevo.setCorrectorId(-1L);
                 }
             } else {
+          
                 examenNuevo.setCorrectorId(-1L);
             }
         }

@@ -77,11 +77,12 @@
 					</dependency>
 				</dependencies>
 				<configuration>
-					<reportFormat>plain</reportFormat>
-					<statelessTestsetInfoReporter
-						implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode">
-					</statelessTestsetInfoReporter>
-				</configuration>
+				<reportFormat>plain</reportFormat>
+				<consoleOutputReporter>
+					<disable>true</disable>
+				</consoleOutputReporter>
+				<statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter"/>
+			</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>

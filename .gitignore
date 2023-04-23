@@ -58,3 +58,5 @@ esquema.ddl
 # ----------------------------------------------------
 # ----- IDE config files: -----
 .vscode/
+
+TestCorrectorLogger.txt

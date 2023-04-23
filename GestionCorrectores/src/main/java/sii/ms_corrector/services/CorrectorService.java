@@ -1,7 +1,9 @@
 package sii.ms_corrector.services;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ public class CorrectorService {
     private MateriaEnConvocatoriaRepository matConvRepo;
     private MateriaRepository matRepo;
 
+    final static Logger LOG = Logger.getLogger("test.CorrectorTests");
+
     @Autowired
     public CorrectorService(CorrectorRepository corRepo,
                             MateriaEnConvocatoriaRepository matConvRepo,
@@ -39,11 +43,24 @@ public class CorrectorService {
         return corRepo.findAll();
     }
 
-    // FIXME
     public List<Corrector> getTodosCorrectoresByConvocatoria(Long idConvocatoria) {
         List<Corrector> lista = corRepo.findAllByIdConvocatoria(idConvocatoria);
-        // Para cada corrector, actualizo su lista de convocatorias para mostrar unicamente aquellas que coinciden con el id pasado por parametro
-        lista.forEach(corrector -> corrector.setMatEnConv(corrector.getMatEnConv().stream().filter(materia -> materia.getIdConvocatoria() == idConvocatoria).toList()));
+        // Para cada corrector, actualizo su lista de materias en convocatoria
+        // para mostrar unicamente aquellas que coinciden con la convocatoria pasada por parametro
+        lista.forEach(
+            corrector -> 
+                corrector.setMatEnConv(corrector.getMatEnConv()
+                                                .stream()
+                                                .filter(materia -> materia.getIdConvocatoria() == idConvocatoria)
+                                                .toList()));
+        // Elimino los correctores cuya lista ha quedado vacia (porque no contiene la convocatoria que buscamos)
+        Iterator<Corrector> it = lista.iterator();
+        while (it.hasNext()) {
+            Corrector c = it.next();
+            if (c.getMatEnConv().isEmpty()) {
+                it.remove();
+            }
+        }
         return lista;
     }
 
@@ -86,10 +103,6 @@ public class CorrectorService {
         matConv.setMateria(mat);
         matConvRepo.save(matConv);
 
-        List<MateriaEnConvocatoria> lista = new ArrayList<>();
-        lista.add(matConv);
-        nuevoCorrector.setMatEnConv(lista);
-
         // Finalmente guardamos el nuevo corrector
         nuevoCorrector.setId(null);
 		corRepo.save(nuevoCorrector);
@@ -104,6 +117,11 @@ public class CorrectorService {
         }
         Corrector corrector = corRepo.findById(entidadCorrector.getId()).get();
         
+        // Si tratamos de cambiarle el idUsuario por uno que ya existia, lanzamos un conflicto
+        // Si 'ese que ya existia' es el propio corrector que se trata de modificar, no pasa nada
+        if (corRepo.existsByIdUsuario(entidadCorrector.getIdUsuario()) && !entidadCorrector.getIdUsuario().equals(corrector.getIdUsuario())) {
+            throw new CorrectorYaExiste();
+        }
         corrector.setIdUsuario(entidadCorrector.getIdUsuario());
         corrector.setTelefono(entidadCorrector.getTelefono());
         corrector.setMaximasCorrecciones(entidadCorrector.getMaximasCorrecciones());
@@ -134,24 +152,19 @@ public class CorrectorService {
         // Guardamos la nueva materia en convocatoria en su correspondiente repositorio
         Long idConv = correctorMod.getIdentificadorConvocatoria();
         MateriaEnConvocatoria matConv = new MateriaEnConvocatoria();
-        // FIXME: Es aqui lo del postman (no deja meter convocatoria en otro corrector si esta ya existe) !!!!
-        if (!matConvRepo.existsByIdConvocatoria(idConv)) {
-            matConv.setId(null);
+
+        // Comentar
+        List<MateriaEnConvocatoria> listaPrueba = matConvRepo.findByIdConvocatoria(idConv);
+        if (listaPrueba.stream().anyMatch(mater -> mater.getCorrector().getId().equals(corrector.getId()))) {
+            // matConv = matConvRepo.findByIdConvocatoriaAndCorrector(idConv, corrector.getId());
+        } else {
+            matConv.setId(null); 
             matConv.setCorrector(entidadCorrector);
             matConv.setIdConvocatoria(idConv);
             matConv.setMateria(mat);
             matConvRepo.save(matConv);
-        } else {
-            matConv = matConvRepo.findByIdConvocatoria(idConv);
         }
 
-        // [x] Si la materia en convocatoria ya esta asociada, no la vuelvo a incluir
-        // [ ] Qué hace que dos materias en convocatoria sean iguales?
-        List<MateriaEnConvocatoria> lista = corrector.getMatEnConv();
-        if (!lista.contains(matConv)) {
-            lista.add(matConv);
-        }
-        corrector.setMatEnConv(lista);
 	}
 
 	public void eliminarCorrector(Long id) {

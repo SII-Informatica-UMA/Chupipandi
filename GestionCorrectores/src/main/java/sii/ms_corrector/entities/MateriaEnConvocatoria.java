@@ -15,7 +15,7 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode(doNotUseGetters = true, of = {"idConvocatoria"})
+@EqualsAndHashCode(doNotUseGetters = true, of = {"idConvocatoria", "corrector"})
 @ToString(doNotUseGetters = true, exclude = {"materia", "corrector"})   // para debug
 @NoArgsConstructor
 public class MateriaEnConvocatoria {

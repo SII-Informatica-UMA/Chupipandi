@@ -1,6 +1,5 @@
 package sii.ms_corrector.services;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -28,6 +27,7 @@ public class CorrectorService {
     private MateriaEnConvocatoriaRepository matConvRepo;
     private MateriaRepository matRepo;
 
+    // Logger para facilitar el desarrollo de los tests
     final static Logger LOG = Logger.getLogger("test.CorrectorTests");
 
     @Autowired
@@ -76,7 +76,8 @@ public class CorrectorService {
         if (corRepo.existsByIdUsuario(nuevoCorrector.getIdUsuario())) {
             throw new CorrectorYaExiste();
         }
-        // [ ] Gestionar las nuevas materias por separado
+        // [ ] Gestionar las nuevas materias por separado en otro servicio
+        // (la idea da problemas, hay que rehacer pruebas -> dejamos que este servicio se encargue de todo)
         
         // Guardamos la nueva materia en su correspondiente repositorio
         // Capaz habria que asegurarse que exista o que pertenezca a un conjunto de posibilidades
@@ -126,8 +127,8 @@ public class CorrectorService {
         corrector.setTelefono(entidadCorrector.getTelefono());
         corrector.setMaximasCorrecciones(entidadCorrector.getMaximasCorrecciones());
 
-        // [ ] Gestionar las nuevas materias por separado
-        // (falta comprobar que la materia no exista ya)
+        // [ ] Gestionar las nuevas materias por separado en otro servicio
+        // (la idea da problemas, hay que rehacer pruebas -> dejamos que este servicio se encargue de todo)
 
         // Guardamos la nueva materia en su correspondiente repositorio
         // Capaz habria que comprobar que exista o que pertenezca a un conjunto de posibilidades
@@ -155,9 +156,7 @@ public class CorrectorService {
 
         // Comentar
         List<MateriaEnConvocatoria> listaPrueba = matConvRepo.findByIdConvocatoria(idConv);
-        if (listaPrueba.stream().anyMatch(mater -> mater.getCorrector().getId().equals(corrector.getId()))) {
-            // matConv = matConvRepo.findByIdConvocatoriaAndCorrector(idConv, corrector.getId());
-        } else {
+        if (!listaPrueba.stream().anyMatch(mater -> mater.getCorrector().getId().equals(corrector.getId()))) {
             matConv.setId(null); 
             matConv.setCorrector(entidadCorrector);
             matConv.setIdConvocatoria(idConv);

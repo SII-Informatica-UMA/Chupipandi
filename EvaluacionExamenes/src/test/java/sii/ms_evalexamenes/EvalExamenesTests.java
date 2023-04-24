@@ -761,7 +761,7 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("Get notas por dni y apellidos")
+		@DisplayName("Devuelve 200 Get /notas?dni=1&apellido=rodriguez de examenes SI Existentes CON autorizacion")
 		public void getNotas() {
 			var peticion = get("http", "localhost",port, "/notas", token, "1", "rodriguez");
 			var respuesta = restTemplate.exchange(peticion,

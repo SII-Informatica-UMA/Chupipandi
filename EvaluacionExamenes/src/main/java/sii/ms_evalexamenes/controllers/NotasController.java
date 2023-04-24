@@ -1,10 +1,13 @@
 package sii.ms_evalexamenes.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import sii.ms_evalexamenes.dtos.ExamenDTO;
+import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.services.ExamenService;
 import sii.ms_evalexamenes.services.exceptions.AlreadyExistsException;
 import sii.ms_evalexamenes.services.exceptions.UnauthorizedAccessException;
@@ -39,8 +43,17 @@ public class NotasController {
         if(notas.get().isEmpty()){
             return ResponseEntity.notFound().build();
         }
+       
+
+        List<ExamenDTO> lista = new ArrayList<>();
+        for (Examen e : notas.get()){
+           lista.add(ExamenDTO.fromExamen(e));
+        }
+        System.out.print(lista.getClass());
+        return ResponseEntity.ok(lista);
         
         
+        /*
         return ResponseEntity.ok(service
                                 .getExamenByDniAndApellido(dni, apellido)
                                 .get()
@@ -48,6 +61,7 @@ public class NotasController {
                                 .map(ex -> ExamenDTO
                                 .fromExamen(ex))
                                 .toList());
+        */
     }
 
     @ExceptionHandler(NotFoundException.class)

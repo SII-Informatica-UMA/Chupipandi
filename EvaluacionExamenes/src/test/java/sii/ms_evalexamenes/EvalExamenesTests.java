@@ -481,7 +481,7 @@ public class EvalExamenesTests {
 		 */
 		
 		 @Test
-		 @DisplayName("Devuelve 200 al acceder a las correcciones CON Autenticacion")
+		 @DisplayName("Devuelve 200 (al acceder a las correcciones) gget /examenes/correciones CON Autenticacion")
 		 public void getCorrecciones() {
 			var peticion = get("http", "localhost", port, "/examenes/correcciones", token);
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<EstadoCorrecionesDTO>() {});
@@ -495,7 +495,7 @@ public class EvalExamenesTests {
 		 }
 
 		 @Test
-		 @DisplayName("Devuelve 403 al acceder a las correcciones SIN Autenticacion")
+		 @DisplayName("Devuelve 403 (Acceso denegado) get /examenes/correciones SIN Autenticacion")
 		 public void getCorrecciones1() {
 			var peticion = get("http", "localhost", port, "/examenes/correcciones", "");
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<EstadoCorrecionesDTO>() {});

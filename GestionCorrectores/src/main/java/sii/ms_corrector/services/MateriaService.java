@@ -34,6 +34,11 @@ public class MateriaService {
             inicializar();
             inicializado = true;
         }
+        // Si se proporcionan tanto el id como el nombre de la materia (y no se corresponden el uno con el otro, ej. Física != 3),
+        // por cómo está implementado el método, se devolverá la materia con el id que se le haya proporcionado (no la del nombre)
+        // En este caso mencionado, se añadiría la materia con id 3 (Química) a la lista de materias del corrector
+
+        // (La idea realmente es que se proporcione el id o el nombre, pero no ambos)
         if (mat.getIdMateria() != null && matRepo.existsByIdMateria(mat.getIdMateria())) {
             return matRepo.findByIdMateria(mat.getIdMateria());
         } else if (mat.getNombre() != null && matRepo.existsByNombre(mat.getNombre())){

@@ -272,7 +272,7 @@ public class EvalExamenesTests {
 
 
 		@Test
-		@DisplayName("Devuelve 200 al acceder a Asignaciones CON Autenticacion")
+		@DisplayName("Devuelve 200 (al acceder a Asignaciones vacias) get /examenes/asignacion CON Autenticacion")
 		public void testgetasignacion1() {
 			var peticion = get("http", "localhost",port, "/examenes/asignacion",token);
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<AsignacionDTO>>() {});  

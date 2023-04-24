@@ -33,10 +33,8 @@ public class ExamenDTO {
     public Examen examen() {
         var examen = new Examen();
         examen.setCalificacion(nota);
-        // ¿Se podría obtener teniendo una variable de tipo MateriaRepository?
         examen.setMateriaId(materia);
         examen.setAlumnoId(codigoAlumno);
-        // Se tendría que obtener del microservicio de Correctores de alguna forma
         examen.setCorrectorId(0L);
         examen.setFechaYHora(new Timestamp(System.currentTimeMillis()));
         

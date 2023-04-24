@@ -437,7 +437,6 @@ public class EvalExamenesTests {
 
 		/**
 		 * Pruebas GET /notas
-		 * @throws URISyntaxException
 		 */
 		
 		

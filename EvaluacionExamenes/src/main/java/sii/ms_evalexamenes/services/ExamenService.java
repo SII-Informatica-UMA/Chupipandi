@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.repositories.ExamenRepository;
-import sii.ms_evalexamenes.services.exceptions.AlreadyExistsException;
 import sii.ms_evalexamenes.services.exceptions.NotFoundException;
 
 @Service

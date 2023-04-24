@@ -2,46 +2,45 @@ package sii.ms_evalexamenes;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
-
-
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriBuilderFactory;
 
-import sii.ms_evalexamenes.util.JwtGenerator;
-import sii.ms_evalexamenes.dtos.ExamenDTO;
-import sii.ms_evalexamenes.dtos.ExamenNuevoDTO;
 import sii.ms_evalexamenes.dtos.AsignacionDTO;
 import sii.ms_evalexamenes.dtos.EstadoCorrecionesDTO;
+import sii.ms_evalexamenes.dtos.ExamenDTO;
+import sii.ms_evalexamenes.dtos.ExamenNuevoDTO;
 import sii.ms_evalexamenes.dtos.NotificacionNotasDTO;
 import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.repositories.ExamenRepository;
+import sii.ms_evalexamenes.util.JwtGenerator;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -51,7 +50,7 @@ public class EvalExamenesTests {
 	@Autowired
 	private TestRestTemplate restTemplate;
 	
-	@Value(value="${local.server.port}")
+	@LocalServerPort
 	private int port;
 	
 	@Autowired
@@ -74,7 +73,6 @@ public class EvalExamenesTests {
 		}
 		return ub.build();
 	}
-
 	private URI uri(String scheme, String host, String dni, String ap, int port, String ...paths) {
 		UriBuilderFactory ubf = new DefaultUriBuilderFactory();
 		UriBuilder ub = ubf.builder()
@@ -152,7 +150,6 @@ public class EvalExamenesTests {
 		@BeforeEach
 		public void initializeDatabase() {
 			examenRepository.deleteAll();
-
 		}
 
 		/**
@@ -444,30 +441,26 @@ public class EvalExamenesTests {
 		 */
 		
 		
-		 @Test
-		@DisplayName("Devuelve 200 (Notas Estudiante) get /notas?dni=1&apellido=enrique CON Autenticacion")
+		@Test
+		@DisplayName("Devuelve 200 (Notas Estudiante) get /notas?dni=05981804X&apellido=González CON Autenticacion")
 		public void testgetnotas(){ 
 			Examen examenEjemplo = new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), 1L,  1L, 1L);
 			examenRepository.save(examenEjemplo);   
 
-			var peticion = get("http", "localhost",port, "/notas", token, "1", "rodriguez");
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<List<ExamenDTO>>() {});
-	
+			var peticion = get("http", "localhost",port, "/notas", "", "05981804X", "González");
+			var respuesta = restTemplate.exchange(peticion, new ParameterizedTypeReference<List<ExamenDTO>>() {});			
 			
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			assertThat(respuesta.getBody().size()).isEqualTo(1);
 			assertThat(compararExamenDTO(respuesta.getBody().get(0), ExamenDTO.fromExamen(examenEjemplo))).isTrue();
-	 		
 		}
 
 		
 
 		@Test
-		@DisplayName("Devuelve 404 (Estudiante no encontrado) get /notas?dni=1&apellido=enrique CON Autenticacion")
+		@DisplayName("Devuelve 404 (Estudiante no encontrado) get /notas?dni=1&apellido=Cocainomano CON Autenticacion")
 		public void testgetnotas1() { 
-
-			
-			var peticion = get("http", "localhost",port, "/notas", token, "1", "Cocainomano");
+			var peticion = get("http", "localhost",port, "/notas", "", "05981804X", "González");
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<List<ExamenDTO>>() {});
 
 			assertThat(respuesta.getStatusCode().is4xxClientError());
@@ -481,7 +474,7 @@ public class EvalExamenesTests {
 		 */
 		
 		 @Test
-		 @DisplayName("Devuelve 200 (al acceder a las correcciones) gget /examenes/correciones CON Autenticacion")
+		 @DisplayName("Devuelve 200 (al acceder a las correcciones) get /examenes/correciones CON Autenticacion")
 		 public void getCorrecciones() {
 			var peticion = get("http", "localhost", port, "/examenes/correcciones", token);
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<EstadoCorrecionesDTO>() {});
@@ -793,7 +786,7 @@ public class EvalExamenesTests {
 		@Test
 		@DisplayName("Devuelve 200  Get /notas?dni=1&apellido=rodriguez de examenes SI Existentes CON autorizacion")
 		public void getNotas() {
-			var peticion = get("http", "localhost",port, "/notas", token, "1", "rodriguez");
+			var peticion = get("http", "localhost",port, "/notas", token, "05981804X", "González");
 			var respuesta = restTemplate.exchange(peticion,
 			new ParameterizedTypeReference<List<ExamenDTO>>() {});
 
@@ -802,6 +795,28 @@ public class EvalExamenesTests {
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			assertThat(respuesta.getBody().size()).isEqualTo(1);
 			assertThat(compararExamenDTO(respuesta.getBody().get(0), ExamenDTO.fromExamen(examenEjemplo))).isTrue();
+		}
+
+		@Test
+		@DisplayName("Get notas por dni y apellido no correcto (devuelve 404)")
+		public void getNotasApellidoIncorrecto() {
+			var peticion = get("http", "localhost",port, "/notas", token, "05981804X", "Gonzále");
+			var respuesta = restTemplate.exchange(peticion,
+			new ParameterizedTypeReference<List<ExamenDTO>>() {});
+
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
+			assertThat(respuesta.getBody()).isNull();
+		}
+
+		@Test
+		@DisplayName("Get notas por dni no válido (devuelve 404)")
+		public void getNotasDNIIncorrecto() {
+			var peticion = get("http", "localhost",port, "/notas", token, "12345678A", "González");
+			var respuesta = restTemplate.exchange(peticion,
+			new ParameterizedTypeReference<List<ExamenDTO>>() {});
+
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
+			assertThat(respuesta.getBody()).isNull();
 		}
 	}
 

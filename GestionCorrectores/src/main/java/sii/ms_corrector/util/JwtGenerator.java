@@ -44,10 +44,4 @@ public class JwtGenerator {
                 .signWith(Keys.hmacShaKeyFor(ACCESS_TOKEN_SECRET.getBytes()))
                 .compact();
     }
-
-    public static void main(String[] args) {
-        System.out.println("Token generado:");
-        String token = JwtGenerator.createToken("user", 24*30*2, "VICERRECTORADO");
-        System.out.println(token);
-    }
 }

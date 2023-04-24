@@ -81,7 +81,7 @@ public class CorrectorService {
         // (la idea da problemas, hay que rehacer pruebas -> dejamos que este servicio se encargue de todo)
         
         // Guardamos la nueva materia en su correspondiente repositorio
-        // Capaz habria que asegurarse que exista o que pertenezca a un conjunto de posibilidades
+        // (Comprueba que existe verificando si pertenece al conjunto de las materias inicializadas)
         Materia mat = nuevoCorrectorDTO.getMateria().materia();
 
         // [x] Comprobar que la materia no exista ya

@@ -30,6 +30,7 @@ public class MateriaService {
             // Podria cubrirse, pero habria que hacerlo con un test totalmente independiente de los demas,
             // donde no se le aplique el @BeforeEach que provoca la inicializacion de la BD
             // (hemos considerado que no merece la pena hacer otra clase nested solo para este test)
+            // (ni es relevante para el correcto funcionamiento del método)
             inicializar();
             inicializado = true;
         }
@@ -38,11 +39,12 @@ public class MateriaService {
         } else if (mat.getNombre() != null && matRepo.existsByNombre(mat.getNombre())){
             return matRepo.findByNombre(mat.getNombre());
         } else {
-            // error en la peticion, id y nombre a nulos o no existe esa materia
+            // error en la peticion: id y nombre a nulos, o bien no existe esa materia
             throw new PeticionIncorrecta();
         }
     }
     
+    // Indica si en la base de datos ya se han inicializado las materias
     public void yaInicializado() {
         inicializado = true;
     }

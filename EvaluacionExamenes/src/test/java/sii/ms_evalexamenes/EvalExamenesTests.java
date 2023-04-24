@@ -26,7 +26,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
-// import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -61,7 +60,6 @@ public class EvalExamenesTests {
 		examenRepository.deleteAll();
 	}
 
-	// String token = "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2ODQ1MDI1ODgsInJvbGVzIjpbIkNPUlJFQ1RPUiJdfQ.o6KxDDdxhnGwzvNom1n8pZ9KwUUNKBogLgASOrLQoYI";
 	String token = JwtGenerator.createToken("user", 24*30*2, "CORRECTOR", "VICERRECTORADO");
 
 	private URI uri(String scheme, String host, int port, String ...paths) {
@@ -144,6 +142,7 @@ public class EvalExamenesTests {
 				asignacion1.getIdExamen() == asignacion2.getIdExamen();
 	}
 	
+
 	@Nested
 	@DisplayName("Base de datos Vacia")
 	public class ExamenesVacios {
@@ -151,7 +150,6 @@ public class EvalExamenesTests {
 		@BeforeEach
 		public void initializeDatabase() {
 			examenRepository.deleteAll();
-			//materiarepository.deleteAll();
 		}
 
 		/**
@@ -372,7 +370,7 @@ public class EvalExamenesTests {
 			var respuesta = restTemplate.exchange(peticion,Void.class);
 			
 			assertThat(respuesta.getStatusCode().is2xxSuccessful());
-			//assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(201);
 			assertFalse(respuesta.hasBody());
 
 
@@ -626,7 +624,6 @@ public class EvalExamenesTests {
 			
 			assertTrue(respuesta.getStatusCode().value() == 201,
 			"El microservicio 'Gestion de correctores' debe estar levantado para pasar este Test."); 
-			// assertThat(respuesta.getStatusCode().value()).isEqualTo(201);
 			assertThat(respuesta.hasBody()).isEqualTo(false);
 		}
 		
@@ -761,7 +758,6 @@ public class EvalExamenesTests {
 			var peticion = get("http", "localhost",port, "/notas", token, "1", "rodriguez");
 			var respuesta = restTemplate.exchange(peticion,
 			new ParameterizedTypeReference<List<ExamenDTO>>() {});
-			// Void.class);
 			
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			assertThat(respuesta.getBody().size()).isEqualTo(1);

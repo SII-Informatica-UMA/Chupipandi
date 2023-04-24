@@ -2,7 +2,19 @@
 # Sistemas Información para Internet
 
 Implementación microservicios de Gestión de Correctores y Evaluación de Exámenes.
-
+## Necesario para el microservicio de evaluación de exámenes
+Para probar este microservicio, es necesario tener activo el microservicio de gestión de correctores, ya que un método del primero depende del segundo:
+1. Desde la carpeta del proyecto: 
+```bash
+cd GestionCorrectores; mvn clean package; java -jar target/ms_corrector-0.0.1-SNAPSHOT.jar
+```
+3. Esperar a que se inicie el microservicio por completo.
+4. Desde la carpeta del proyecto: 
+```bash 
+cd EvaluacionExamenes; mvn clean package; java -jar target/ms_evalexamenes-0.0.1-SNAPSHOT.jar
+```
+5. De esta forma, estarán funcionando los dos microservicios.
+- - -
 ## Authors
 
 - [@M4rdom](https://www.github.com/M4rdom)
@@ -32,16 +44,3 @@ runme.bat
 Dos bases de datos disponibles:
 - *jdbc:h2:tcp://localhost/./database/ms_evalexamenes*
 - *jdbc:h2:tcp://localhost/./database/ms_corrector*
-
-## Necesario para el microservicio de evaluación de exámenes
-Para probar este microservicio, es necesario tener activo el microservicio de gestión de correctores, ya que un método del primero depende del segundo:
-1. Desde la carpeta del proyecto: 
-```bash
-cd GestionCorrectores; mvn clean package; java -jar target/ms_corrector-0.0.1-SNAPSHOT.jar
-```
-3. Esperar a que se inicie el microservicio por completo.
-4. Desde la carpeta del proyecto: 
-```bash 
-cd EvaluacionExamenes; mvn clean package; java -jar target/ms_evalexamenes-0.0.1-SNAPSHOT.jar
-```
-5. De esta forma, estarán funcionando los dos microservicios.

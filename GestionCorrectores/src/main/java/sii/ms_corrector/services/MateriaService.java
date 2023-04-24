@@ -49,6 +49,8 @@ public class MateriaService {
         inicializado = true;
     }
 
+    // Inicializa la base de datos con un conjunto de materias predefinido
+    // (se ejecutara una sola vez)
     public void inicializar() {
         Materia mat = new Materia();
         mat.setNombre("Matemáticas II");

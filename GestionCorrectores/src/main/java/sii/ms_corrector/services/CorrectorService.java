@@ -77,14 +77,11 @@ public class CorrectorService {
         if (corRepo.existsByIdUsuario(nuevoCorrector.getIdUsuario())) {
             throw new CorrectorYaExiste();
         }
-        // [ ] Gestionar las nuevas materias por separado en otro servicio
-        // (la idea da problemas, hay que rehacer pruebas -> dejamos que este servicio se encargue de todo)
         
-        // Guardamos la nueva materia en su correspondiente repositorio
-        // (Comprueba que existe verificando si pertenece al conjunto de las materias inicializadas)
         Materia mat = nuevoCorrectorDTO.getMateria().materia();
-
+        
         // [x] Comprobar que la materia no exista ya
+        // (Comprueba que existe verificando si pertenece al conjunto de las materias inicializadas)
         mat = matService.comprobarMateria(mat);
         
         // Guardamos la nueva materia en convocatoria en su correspondiente repositorio
@@ -123,14 +120,10 @@ public class CorrectorService {
         corrector.setTelefono(entidadCorrector.getTelefono());
         corrector.setMaximasCorrecciones(entidadCorrector.getMaximasCorrecciones());
 
-        // [ ] Gestionar las nuevas materias por separado en otro servicio
-        // (la idea da problemas, hay que rehacer pruebas -> dejamos que este servicio se encargue de todo)
-
-        // Guardamos la nueva materia en su correspondiente repositorio
-        // Capaz habria que comprobar que exista o que pertenezca a un conjunto de posibilidades
         Materia mat = correctorMod.getMateria().materia();
 
         // [x] Comprobar que la materia no exista ya
+        // (Comprueba que existe verificando si pertenece al conjunto de las materias inicializadas)
         mat = matService.comprobarMateria(mat);
         
         // [x] Comprobar que la convocatoria no exista ya
@@ -140,7 +133,8 @@ public class CorrectorService {
         Long idConv = correctorMod.getIdentificadorConvocatoria();
         MateriaEnConvocatoria matConv = new MateriaEnConvocatoria();
 
-        // Comentar
+        // Recojo la lista de materias en convocatoria dada una convocatoria
+        // (pueden haber varias, pues mas de un corrector puede tener una asignacion con la misma convocatoria)
         List<MateriaEnConvocatoria> listaPrueba = matConvRepo.findByIdConvocatoria(idConv);
         if (!listaPrueba.stream().anyMatch(mater -> mater.getCorrector().getId().equals(corrector.getId()))) {
             matConv.setId(null); 

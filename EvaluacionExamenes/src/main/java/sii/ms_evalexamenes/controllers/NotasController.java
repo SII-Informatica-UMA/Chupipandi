@@ -43,25 +43,12 @@ public class NotasController {
         if(notas.get().isEmpty()){
             return ResponseEntity.notFound().build();
         }
-       
-
+    
         List<ExamenDTO> lista = new ArrayList<>();
         for (Examen e : notas.get()){
            lista.add(ExamenDTO.fromExamen(e));
         }
-        System.out.print(lista.getClass());
         return ResponseEntity.ok(lista);
-        
-        
-        /*
-        return ResponseEntity.ok(service
-                                .getExamenByDniAndApellido(dni, apellido)
-                                .get()
-                                .stream()
-                                .map(ex -> ExamenDTO
-                                .fromExamen(ex))
-                                .toList());
-        */
     }
 
     @ExceptionHandler(NotFoundException.class)

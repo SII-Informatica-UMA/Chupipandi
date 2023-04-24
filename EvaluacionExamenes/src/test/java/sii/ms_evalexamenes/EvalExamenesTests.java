@@ -160,7 +160,7 @@ public class EvalExamenesTests {
 		 */
 
 		@Test
-		@DisplayName("Devuelve 403 al acceder a un Examen Concreto NO Existente SIN Autenticacion")
+		@DisplayName("Devuelve 403 (al acceder a un Examen Concreto NO Existente) get/examenes/{id} SIN Autenticacion")
 		public void testgetExamen1() {
 			var peticion = get("http", "localhost",port, "/examenes/1","");
 			var respuesta = restTemplate.exchange(peticion,Void.class); 
@@ -173,7 +173,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Devuelve 200 al acceder a un Examen Concreto SI Existente CON Autenticacion")
+		@DisplayName("Devuelve 200 (Devuelve Examen) get/examenes/{id} CON Autenticacion")
 		public void testgetExamen2() { 
 			ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
 			examenRepository.save(examen.examen());
@@ -191,7 +191,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Devuelve 404 al acceder a un Examen Concreto NO Existente CON Autenticacion")
+		@DisplayName("Devuelve 404 (al acceder a un Examen Concreto NO Existente) get /examenes/{id} CON Autenticacion")
 		public void testgetExamen3() { 
 			var peticion = get("http", "localhost",port, "/examenes/1",token);
 			var respuesta = restTemplate.exchange(peticion,Void.class);   
@@ -209,7 +209,7 @@ public class EvalExamenesTests {
 
 
 		@Test
-		@DisplayName("Devuelve 200 al modificar nota a un Examen Concreto SI Existente CON Autenticacion")
+		@DisplayName("Devuelve 200 (Modificar nota a un Examen Concreto SI Existente) put examenes/{id} CON Autenticacion")
 		public void testputexamenes() {
 			ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
 			ExamenDTO nuevoexamen = new ExamenDTO(2L, 2L, 2L, 2F);
@@ -233,7 +233,7 @@ public class EvalExamenesTests {
 		} 
 
 		@Test
-		@DisplayName("Devuelve 404 al modificar nota a un Examen Concreto NO Existente CON Autenticacion")
+		@DisplayName("Devuelve 404 (al modificar nota a un Examen Concreto NO Existente) put examenes/{id} CON Autenticacion")
 		public void testputexamenes1() {
 			ExamenDTO nuevoexamen = new ExamenDTO(1L, 1L, 1L, 2F);
 
@@ -247,7 +247,7 @@ public class EvalExamenesTests {
 		} 
 
 		@Test
-		@DisplayName("Devuelve 403 al modificar nota a un Examen Concreto SI Existente SIN Autenticacion")
+		@DisplayName("Devuelve 403 (Acceso Denegado al modificar nota a un Examen Concreto) put examenes/{id} SI Existente SIN Autenticacion")
 		public void testputexamenes2() {
 			ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
 			examenRepository.save(examen.examen());

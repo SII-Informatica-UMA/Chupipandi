@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -29,8 +31,11 @@ import sii.ms_evalexamenes.services.ExamenService;
 @RestController
 @RequestMapping("/notas")
 public class NotasController {
-    
+
     private ExamenService service;
+
+    @Autowired
+    private ServletWebServerApplicationContext server;
 
     public NotasController(ExamenService service) {
         this.service = service;
@@ -56,16 +61,23 @@ public class NotasController {
 		return peticion;
 	}
 
+    /**
+     * Obtiene las notas del alumno con el DNI y primer apellido pasados como parámetros
+     * @param dni {@link String} DNI del alumno
+     * @param apellido {@link String} Primer apellido del alumno
+     * @return {@code 200 OK} - {@link List<ExamenDTO>} - Lista de notas para el estudiante a buscar  
+     * @return {@code 404 Not Found} - {@link Void} - En caso de que no encuentre el estudiante
+     * @throws JsonMappingException
+     * @throws JsonProcessingException
+     */
     @GetMapping
     public ResponseEntity<List<ExamenDTO>> getNotas(@RequestParam String dni, @RequestParam String apellido) throws JsonMappingException, JsonProcessingException {
         
         //El objeto optional que nos devuelve el metodo getExamenByDniAndApellido nunca apararece como null por lo tanto no devuelve excepcion
         //Siempre devuelve una lista
-        var peticion = get("http", "localhost", 8080, "/estudiantes");
+        var peticion = get("http", "localhost", server.getWebServer().getPort(), "/estudiantes");
 
         var respuesta = new RestTemplate().exchange(peticion, new ParameterizedTypeReference<List<Map<String, Object>>>() {});
-        if (respuesta.getBody().isEmpty())
-            return ResponseEntity.notFound().build();
         Optional<Map<String, Object>> dniRespuesta = respuesta.getBody().stream().filter(est -> est.get("dni").equals(dni)).findFirst();
         if (!(dniRespuesta.isPresent() && dniRespuesta.get().get("apellido1").equals(apellido)))
             return ResponseEntity.notFound().build();
@@ -85,16 +97,4 @@ public class NotasController {
         System.out.println(lista);
         return ResponseEntity.ok(lista);
     }
-
-    // @ExceptionHandler(NotFoundException.class)
-    // @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    // public void notFound() {}
-
-    // @ExceptionHandler(UnauthorizedAccessException.class)
-    // @ResponseStatus(code = HttpStatus.FORBIDDEN)
-    // public void unauthorizedAccess() {}
-
-    // @ExceptionHandler(AlreadyExistsException.class)
-    // @ResponseStatus(code = HttpStatus.CONFLICT)
-    // public void alreadyExists() {}
 }

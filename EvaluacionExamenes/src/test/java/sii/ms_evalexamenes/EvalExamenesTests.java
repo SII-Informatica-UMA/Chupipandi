@@ -288,7 +288,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Devuelve 403 al acceder a Asignaciones SIN Autenticacion")
+		@DisplayName("Devuelve 403 (Acceso Denegado) get /examenes/asignacion SIN Autenticacion")
 		public void testgetasignacion2() {
 			var peticion = get("http", "localhost",port, "/examenes/asignacion","");
 			var respuesta = restTemplate.exchange(peticion,Void.class); 
@@ -306,7 +306,7 @@ public class EvalExamenesTests {
 
 
 		@Test
-		@DisplayName("Devuelve 200 al modificar una Asignacion CON Autenticacion")
+		@DisplayName("Devuelve 200 (asignacion modificaca) put /examenes/asignacion CON Autenticacion")
 		public void testputasignacion1() {
 			//Añadimos Examenes 1 y 2, Asignamos Corrector 1 y 2 respectivamente 
 			//Cambiarmos Corrector del Examen 2 a 1 
@@ -337,7 +337,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Devuelve 403 al modificar una Asignacion SIN Autenticacion")
+		@DisplayName("Devuelve 403 (Acceso No Autorizado) put /examenes/asignacion SIN Autenticacion")
 		public void testputasignacion2() {			
 			AsignacionDTO asignacion = new AsignacionDTO(1L, 1L);
 
@@ -359,7 +359,7 @@ public class EvalExamenesTests {
 		 */
 
 		@Test
-		@DisplayName("Devuelve 200 al añadir notificaciones notas CON Autenticacion")
+		@DisplayName("Devuelve 200 (notas Añadidas) post /notificaciones/notas CON Autenticacion")
 		public void postNotificacionesNotas() {
 
 			NotificacionNotasDTO notificacion = new NotificacionNotasDTO(
@@ -382,7 +382,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Devuelve 403 al añadir notificaciones/notas SIN Autenticacion")
+		@DisplayName("Devuelve 403 (Acceso Denegado) post /notificaciones/notas SIN Autenticacion")
 		public void postNotificacionesNotas1() {
 
 			NotificacionNotasDTO notificacion = new NotificacionNotasDTO(
@@ -408,7 +408,7 @@ public class EvalExamenesTests {
 		 */
 
 		@Test
-		@DisplayName("Devuelve 200 al añadir un Examen CON Autenticacion")
+		@DisplayName("Devuelve 200 (Examen Añadido) post /examenes CON Autenticacion")
 		public void testpostExamen() { 
 			
 			ExamenNuevoDTO examen = new ExamenNuevoDTO(1L, 1L);
@@ -424,7 +424,7 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("Devuelve 403 al añadir un Examen SIN Autenticacion")
+		@DisplayName("Devuelve 403 (Acceso Denegado) al añadir un Examen SIN Autenticacion")
 		public void testpostExamen1() { 
 			ExamenNuevoDTO examen = new ExamenNuevoDTO(1L, 1L);
 			var peticion = post("http", "localhost",port, "/examenes",examen,"");
@@ -445,7 +445,7 @@ public class EvalExamenesTests {
 		
 		
 		 @Test
-		@DisplayName("Devuelve 200 al acceder a las Notas de un estudiante CON Autenticacion")
+		@DisplayName("Devuelve 200 (Notas Estudiante) get /notas?dni=1&apellido=enrique CON Autenticacion")
 		public void testgetnotas(){ 
 			Examen examenEjemplo = new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), 1L,  1L, 1L);
 			examenRepository.save(examenEjemplo);   
@@ -463,7 +463,7 @@ public class EvalExamenesTests {
 		
 
 		@Test
-		@DisplayName("Devuelve 404 al acceder a las Notas de un estudiante CON Autenticacion")
+		@DisplayName("Devuelve 404 (Estudiante no encontrado) get /notas?dni=1&apellido=enrique CON Autenticacion")
 		public void testgetnotas1() { 
 
 			

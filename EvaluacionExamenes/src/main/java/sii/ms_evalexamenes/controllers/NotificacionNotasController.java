@@ -125,6 +125,7 @@ public class NotificacionNotasController {
      * @param header Cabecera para extraer el JWT Bearer token
      * @return {@code 201 Created} - {@link Void}
      * @exception UnauthorizedAccessException {@code 403 Forbidden} Acceso no autorizado
+     * @annotation {@link GeneratedFakeEndpoint} Anotación para evitar el recubrimiento de JaCoCo al ser un endpoint que no pertenece a nuestro microservicio
      */
     @GeneratedFakeEndpoint
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

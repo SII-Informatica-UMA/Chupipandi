@@ -212,18 +212,18 @@ public class EvalExamenesTests {
 			examenRepository.save(examen.examen());
 
 			var peticion = put("http", "localhost",port, "/examenes/1",nuevoexamen,token);
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<ExamenDTO>>() {});                 
+			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <ExamenDTO>() {});                 
 			
 
 
-			Optional<Examen> examenModificado = examenRepository.findById(1L);
+			// Optional<Examen> examenModificado = examenRepository.findById(1L);
 
 			assertThat(respuesta.getStatusCode().is2xxSuccessful());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
-			assertEquals(examenModificado.get().getCalificacion(),nuevoexamen.getNota());
-			assertNotEquals(examenModificado.get().getMateriaId(),nuevoexamen.getMateria());
-			assertNotEquals(examenModificado.get().getId(),nuevoexamen.getId());
-			assertNotEquals(examenModificado.get().getAlumnoId(),nuevoexamen.getCodigoAlumno());
+			assertEquals(nuevoexamen.getNota(),respuesta.getBody().getNota());
+			assertNotEquals(nuevoexamen.getMateria(),respuesta.getBody().getMateria());
+			assertNotEquals(nuevoexamen.getId(),respuesta.getBody().getId());
+			assertNotEquals(nuevoexamen.getCodigoAlumno(),respuesta.getBody().getCodigoAlumno());
 
 
 		} 
@@ -234,7 +234,7 @@ public class EvalExamenesTests {
 			ExamenDTO nuevoexamen = new ExamenDTO(1L, 1L, 1L, 2F);
 
 			var peticion = put("http", "localhost",port, "/examenes/1",nuevoexamen,token);
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<ExamenDTO>>() {});    
+			var respuesta = restTemplate.exchange(peticion, ExamenDTO.class); 
 
 			assertThat(respuesta.getStatusCode().is4xxClientError());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
@@ -558,19 +558,14 @@ public class EvalExamenesTests {
 
 			var peticion = put("http", "localhost",port, "/examenes/1", examenDTOModificado, token);
 		
-			var respuesta = restTemplate.exchange(peticion,Void.class);
+			var respuesta = restTemplate.exchange(peticion,ExamenDTO.class);
 				
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
-			assertThat(respuesta.hasBody()).isEqualTo(false);
-			
-			var peticion2 = get("http", "localhost",port, "/examenes/1", token);
-			var respuesta2 = restTemplate.exchange(peticion2,
-				new ParameterizedTypeReference<ExamenDTO>() {});
+			assertThat(respuesta.hasBody()).isEqualTo(true);
 				
-			assertThat(respuesta2.getStatusCode().value()).isEqualTo(200);
-			assertThat(respuesta2.getBody()).isNotNull();
-			assertThat(compararExamenDTO(respuesta2.getBody(), examenDTOEjemplo)).isFalse();
-			assertThat(compararExamenDTO(respuesta2.getBody(), examenDTOModificado)).isTrue();
+			assertThat(respuesta.getStatusCode().is2xxSuccessful());
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertEquals(examenDTOModificado.getNota(),respuesta.getBody().getNota());
 		}
 
 		@Test

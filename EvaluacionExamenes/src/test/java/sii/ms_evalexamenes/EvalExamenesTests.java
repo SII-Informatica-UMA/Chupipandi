@@ -714,8 +714,9 @@ public class EvalExamenesTests {
 	@Nested
 	@DisplayName("Tests Notificaciones")
 	public class notificacionesTests {
+
 		@Test
-		@DisplayName("Post notificacion de notas")
+		@DisplayName("Devuelve 200 (Medios SI contemplados) Post /notificaciones/nostas CON autorizacion")
 		public void notificaciones() {
 			NotificacionNotasDTO notificacion = 
 				new NotificacionNotasDTO(	"Asunto", 
@@ -732,7 +733,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Post notificacion de notas todos los medios")
+		@DisplayName("Devuelve 400 (Medios SI contemplados) Post /notificaciones/nostas CON autorizacion")
 		public void notificacionesTodosMedios() {
 			NotificacionNotasDTO notificacion = 
 				new NotificacionNotasDTO(	"Asunto", 

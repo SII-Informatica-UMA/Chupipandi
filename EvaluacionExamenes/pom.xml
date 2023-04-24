@@ -96,7 +96,7 @@
 				<configuration>
 					<reportFormat>plain</reportFormat>
 					<statelessTestsetInfoReporter
-						implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporterUnicode">
+						implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
 					</statelessTestsetInfoReporter>
 					<consoleOutputReporter>
 						<disable>false</disable>

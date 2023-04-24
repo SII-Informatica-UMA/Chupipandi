@@ -29,6 +29,18 @@ public class NotasController {
 
     @GetMapping
     public ResponseEntity<List<ExamenDTO>> getNotas(@RequestParam Long dni, @RequestParam String apellido) {
+        
+        //El objeto optional que nos devuelve el metodo getExamenByDniAndApellido nunca apararece como null por lo tanto no devuelve excepcion
+        //Siempre devuelve una lista 
+        Optional<List<Examen>> notas = service.getExamenByDniAndApellido(dni, apellido);
+        
+        // notas.isPresent siempre es igual a True 
+        // Podemos Comprobar si la lista esta vacia
+        if(notas.get().isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        
+        
         return ResponseEntity.ok(service
                                 .getExamenByDniAndApellido(dni, apellido)
                                 .get()

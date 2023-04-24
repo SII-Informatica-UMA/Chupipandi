@@ -45,8 +45,9 @@ public class CorrectorController {
 
 	// Necesitamos una base de datos de Materia solida y predefinida. Donde tengamos tuplas (idMateria, nombre)
 	// para poder consultar si existe o no antes de introducirla (por definicion, en el POST podemos elegir si
-	// especificar la materia bien por su id o bien por su nombre). Podria implementarse un endpoint fake
-	// como '/materias' que devuelva una lista de materias predefinidas, y comprobarlo en base a eso.
+	// especificar la materia bien por su id o bien por su nombre). Hemos decidido implementarlo con un método
+	// 'inicializar()' que se ejecuta (una única vez, a modo de un Singleton) en cuanto se llama a comprobar una
+	// materia (con el método 'comprobarMateria()').
 
 	// De momento desarrollamos la idea de: si la materia que trae un CorrectorNuevoDTO no existe, se creará
 	// Si se le proporciona solo el nombre, como no tenemos una lista predefinida de materias, el idMateria que

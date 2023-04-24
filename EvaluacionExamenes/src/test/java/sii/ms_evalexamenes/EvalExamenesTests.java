@@ -631,7 +631,7 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("Get Estado correciones")
+		@DisplayName("Devuelve 200 (Correciones Disponibles) Get /examenes/correcciones CON autorizacion")
 		public void getCorrecciones() {
 			Examen examenModificado = examenEjemplo[0];
 			examenModificado.setCalificacion(null);

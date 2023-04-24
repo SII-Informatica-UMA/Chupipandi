@@ -3,7 +3,6 @@ package sii.ms_evalexamenes.dtos;
 import java.sql.Timestamp;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +12,6 @@ import sii.ms_evalexamenes.entities.Examen;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ExamenNuevoDTO {
     private Long materia;
     private Long codigoAlumno;

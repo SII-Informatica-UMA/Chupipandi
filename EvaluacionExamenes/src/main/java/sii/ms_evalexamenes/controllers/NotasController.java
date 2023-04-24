@@ -1,13 +1,11 @@
 package sii.ms_evalexamenes.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,7 +50,6 @@ public class NotasController {
                                 .map(ex -> ExamenDTO
                                 .fromExamen(ex))
                                 .toList());
-        */
     }
 
     @ExceptionHandler(NotFoundException.class)

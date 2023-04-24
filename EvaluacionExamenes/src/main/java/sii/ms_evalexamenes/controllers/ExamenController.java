@@ -77,7 +77,6 @@ public class ExamenController {
     public ResponseEntity<ExamenDTO> getExamen(@PathVariable Long id, @RequestHeader Map<String, String> header) {
         if (!TokenUtils.comprobarAcceso(header, Arrays.asList("CORRECTOR")))
             throw new UnauthorizedAccessException();
-            
         ExamenDTO examen = ExamenDTO.fromExamen(service.getExamenById(id).orElseThrow(NotFoundException::new));
         return ResponseEntity.ok(examen);
     }

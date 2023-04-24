@@ -28,6 +28,7 @@ public class CorrectorService {
     private MateriaEnConvocatoriaRepository matConvRepo;
     private MateriaRepository matRepo;
 
+    // Logger para facilitar el desarrollo de los tests
     final static Logger LOG = Logger.getLogger("test.CorrectorTests");
 
     @Autowired
@@ -76,7 +77,8 @@ public class CorrectorService {
         if (corRepo.existsByIdUsuario(nuevoCorrector.getIdUsuario())) {
             throw new CorrectorYaExiste();
         }
-        // [ ] Gestionar las nuevas materias por separado
+        // [ ] Gestionar las nuevas materias por separado en otro servicio
+        // (la idea da problemas, hay que rehacer pruebas -> dejamos que este servicio se encargue de todo)
         
         // Guardamos la nueva materia en su correspondiente repositorio
         // Capaz habria que asegurarse que exista o que pertenezca a un conjunto de posibilidades
@@ -103,13 +105,17 @@ public class CorrectorService {
         matConv.setMateria(mat);
         matConvRepo.save(matConv);
 
+        List<MateriaEnConvocatoria> lista = new ArrayList<>();
+        lista.add(matConv);
+        nuevoCorrector.setMatEnConv(lista);
+
         // Finalmente guardamos el nuevo corrector
         nuevoCorrector.setId(null);
 		corRepo.save(nuevoCorrector);
 		return nuevoCorrector.getId();
     }
 
-	public void modificarCorrector(Long id, CorrectorNuevoDTO correctorMod) {
+	public Corrector modificarCorrector(Long id, CorrectorNuevoDTO correctorMod) {
         Corrector entidadCorrector = correctorMod.corrector();
         entidadCorrector.setId(id);
 		if (!corRepo.existsById(entidadCorrector.getId())) {
@@ -126,8 +132,8 @@ public class CorrectorService {
         corrector.setTelefono(entidadCorrector.getTelefono());
         corrector.setMaximasCorrecciones(entidadCorrector.getMaximasCorrecciones());
 
-        // [ ] Gestionar las nuevas materias por separado
-        // (falta comprobar que la materia no exista ya)
+        // [ ] Gestionar las nuevas materias por separado en otro servicio
+        // (la idea da problemas, hay que rehacer pruebas -> dejamos que este servicio se encargue de todo)
 
         // Guardamos la nueva materia en su correspondiente repositorio
         // Capaz habria que comprobar que exista o que pertenezca a un conjunto de posibilidades
@@ -155,15 +161,18 @@ public class CorrectorService {
 
         // Comentar
         List<MateriaEnConvocatoria> listaPrueba = matConvRepo.findByIdConvocatoria(idConv);
-        if (listaPrueba.stream().anyMatch(mater -> mater.getCorrector().getId().equals(corrector.getId()))) {
-            // matConv = matConvRepo.findByIdConvocatoriaAndCorrector(idConv, corrector.getId());
-        } else {
+        if (!listaPrueba.stream().anyMatch(mater -> mater.getCorrector().getId().equals(corrector.getId()))) {
             matConv.setId(null); 
             matConv.setCorrector(entidadCorrector);
             matConv.setIdConvocatoria(idConv);
             matConv.setMateria(mat);
             matConvRepo.save(matConv);
+            List<MateriaEnConvocatoria> lista = corrector.getMatEnConv();
+            lista.add(matConv);
+            corrector.setMatEnConv(lista);
         }
+
+        return corrector;
 
 	}
 

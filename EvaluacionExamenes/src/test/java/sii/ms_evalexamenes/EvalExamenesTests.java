@@ -7,14 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
-import org.apache.catalina.connector.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,25 +26,21 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 // import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriBuilderFactory;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import sii.ms_evalexamenes.util.JwtGenerator;
-import sii.ms_evalexamenes.dtos.ExamenDTO;
-import sii.ms_evalexamenes.dtos.ExamenNuevoDTO;
 import sii.ms_evalexamenes.dtos.AsignacionDTO;
 import sii.ms_evalexamenes.dtos.EstadoCorrecionesDTO;
+import sii.ms_evalexamenes.dtos.ExamenDTO;
+import sii.ms_evalexamenes.dtos.ExamenNuevoDTO;
 import sii.ms_evalexamenes.dtos.NotificacionNotasDTO;
 import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.repositories.ExamenRepository;
+import sii.ms_evalexamenes.util.JwtGenerator;
 
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -452,20 +447,20 @@ public class EvalExamenesTests {
 		 */
 		
 		
-		 @Test
+		@Test
 		@DisplayName("Devuelve 200 al acceder a las Notas de un estudiante CON Autenticacion")
 		public void testgetnotas() throws URISyntaxException { 
 			Examen examenEjemplo = new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), 1L,  1L, 1L);
 			examenRepository.save(examenEjemplo);   
 
-			var peticion = get("http", "localhost",port, "/notas", token, "1", "rodriguez");
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<List<ExamenDTO>>() {});
-	
+			var peticion = get("http", "localhost",port, "/notas", "", "05981804X", "González");
+			var respuesta = restTemplate.exchange(peticion, new ParameterizedTypeReference<List<ExamenDTO>>() {});
+			System.out.println("RESPUESTA CADENA: " + respuesta.getBody());
+			
 			
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			assertThat(respuesta.getBody().size()).isEqualTo(1);
 			assertThat(compararExamenDTO(respuesta.getBody().get(0), ExamenDTO.fromExamen(examenEjemplo))).isTrue();
-	 		
 		}
 
 		
@@ -475,7 +470,7 @@ public class EvalExamenesTests {
 		public void testgetnotas1() { 
 
 			
-			var peticion = get("http", "localhost",port, "/notas", token, "1", "Cocainomano");
+			var peticion = get("http", "localhost",port, "/notas", "", "05981804X", "González");
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<List<ExamenDTO>>() {});
 
 			assertThat(respuesta.getStatusCode().is4xxClientError());

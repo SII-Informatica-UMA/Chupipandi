@@ -38,6 +38,7 @@ import sii.ms_evalexamenes.services.ExamenService;
 import sii.ms_evalexamenes.services.exceptions.AlreadyExistsException;
 import sii.ms_evalexamenes.services.exceptions.NotFoundException;
 import sii.ms_evalexamenes.services.exceptions.UnauthorizedAccessException;
+import sii.ms_evalexamenes.util.JwtGenerator;
 
 @RestController
 @RequestMapping("/examenes")

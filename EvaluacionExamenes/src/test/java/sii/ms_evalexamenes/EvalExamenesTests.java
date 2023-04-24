@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.isNull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,10 +21,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -50,7 +51,7 @@ public class EvalExamenesTests {
 	@Autowired
 	private TestRestTemplate restTemplate;
 	
-	@Value(value="${local.server.port}")
+	@LocalServerPort
 	private int port;
 	
 	@Autowired
@@ -758,7 +759,7 @@ public class EvalExamenesTests {
 		@Test
 		@DisplayName("Get notas por dni y apellidos")
 		public void getNotas() {
-			var peticion = get("http", "localhost",port, "/notas", token, "1", "rodriguez");
+			var peticion = get("http", "localhost",port, "/notas", token, "05981804X", "González");
 			var respuesta = restTemplate.exchange(peticion,
 			new ParameterizedTypeReference<List<ExamenDTO>>() {});
 
@@ -767,6 +768,28 @@ public class EvalExamenesTests {
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			assertThat(respuesta.getBody().size()).isEqualTo(1);
 			assertThat(compararExamenDTO(respuesta.getBody().get(0), ExamenDTO.fromExamen(examenEjemplo))).isTrue();
+		}
+
+		@Test
+		@DisplayName("Get notas por dni y apellido no correcto")
+		public void getNotasApellidoIncorrecto() {
+			var peticion = get("http", "localhost",port, "/notas", token, "05981804X", "Gonzále");
+			var respuesta = restTemplate.exchange(peticion,
+			new ParameterizedTypeReference<List<ExamenDTO>>() {});
+
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
+			assertThat(respuesta.getBody()).isNull();
+		}
+
+		@Test
+		@DisplayName("Get notas por dni no válido")
+		public void getNotasDNIIncorrecto() {
+			var peticion = get("http", "localhost",port, "/notas", token, "12345678A", "González");
+			var respuesta = restTemplate.exchange(peticion,
+			new ParameterizedTypeReference<List<ExamenDTO>>() {});
+
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
+			assertThat(respuesta.getBody()).isNull();
 		}
 	}
 

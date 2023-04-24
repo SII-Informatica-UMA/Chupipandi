@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.format.datetime.standard.DateTimeFormatterFactory;
 import org.springframework.http.HttpStatus;
@@ -29,8 +31,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import sii.ms_evalexamenes.dtos.NotificacionNotasDTO;
 import sii.ms_evalexamenes.security.TokenUtils;
-import sii.ms_evalexamenes.services.exceptions.NotFoundException;
 import sii.ms_evalexamenes.services.exceptions.UnauthorizedAccessException;
+import sii.ms_evalexamenes.util.GeneratedFakeEndpoint;
 import sii.ms_evalexamenes.util.JwtGenerator;
 
 @RestController
@@ -38,6 +40,9 @@ import sii.ms_evalexamenes.util.JwtGenerator;
 public class NotificacionNotasController {
 
     private static final List<String> medios = new ArrayList<>();
+
+    @Autowired
+    private ServletWebServerApplicationContext server;
 
     public NotificacionNotasController() {
         medios.add("EMAIL");
@@ -75,31 +80,36 @@ public class NotificacionNotasController {
 		return peticion;
 	}
 
+    /**
+     * Añade una notificación para cada estudiante de publicación de notas
+     * @param notificacion {@link NotificacionNotasDTO} Contiene la información de la notificación
+     * @param builder {@link UriComponentsBuilder}
+     * @param header Cabecera para extraer el JWT Bearer token
+     * @return {@code 201 Created} - {@link Void}
+     * @exception UnauthorizedAccessException {@code 403 Forbidden} Accesso no autorizado
+     */
     @PostMapping(value="/notas", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNotificacionNotas(@RequestBody NotificacionNotasDTO notificacion, UriComponentsBuilder builder, @RequestHeader Map<String, String> header) {
         if (!TokenUtils.comprobarAcceso(header, Arrays.asList("CORRECTOR")))
             throw new UnauthorizedAccessException();
         if (!medios.containsAll(notificacion.getMedios()))
             return ResponseEntity.badRequest().build();
-        var peticion = get("http", "localhost", 8080, "/estudiantes");
+        var peticion = get("http", "localhost", server.getWebServer().getPort(), "/estudiantes");
 
         var respuesta = new RestTemplate().exchange(peticion, new ParameterizedTypeReference<List<Map<String, Object>>>() {});
-        if (respuesta.getBody().isEmpty())
-            return ResponseEntity.notFound().build();
+
         String asunto = notificacion.getPlantillaAsunto();
         String cuerpo = notificacion.getPlantillaCuerpo();
         String programacionEnvio = notificacion.getProgramacionEnvio().format(new DateTimeFormatterFactory("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").createDateTimeFormatter());
-        String[] medios = (String[])(notificacion.getMedios().toArray());
+        String[] medios = notificacion.getMedios().toArray(new String[notificacion.getMedios().size()]);
         for (Map<String, Object> estudiante : respuesta.getBody()) {
             String emailDestino = estudiante.get("email").toString();
-            String telefonoDestino = estudiante.get("telefonoDestino").toString();
+            String telefonoDestino = estudiante.get("telefono").toString();
             JSONObject notificacionNotas = buildNotificacion(asunto, cuerpo, emailDestino, telefonoDestino, programacionEnvio, medios, "ANUNCIO_NOTA_ESTUDIANTE");
             
-            var peticionPOST = post("http", "localhost", 8080, "/notificaciones", notificacionNotas, tokenValido);
+            var peticionPOST = post("http", "localhost", server.getWebServer().getPort(), "/notificaciones", notificacionNotas, tokenValido);
 
-            var respuestaPOST = new RestTemplate().exchange(peticionPOST, Void.class);
-            if (!respuestaPOST.getStatusCode().equals(HttpStatus.CREATED))
-                return ResponseEntity.status(respuestaPOST.getStatusCode()).build();
+            new RestTemplate().exchange(peticionPOST, Void.class);
         }
         URI uri = builder
                 .path("/notificaciones/notas")
@@ -108,7 +118,15 @@ public class NotificacionNotasController {
         return ResponseEntity.created(uri).build();
     }
 
-    // ENDPOINT FAKE DE NOTIFICACIONES
+    /**
+     * Endpoint que imita al endpoint del microservicio de gestión de notificaciones (necesario para hacer POST de notas)
+     * @param notificacion {@link JSONObject} Contiene la información de la notificación
+     * @param builder {@link UriComponentsBuilder}
+     * @param header Cabecera para extraer el JWT Bearer token
+     * @return {@code 201 Created} - {@link Void}
+     * @exception UnauthorizedAccessException {@code 403 Forbidden} Acceso no autorizado
+     */
+    @GeneratedFakeEndpoint
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNotificacion(@RequestBody JSONObject notificacion, UriComponentsBuilder builder, @RequestHeader Map<String, String> header) {
         if (!TokenUtils.comprobarAcceso(header, Arrays.asList("CORRECTOR")))
@@ -120,6 +138,17 @@ public class NotificacionNotasController {
         return ResponseEntity.created(uri).build();
     }
 
+    /**
+     * Método auxiliar para construir el DTO de una notificación para el POST del endpoint falso de notificaciones
+     * @param asunto {@link String} Asunto de la notificación
+     * @param cuerpo {@link String} Cuerpo de la notificación
+     * @param emailDestino {@link String} Email destino de la persona
+     * @param telefonoDestino {@link String} Teléfono destino de la persona
+     * @param programacionEnvio {@link String} Fecha en la que se enviará la notificación
+     * @param medios {@link String[]} Medios permitidos para enviar la notificación (SMS o EMAIL) 
+     * @param tipoNotificacion {@link String} Tipo de la notificación
+     * @return {@link JSONObject} Objeto creado para la notificación
+     */
     private static JSONObject buildNotificacion(String asunto, String cuerpo, String emailDestino, String telefonoDestino, String programacionEnvio, String[] medios, String tipoNotificacion) {
         return new JSONObject()
                         .put("asunto", asunto)
@@ -131,15 +160,7 @@ public class NotificacionNotasController {
                         .put("tipoNotificacion", tipoNotificacion);
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public void notFound() {}
-
     @ExceptionHandler(UnauthorizedAccessException.class)
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
     public void unauthorizedAccess() {}
-
-    // @ExceptionHandler(AlreadyExistsException.class)
-    // @ResponseStatus(code = HttpStatus.CONFLICT)
-    // public void alreadyExists() {}
 }

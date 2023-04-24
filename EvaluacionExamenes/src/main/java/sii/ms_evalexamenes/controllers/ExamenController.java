@@ -193,8 +193,8 @@ public class ExamenController {
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
     public void unauthorizedAccess() {}
 
-    @ExceptionHandler(AlreadyExistsException.class)
-    @ResponseStatus(code = HttpStatus.CONFLICT)
-    public void alreadyExists() {}
+    // @ExceptionHandler(AlreadyExistsException.class)
+    // @ResponseStatus(code = HttpStatus.CONFLICT)
+    // public void alreadyExists() {}
 
 }

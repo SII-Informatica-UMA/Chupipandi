@@ -653,12 +653,12 @@ public class EvalExamenesTests {
 		@Test
 		@DisplayName("Devuelve 200 al añadir un Examen CON Autenticacion")
 		public void testpostExamen() { 
-			String payload = "{\"identificadorUsuario\": 99, \"identificadorConvocatoria\": 1, \"telefono\": \"123456789\", \"materia\": {\"id\": 88, \"nombre\": \"Paco\"}, \"maximasCorrecciones\": 20}";
+			String payload = "{\"identificadorUsuario\": 99, \"identificadorConvocatoria\": 1, \"telefono\": \"123456789\", \"materia\": {\"id\": 1, \"nombre\": \"Matematicas\"}, \"maximasCorrecciones\": 20}";
 			var peticion0 = post("http", "localhost", 8081, "/correctores", payload, token);
 			var respuesta0 = restTemplate.exchange(peticion0, Void.class);
+			assertThat(respuesta0.getStatusCode().value()).isEqualTo(201);
 			String pathID = respuesta0.getHeaders().get("Location").get(0).substring(respuesta0.getHeaders().get("Location").get(0).length()-1);
 
-			assertThat(respuesta0.getStatusCode().value()).isEqualTo(201);
 
 			ExamenNuevoDTO examen = new ExamenNuevoDTO(1L, 99L);
 			var peticion = post("http", "localhost",port, "/examenes",examen,token);
@@ -681,9 +681,10 @@ public class EvalExamenesTests {
 		@Test
 		@DisplayName("Devuelve 409 al añadir un Examen CON Autenticacion")
 		public void testpostExamenDemasiados() { 
-			String payload = "{\"identificadorUsuario\": 99, \"identificadorConvocatoria\": 1, \"telefono\": \"123456789\", \"materia\": {\"id\": 88, \"nombre\": \"Paco\"}, \"maximasCorrecciones\": 20}";
+			String payload = "{\"identificadorUsuario\": 99, \"identificadorConvocatoria\": 1, \"telefono\": \"123456789\", \"materia\": {\"id\": 1, \"nombre\": \"Matematicas\"}, \"maximasCorrecciones\": -1}";
 			var peticion0 = post("http", "localhost", 8081, "/correctores", payload, token);
 			var respuesta0 = restTemplate.exchange(peticion0, Void.class);
+			assertThat(respuesta0.getStatusCode().value()).isEqualTo(201);
 			String pathID = respuesta0.getHeaders().get("Location").get(0).substring(respuesta0.getHeaders().get("Location").get(0).length()-1);
 
 			ExamenNuevoDTO examen = new ExamenNuevoDTO(1L, 99L);

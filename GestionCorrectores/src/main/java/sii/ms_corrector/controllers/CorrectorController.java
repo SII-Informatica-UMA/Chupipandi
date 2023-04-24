@@ -44,12 +44,23 @@ public class CorrectorController {
     }
 
 	// Necesitamos una base de datos de Materia solida y predefinida. Donde tengamos tuplas (idMateria, nombre)
-	// para poder consultar si existe o no antes de introducirla (en nuestro POST podemos elegir si especificar
-	// la materia bien por su id o bien por su nombre). Podria implementarse un endpoint fake '/materias' que devuelva
-	// una lista de materias predefinidas, y comprobarlo en base a eso.
+	// para poder consultar si existe o no antes de introducirla (por definicion, en el POST podemos elegir si
+	// especificar la materia bien por su id o bien por su nombre). Podria implementarse un endpoint fake
+	// como '/materias' que devuelva una lista de materias predefinidas, y comprobarlo en base a eso.
 
+	// De momento desarrollamos la idea de: si la materia que trae un CorrectorNuevoDTO no existe, se creará
+	// Si se le proporciona solo el nombre, como no tenemos una lista predefinida de materias, el idMateria que
+	// se asocia queda como nulo (no afecta al funcionamiento, pero se ve feo al hacer un GET (todos o un corrector))
+
+	/**
+	 * Obtiene un corrector concreto
+	 * @param id id del corrector a solicitar
+	 * @param header cabecera para extraer el token (incluir token al hacer la peticion)
+	 * @return {@code 200 OK} - el corrector solicitado {@link CorrectorDTO}
+	 * @exception AccesoNoAutorizado {@code 403 Forbidden} Acceso no autorizado
+	 * @exception CorrectorNoEncontrado {@code 404 Not Found} El corrector no existe
+	 */
 	@GetMapping("{id}")
-	// 200, 403, 404
 	public ResponseEntity<CorrectorDTO> obtenerCorrector(@PathVariable Long id, @RequestHeader Map<String,String> header) {
 		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
 			throw new AccesoNoAutorizado();
@@ -57,27 +68,52 @@ public class CorrectorController {
 		return ResponseEntity.ok(CorrectorDTO.fromCorrector(contactoById));
 	}
 
+	/**
+	 * Actualiza un corrector
+	 * <p>
+	 * Note: Cambiar {@code identificadorConvocatoria} (y opcionalmente la {@code MateriaDTO} asociada)
+	 * añadirá dicha materia a la lista de materias en convocatoria asociada al corrector
+	 * </p>
+	 * @param id id del corrector a modificar
+	 * @param corrector {@link CorrectorNuevoDTO} que contiene los nuevos cambios
+	 * @param header cabecera para extraer el token (incluir token al hacer la peticion)
+	 * @return {@code 200 OK} - {@link Void}
+	 * @exception AccesoNoAutorizado {@code 403 Forbidden} Acceso no autorizado
+	 * @exception CorrectorNoEncontrado {@code 404 Not Found} El corrector no existe
+	 */
 	@PutMapping("{id}")
-	// 200, 403, 404
-	// [ ]: Preguntar por qué devuelve un PUT (conlleva cambiar tambien los tests)
-	public ResponseEntity<?> modificaCorrector(@PathVariable Long id, @RequestBody CorrectorNuevoDTO corrector, @RequestHeader Map<String,String> header) {
+	// [x]: Preguntar qué devuelve un PUT (siempre lo hemos hecho void, pero la API es confusa) (conlleva cambiar tambien los tests)
+	public ResponseEntity<CorrectorDTO> modificaCorrector(@PathVariable Long id, @RequestBody CorrectorNuevoDTO corrector, @RequestHeader Map<String,String> header) {
 		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
 			throw new AccesoNoAutorizado();
-		service.modificarCorrector(id, corrector);
-		return ResponseEntity.ok().build();
+		Corrector correctorMod = service.modificarCorrector(id, corrector);
+		return ResponseEntity.ok(CorrectorDTO.fromCorrector(correctorMod));
 	}
 
+	/**
+	 * Elimina un corrector
+	 * @param id id del corrector
+	 * @param header cabecera para extraer el token (incluir token al hacer la peticion)
+	 * @return {@code 200 OK} - {@link Void}
+	 * @exception AccesoNoAutorizado {@code 403 Forbidden} Acceso no autorizado
+	 * @exception CorrectorNoEncontrado {@code 404 Not Found} El corrector no existe
+	 */
 	@DeleteMapping("{id}")
 	@ResponseStatus(code = HttpStatus.OK)
-	// 200, 403, 404
 	public void eliminarCorrector(@PathVariable Long id, @RequestHeader Map<String,String> header) {
 		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
 			throw new AccesoNoAutorizado();
 		service.eliminarCorrector(id);
 	}
 
+    /**
+	 * Obtiene la lista de correctores del sistema
+     * @param idConvocatoria (para query, es opcional)
+     * @param header cabecera para extraer el token (incluir token al hacer la peticion)
+     * @return {@code 200 OK} - {@link List}<{@linkplain CorrectorDTO}> Lista de correctores
+	 * @exception AccesoNoAutorizado {@code 403 Forbidden} Acceso no autorizado
+     */
     @GetMapping
-	// 200, 403
     public ResponseEntity<List<CorrectorDTO>> obtieneCorrectores(@RequestParam(required = false) Long idConvocatoria, @RequestHeader Map<String,String> header) {
 		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
 			throw new AccesoNoAutorizado();
@@ -91,8 +127,16 @@ public class CorrectorController {
 		return ResponseEntity.ok(correctores.stream().map(mapper).toList());
     }
 
+    /**
+	 * Crea un nuevo corrector para la convocatoria vigente (que se pasa dentro del objeto)
+     * @param nuevoCorrector {@link CorrectorNuevoDTO} que contiene los nuevos cambios
+     * @param builder {@link UriComponentsBuilder}
+     * @param header cabecera para extraer el token (incluir token al hacer la peticion)
+     * @return {@code 201 Created} - {@link Void}
+	 * @exception AccesoNoAutorizado {@code 403 Forbidden} Acceso no autorizado
+	 * @exception CorrectorNoEncontrado {@code 404 Not Found} El corrector no existe
+     */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)	// "aplication/json"
-	// 201, 403, 409
 	public ResponseEntity<?> añadirCorrector(@RequestBody CorrectorNuevoDTO nuevoCorrector, UriComponentsBuilder builder, @RequestHeader Map<String,String> header) {
 		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
 			throw new AccesoNoAutorizado();

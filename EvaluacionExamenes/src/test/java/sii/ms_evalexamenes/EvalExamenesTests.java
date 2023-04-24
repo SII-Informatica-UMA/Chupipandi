@@ -103,15 +103,16 @@ public class EvalExamenesTests {
 			.header("Authorization", "Bearer " + tk)
 			.accept(MediaType.APPLICATION_JSON)
 			.build();
+			return peticion;
+		}
+		
+		private RequestEntity<Void> delete(String scheme, String host, int port, String path, String tk) {
+			URI uri = uri(scheme, host,port, path);
+			var peticion = RequestEntity.delete(uri)
+			.header("Authorization", "Bearer " + tk)
+			.build();
 		return peticion;
 	}
-	
-	// private RequestEntity<Void> delete(String scheme, String host, int port, String path) {
-	// 	URI uri = uri(scheme, host,port, path);
-	// 	var peticion = RequestEntity.delete(uri)
-	// 		.build();
-	// 	return peticion;
-	// }
 	
 	private <T> RequestEntity<T> post(String scheme, String host, int port, String path, T object, String tk) {
 		URI uri = uri(scheme, host,port, path);
@@ -650,6 +651,58 @@ public class EvalExamenesTests {
 			assertThat(respuesta2.getStatusCode().value()).isEqualTo(200);
 			assertThat(respuesta2.getBody().getCorregidos().size()).isEqualTo(examenEjemplo.length - 1);
 			assertThat(respuesta2.getBody().getPendientes().size()).isEqualTo(1);
+		}
+
+		@Test
+		@DisplayName("Devuelve 200 al añadir un Examen CON Autenticacion")
+		public void testpostExamen() { 
+			String payload = "{\"identificadorUsuario\": 99, \"identificadorConvocatoria\": 1, \"telefono\": \"123456789\", \"materia\": {\"id\": 88, \"nombre\": \"Paco\"}, \"maximasCorrecciones\": 20}";
+			var peticion0 = post("http", "localhost", 8081, "/correctores", payload, token);
+			var respuesta0 = restTemplate.exchange(peticion0, Void.class);
+			String pathID = respuesta0.getHeaders().get("Location").get(0).substring(respuesta0.getHeaders().get("Location").get(0).length()-1);
+
+			assertThat(respuesta0.getStatusCode().value()).isEqualTo(201);
+
+			ExamenNuevoDTO examen = new ExamenNuevoDTO(1L, 99L);
+			var peticion = post("http", "localhost",port, "/examenes",examen,token);
+			var respuesta1 = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});
+			assertThat(respuesta1.getStatusCode().is2xxSuccessful());
+			assertThat(respuesta1.getStatusCode().value()).isEqualTo(201);
+			var respuesta2 = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});
+
+			assertThat(respuesta2.getStatusCode().is2xxSuccessful());
+			assertThat(respuesta2	.getStatusCode().value()).isEqualTo(201);
+			assertEquals(respuesta2.getHeaders().getContentLength(),0);
+			assertFalse(respuesta2.hasBody());
+			
+			var peticion3 = delete("http", "localhost", 8081, "/correctores/" + pathID, token);
+			var respuesta3 = restTemplate.exchange(peticion3,Void.class);
+			assertThat(respuesta3	.getStatusCode().value()).isEqualTo(200);
+
+		}
+
+		@Test
+		@DisplayName("Devuelve 409 al añadir un Examen CON Autenticacion")
+		public void testpostExamenDemasiados() { 
+			String payload = "{\"identificadorUsuario\": 99, \"identificadorConvocatoria\": 1, \"telefono\": \"123456789\", \"materia\": {\"id\": 88, \"nombre\": \"Paco\"}, \"maximasCorrecciones\": 20}";
+			var peticion0 = post("http", "localhost", 8081, "/correctores", payload, token);
+			var respuesta0 = restTemplate.exchange(peticion0, Void.class);
+			String pathID = respuesta0.getHeaders().get("Location").get(0).substring(respuesta0.getHeaders().get("Location").get(0).length()-1);
+
+			ExamenNuevoDTO examen = new ExamenNuevoDTO(1L, 99L);
+			var peticion = post("http", "localhost",port, "/examenes",examen,token);
+			var respuesta1 = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});
+			assertThat(respuesta1.getStatusCode().is2xxSuccessful());
+			assertThat(respuesta1.getStatusCode().value()).isEqualTo(201);
+			var respuesta2 = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});
+
+			assertThat(respuesta2.getStatusCode().is2xxSuccessful());
+			assertThat(respuesta2	.getStatusCode().value()).isEqualTo(201);
+			assertEquals(respuesta2.getHeaders().getContentLength(),0);
+			assertFalse(respuesta2.hasBody());
+			var peticion3 = delete("http", "localhost", 8081, "/correctores/" + pathID, token);
+			var respuesta3 = restTemplate.exchange(peticion3,Void.class);
+			assertThat(respuesta3	.getStatusCode().value()).isEqualTo(200);
 		}
 	}
 

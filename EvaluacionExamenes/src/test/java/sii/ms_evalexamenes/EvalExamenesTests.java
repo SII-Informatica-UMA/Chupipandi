@@ -460,7 +460,7 @@ public class EvalExamenesTests {
 		@Test
 		@DisplayName("Devuelve 404 (Estudiante no encontrado) get /notas?dni=1&apellido=Cocainomano CON Autenticacion")
 		public void testgetnotas1() { 
-			var peticion = get("http", "localhost",port, "/notas", "", "1", "Cocainomano");
+			var peticion = get("http", "localhost",port, "/notas", "", "05981804X", "González");
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<List<ExamenDTO>>() {});
 
 			assertThat(respuesta.getStatusCode().is4xxClientError());
@@ -474,7 +474,7 @@ public class EvalExamenesTests {
 		 */
 		
 		 @Test
-		 @DisplayName("Devuelve 200 (al acceder a las correcciones) gget /examenes/correciones CON Autenticacion")
+		 @DisplayName("Devuelve 200 (al acceder a las correcciones) get /examenes/correciones CON Autenticacion")
 		 public void getCorrecciones() {
 			var peticion = get("http", "localhost", port, "/examenes/correcciones", token);
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<EstadoCorrecionesDTO>() {});
@@ -798,7 +798,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Get notas por dni y apellido no correcto")
+		@DisplayName("Get notas por dni y apellido no correcto (devuelve 404)")
 		public void getNotasApellidoIncorrecto() {
 			var peticion = get("http", "localhost",port, "/notas", token, "05981804X", "Gonzále");
 			var respuesta = restTemplate.exchange(peticion,
@@ -809,7 +809,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Get notas por dni no válido")
+		@DisplayName("Get notas por dni no válido (devuelve 404)")
 		public void getNotasDNIIncorrecto() {
 			var peticion = get("http", "localhost",port, "/notas", token, "12345678A", "González");
 			var respuesta = restTemplate.exchange(peticion,

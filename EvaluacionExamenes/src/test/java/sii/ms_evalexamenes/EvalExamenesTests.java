@@ -533,7 +533,7 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("Examen encontrado")
+		@DisplayName("Devuelve 200 (Examen encontrado) get /examenes/{id} CON Autorizacion")
 		public void devuelveExamen() {
 
 			var peticion = get("http", "localhost",port, "/examenes/1", token);
@@ -546,7 +546,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Examen no encontrado")
+		@DisplayName("Devuelve 404 (Examen no encontrado) get /examenes/{id} CON Autorizacion")
 		public void noDevuelveExamen() {
 
 			var peticion = get("http", "localhost",port, "/examenes/9999", token);
@@ -558,7 +558,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Nota del examen modificada")
+		@DisplayName("Devuelve 200 (Nota Examen Modificada) put /examenes/{id} CON Autorizacion")
 		public void modificarNota() {
 
 			Examen examenModificado = examenEjemplo[0];
@@ -583,7 +583,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Asignacion encontrada")
+		@DisplayName("Devuelve 200 (Asignacion encontrada) get /examenes/asignacion CON Autorizacion")
 		public void asignacionEncontrada() {
 			var peticion = get("http", "localhost",port, "/examenes/asignacion", token);
 			var respuesta = restTemplate.exchange(peticion,
@@ -595,7 +595,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Modificar asignacion")
+		@DisplayName("Devuelve 200 (Modificiacion Correcta) put /examenes/asignacion CON Autorizacion")
 		public void modificarAsignacion() {
 			AsignacionDTO asignacionModificada = AsignacionDTO.fromExamen(examenEjemplo[0]);
 			asignacionModificada.setIdCorrector(9999L);
@@ -618,7 +618,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Post examen")
+		@DisplayName("Devuelve 200 (Examen Añadido) Post /examenes CON autorizacion")
 		public void postExamen() {
 			ExamenNuevoDTO examenNuevoDTO = new ExamenNuevoDTO(99L, 99L);
 			

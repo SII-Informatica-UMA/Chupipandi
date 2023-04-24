@@ -26,6 +26,8 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
+
+
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -150,6 +152,7 @@ public class EvalExamenesTests {
 		@BeforeEach
 		public void initializeDatabase() {
 			examenRepository.deleteAll();
+
 		}
 
 		/**
@@ -653,11 +656,13 @@ public class EvalExamenesTests {
 		@Test
 		@DisplayName("Devuelve 200 al añadir un Examen CON Autenticacion")
 		public void testpostExamen() { 
+
 			String payload = "{\"identificadorUsuario\": 99, \"identificadorConvocatoria\": 1, \"telefono\": \"123456789\", \"materia\": {\"id\": 1, \"nombre\": \"Matematicas\"}, \"maximasCorrecciones\": 20}";
 			var peticion0 = post("http", "localhost", 8081, "/correctores", payload, token);
 			var respuesta0 = restTemplate.exchange(peticion0, Void.class);
 			assertThat(respuesta0.getStatusCode().value()).isEqualTo(201);
 			String pathID = respuesta0.getHeaders().get("Location").get(0).substring(respuesta0.getHeaders().get("Location").get(0).length()-1);
+
 
 
 			ExamenNuevoDTO examen = new ExamenNuevoDTO(1L, 99L);
@@ -681,10 +686,12 @@ public class EvalExamenesTests {
 		@Test
 		@DisplayName("Devuelve 409 al añadir un Examen CON Autenticacion")
 		public void testpostExamenDemasiados() { 
+
 			String payload = "{\"identificadorUsuario\": 99, \"identificadorConvocatoria\": 1, \"telefono\": \"123456789\", \"materia\": {\"id\": 1, \"nombre\": \"Matematicas\"}, \"maximasCorrecciones\": -1}";
 			var peticion0 = post("http", "localhost", 8081, "/correctores", payload, token);
 			var respuesta0 = restTemplate.exchange(peticion0, Void.class);
 			assertThat(respuesta0.getStatusCode().value()).isEqualTo(201);
+
 			String pathID = respuesta0.getHeaders().get("Location").get(0).substring(respuesta0.getHeaders().get("Location").get(0).length()-1);
 
 			ExamenNuevoDTO examen = new ExamenNuevoDTO(1L, 99L);
@@ -759,6 +766,8 @@ public class EvalExamenesTests {
 			var peticion = get("http", "localhost",port, "/notas", token, "1", "rodriguez");
 			var respuesta = restTemplate.exchange(peticion,
 			new ParameterizedTypeReference<List<ExamenDTO>>() {});
+
+
 			
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			assertThat(respuesta.getBody().size()).isEqualTo(1);

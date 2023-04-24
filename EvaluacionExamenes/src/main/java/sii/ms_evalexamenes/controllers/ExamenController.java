@@ -35,7 +35,6 @@ import sii.ms_evalexamenes.dtos.ExamenNuevoDTO;
 import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.security.TokenUtils;
 import sii.ms_evalexamenes.services.ExamenService;
-import sii.ms_evalexamenes.services.exceptions.AlreadyExistsException;
 import sii.ms_evalexamenes.services.exceptions.NotFoundException;
 import sii.ms_evalexamenes.services.exceptions.UnauthorizedAccessException;
 import sii.ms_evalexamenes.util.JwtGenerator;
@@ -194,8 +193,8 @@ public class ExamenController {
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
     public void unauthorizedAccess() {}
 
-    @ExceptionHandler(AlreadyExistsException.class)
-    @ResponseStatus(code = HttpStatus.CONFLICT)
-    public void alreadyExists() {}
+    // @ExceptionHandler(AlreadyExistsException.class)
+    // @ResponseStatus(code = HttpStatus.CONFLICT)
+    // public void alreadyExists() {}
 
 }

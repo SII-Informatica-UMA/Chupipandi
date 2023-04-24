@@ -1,9 +1,8 @@
 package sii.ms_evalexamenes.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.Setter;
 import sii.ms_evalexamenes.entities.Examen;
 
@@ -11,7 +10,6 @@ import sii.ms_evalexamenes.entities.Examen;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class AsignacionDTO {
 
     private Long idCorrector;

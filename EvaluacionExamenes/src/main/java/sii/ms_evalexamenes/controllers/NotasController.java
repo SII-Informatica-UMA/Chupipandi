@@ -7,16 +7,12 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -29,8 +25,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import sii.ms_evalexamenes.dtos.ExamenDTO;
 import sii.ms_evalexamenes.entities.Examen;
 import sii.ms_evalexamenes.services.ExamenService;
-import sii.ms_evalexamenes.services.exceptions.AlreadyExistsException;
-import sii.ms_evalexamenes.services.exceptions.UnauthorizedAccessException;
 
 @RestController
 @RequestMapping("/notas")
@@ -92,15 +86,15 @@ public class NotasController {
         return ResponseEntity.ok(lista);
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public void notFound() {}
+    // @ExceptionHandler(NotFoundException.class)
+    // @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    // public void notFound() {}
 
-    @ExceptionHandler(UnauthorizedAccessException.class)
-    @ResponseStatus(code = HttpStatus.FORBIDDEN)
-    public void unauthorizedAccess() {}
+    // @ExceptionHandler(UnauthorizedAccessException.class)
+    // @ResponseStatus(code = HttpStatus.FORBIDDEN)
+    // public void unauthorizedAccess() {}
 
-    @ExceptionHandler(AlreadyExistsException.class)
-    @ResponseStatus(code = HttpStatus.CONFLICT)
-    public void alreadyExists() {}
+    // @ExceptionHandler(AlreadyExistsException.class)
+    // @ResponseStatus(code = HttpStatus.CONFLICT)
+    // public void alreadyExists() {}
 }

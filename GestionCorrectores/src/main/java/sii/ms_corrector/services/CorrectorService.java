@@ -1,5 +1,6 @@
 package sii.ms_corrector.services;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
@@ -104,13 +105,17 @@ public class CorrectorService {
         matConv.setMateria(mat);
         matConvRepo.save(matConv);
 
+        List<MateriaEnConvocatoria> lista = new ArrayList<>();
+        lista.add(matConv);
+        nuevoCorrector.setMatEnConv(lista);
+
         // Finalmente guardamos el nuevo corrector
         nuevoCorrector.setId(null);
 		corRepo.save(nuevoCorrector);
 		return nuevoCorrector.getId();
     }
 
-	public void modificarCorrector(Long id, CorrectorNuevoDTO correctorMod) {
+	public Corrector modificarCorrector(Long id, CorrectorNuevoDTO correctorMod) {
         Corrector entidadCorrector = correctorMod.corrector();
         entidadCorrector.setId(id);
 		if (!corRepo.existsById(entidadCorrector.getId())) {
@@ -162,7 +167,12 @@ public class CorrectorService {
             matConv.setIdConvocatoria(idConv);
             matConv.setMateria(mat);
             matConvRepo.save(matConv);
+            List<MateriaEnConvocatoria> lista = corrector.getMatEnConv();
+            lista.add(matConv);
+            corrector.setMatEnConv(lista);
         }
+
+        return corrector;
 
 	}
 

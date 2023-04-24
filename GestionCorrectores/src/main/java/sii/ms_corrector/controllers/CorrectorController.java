@@ -83,11 +83,11 @@ public class CorrectorController {
 	 */
 	@PutMapping("{id}")
 	// [x]: Preguntar qué devuelve un PUT (siempre lo hemos hecho void, pero la API es confusa) (conlleva cambiar tambien los tests)
-	public ResponseEntity<?> modificaCorrector(@PathVariable Long id, @RequestBody CorrectorNuevoDTO corrector, @RequestHeader Map<String,String> header) {
+	public ResponseEntity<CorrectorDTO> modificaCorrector(@PathVariable Long id, @RequestBody CorrectorNuevoDTO corrector, @RequestHeader Map<String,String> header) {
 		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
 			throw new AccesoNoAutorizado();
-		service.modificarCorrector(id, corrector);
-		return ResponseEntity.ok().build();
+		Corrector correctorMod = service.modificarCorrector(id, corrector);
+		return ResponseEntity.ok(CorrectorDTO.fromCorrector(correctorMod));
 	}
 
 	/**

@@ -779,7 +779,7 @@ public class EvalExamenesTests {
 	@DisplayName("Tests sin autorizacion")
 	public class noAutorizacion{
 		@Test
-		@DisplayName("Get examen")
+		@DisplayName("Devuelve 403 Get /examen/{id} SIN autenticacion")
 		public void getExamen() {
 			var peticion = get("http", "localhost",port, "/examenes/1", "");
 			var respuesta = restTemplate.exchange(peticion, Void.class);
@@ -787,7 +787,7 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("Put examen")
+		@DisplayName("Devuelve 403 Put /examen/{id} SIN autenticacion")
 		public void putExamen() {
 			var peticion = put("http", "localhost",port, "/examenes/1", new ExamenDTO(), "");
 			var respuesta = restTemplate.exchange(peticion, Void.class);
@@ -795,7 +795,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Get examenes asignacion")
+		@DisplayName("Devuelve 403 Get examenes asignacion SIN autenticacion")
 		public void getExamenesAsignacion() {
 			var peticion = get("http", "localhost",port, "/examenes/asignacion", "");
 			var respuesta = restTemplate.exchange(peticion, Void.class);
@@ -803,7 +803,7 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("Put examenes asignacion")
+		@DisplayName("Devuelve 403 Put /examenes asignacion SIN autenticacion")
 		public void putExamenesAsignacion() {
 			var peticion = put("http", "localhost",port, "/examenes/asignacion", new ArrayList<AsignacionDTO>(), "");
 			var respuesta = restTemplate.exchange(peticion, Void.class);
@@ -811,7 +811,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Post notificacion de notas")
+		@DisplayName("Devuelve 403 Post /notificaciones/notas SIN autenticacion")
 		public void postNotas() {
 			var peticion = post("http", "localhost",port, "/notificaciones/notas", new NotificacionNotasDTO(), "");
 			var respuesta = restTemplate.exchange(peticion, Void.class);
@@ -819,7 +819,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Post examenes")
+		@DisplayName("Devuelve 403 Post /examenes SIN autenticacion")
 		public void postExamene() {
 			var peticion = post("http", "localhost",port, "/examenes", new ExamenNuevoDTO(), "");
 			var respuesta = restTemplate.exchange(peticion, Void.class);
@@ -827,7 +827,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Get correcciones")
+		@DisplayName("Devuelve 403 Get /examenes/correcciones SIN autenticacion")
 		public void getCorrecciones() {
 			var peticion = get("http", "localhost",port, "/examenes/correcciones", "");
 			var respuesta = restTemplate.exchange(peticion, Void.class);

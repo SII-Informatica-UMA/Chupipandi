@@ -750,7 +750,7 @@ public class EvalExamenesTests {
 	}
 
 	@Nested
-	@DisplayName("Tests notas")
+	@DisplayName("Tests GET notas")
 	public class notasTests {
 
 		Examen examenEjemplo = new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), 1L,  1L, 1L);
@@ -761,7 +761,7 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("Devuelve 200 Get /notas?dni=1&apellido=rodriguez de examenes SI Existentes CON autorizacion")
+		@DisplayName("Devuelve 200  Get /notas?dni=1&apellido=rodriguez de examenes SI Existentes CON autorizacion")
 		public void getNotas() {
 			var peticion = get("http", "localhost",port, "/notas", token, "1", "rodriguez");
 			var respuesta = restTemplate.exchange(peticion,
@@ -776,7 +776,7 @@ public class EvalExamenesTests {
 	}
 
 	@Nested
-	@DisplayName("Tests sin autorizacion")
+	@DisplayName("Pruebas 403 Token no Validos ")
 	public class noAutorizacion{
 		@Test
 		@DisplayName("Devuelve 403 Get /examen/{id} SIN autenticacion")

@@ -80,7 +80,7 @@
 					<skipTests>false</skipTests>
 					<reportFormat>plain</reportFormat>
 					<consoleOutputReporter>
-						<disable>true</disable>
+						<disable>false</disable>
 					</consoleOutputReporter>
 					<statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter"/>
 				</configuration>

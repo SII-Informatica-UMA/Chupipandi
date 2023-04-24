@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 import org.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.javafaker.Faker;
+
+import sii.ms_evalexamenes.util.GeneratedFakeEndpoint;
 
 @RestController
 @RequestMapping("/estudiantes")
@@ -35,15 +35,12 @@ public class EstudiantesFakeController {
             listaEstudiantes.add(estudiante);
         }
     }
-
-    @GetMapping("{id}")
-    public ResponseEntity<Map<String, Object>> getEstudiante(@PathVariable Long id) {
-        Optional<JSONObject> estudiante = listaEstudiantes.stream().filter(est -> est.getLong("id") == id).findFirst();
-        if (estudiante.isEmpty())
-            return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(estudiante.get().toMap());
-    }
-
+    
+    /**
+     * Endpoint que imita el endpoint del microservicio de gestión de estudiantes (necesario para la comprobación del GET de /notas)
+     * @return {@code 200 OK} - Siempre devuelve OK ya que siempre hay estudiantes en la lista
+     */
+    @GeneratedFakeEndpoint
     @GetMapping
     public ResponseEntity<List<Map<String, Object>>> getEstudiantes() {
         return ResponseEntity.ok(listaEstudiantes
@@ -52,6 +49,15 @@ public class EstudiantesFakeController {
                                 .toList());
     }
 
+    /**
+     * Método auxiliar para generar estudiantes y rellenar la lista
+     * @param id {@link Long} ID del estudiante
+     * @param apellido1 {@link String} Primer apellido del estudiante
+     * @param dni {@link String} DNI del estudiante
+     * @param telefono {@link String} Teléfono del estudiante
+     * @param email {@link String} Email del estudiante
+     * @return {@link JSONObject} Objeto del estudiante creado
+     */
     private static JSONObject generarEstudiante(Long id, String apellido1, String dni, String telefono, String email) {
         JSONObject estudiante = new JSONObject();
         estudiante
@@ -64,6 +70,11 @@ public class EstudiantesFakeController {
 
     }
 
+    /**
+     * Método auxiliar para generar DNIs válidos
+     * @param dni {@link String} SSN estadounidense
+     * @return {@link String} DNI válido con letra
+     */
     private static String getValidDNI(String dni) {
         char[] letras = {'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X',
         'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E'};

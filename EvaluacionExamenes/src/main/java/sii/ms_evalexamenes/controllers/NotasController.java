@@ -52,15 +52,15 @@ public class NotasController {
                                 .toList());
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(code = HttpStatus.NOT_FOUND)
-    public void notFound() {}
+    // @ExceptionHandler(NotFoundException.class)
+    // @ResponseStatus(code = HttpStatus.NOT_FOUND)
+    // public void notFound() {}
 
-    @ExceptionHandler(UnauthorizedAccessException.class)
-    @ResponseStatus(code = HttpStatus.FORBIDDEN)
-    public void unauthorizedAccess() {}
+    // @ExceptionHandler(UnauthorizedAccessException.class)
+    // @ResponseStatus(code = HttpStatus.FORBIDDEN)
+    // public void unauthorizedAccess() {}
 
-    @ExceptionHandler(AlreadyExistsException.class)
-    @ResponseStatus(code = HttpStatus.CONFLICT)
-    public void alreadyExists() {}
+    // @ExceptionHandler(AlreadyExistsException.class)
+    // @ResponseStatus(code = HttpStatus.CONFLICT)
+    // public void alreadyExists() {}
 }

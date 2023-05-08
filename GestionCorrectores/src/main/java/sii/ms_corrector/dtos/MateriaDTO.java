@@ -1,5 +1,7 @@
 package sii.ms_corrector.dtos;
 
+import java.util.regex.Pattern;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +19,14 @@ import sii.ms_corrector.entities.Materia;
 public class MateriaDTO {
     private Long id;
     private String nombre;
+
+    public MateriaDTO(String jsonfrontend) {
+        if (Pattern.compile("\\d+").matcher(jsonfrontend).matches()) {
+            id = Long.parseLong(jsonfrontend);
+        } else {
+            nombre = jsonfrontend;
+        }
+    }
 
     public static MateriaDTO fromMateria(Materia materia) { 
         var dto = new MateriaDTO();

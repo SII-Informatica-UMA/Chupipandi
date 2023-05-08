@@ -62,7 +62,6 @@ class CorrectorTests {
 	// Utilizamos esta variable para que no se inicialice la base de datos en cada test.
 	// De este modo, solo se inicializa una vez, en el primer test (como si fuera un @BeforeAll)
 	// No podemos utilizar @BeforeAll porque el método inicializar() del servicio de Materias no es un metodo estático.
-	private boolean inicializado = false;
 
 	String tokenValido = JwtGenerator.createToken("user", 5, "VICERRECTORADO");		// valido por 5 horas
 	// Los tokens tokenCaducado y tokenNoAuth son equivalentes. No se distingue el error de que un token
@@ -82,15 +81,9 @@ class CorrectorTests {
 	@BeforeEach
 	public void initializeDatabase() {
 		correctorRepo.deleteAll();
-		// Si no se ha inicializado la base de datos, lo hacemos
-		if (!inicializado) {
-			matService.inicializar();
-			// Indicamos al servicio que ya se ha inicializado la base de datos
-			// (para que no se inicialice en el método 'comprobarMateria()')
-			matService.yaInicializado();
-			// Ponemos inicializado a true
-			inicializado = true;
-		}
+		matConvRepo.deleteAll();
+		// Inicializamos la base de datos (internamente comprueba si se ha hecho ya)
+		matService.inicializar();
 	}
 
 	private URI uri(String scheme, String host, int port, String ...paths) {

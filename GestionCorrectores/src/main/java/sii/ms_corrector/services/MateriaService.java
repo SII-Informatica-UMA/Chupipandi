@@ -13,7 +13,7 @@ import sii.ms_corrector.services.exceptions.PeticionIncorrecta;
 public class MateriaService {
     private MateriaRepository matRepo;
 
-    private boolean inicializado = false;
+    // private boolean inicializado = false;
 
     @Autowired
     public MateriaService(MateriaRepository matRepo) {
@@ -23,17 +23,7 @@ public class MateriaService {
     // Este metodo se usa para comprobar si una materia existe en la base de datos
     // Si es la primera vez que se ejecuta, inicializa la base de datos con un conjunto de materias predefinido
     public Materia comprobarMateria(Materia mat) {
-        if (!inicializado) {
-            // JaCoCo muestra esta rama del if como no cubierta.
-            // Pero no podemos cubrirla porque dentro del ambito de los tests, 'inicializado'
-            // siempre va a estar a true desde el momento en que se ejecuta el primer test
-            // Podria cubrirse, pero habria que hacerlo con un test totalmente independiente de los demas,
-            // donde no se le aplique el @BeforeEach que provoca la inicializacion de la BD
-            // (hemos considerado que no merece la pena hacer otra clase nested solo para este test)
-            // (ni es relevante para el correcto funcionamiento del método)
-            inicializar();
-            inicializado = true;
-        }
+        // - (Solo aplica para postman, en el frontend solo se permite proporcionar uno):
         // Si se proporcionan tanto el id como el nombre de la materia (y no se corresponden el uno con el otro, ej. Física != 3),
         // por cómo está implementado el método, se devolverá la materia con el id que se le haya proporcionado (no la del nombre)
         // En este caso mencionado, se añadiría la materia con id 3 (Química) a la lista de materias del corrector
@@ -49,14 +39,13 @@ public class MateriaService {
         }
     }
     
-    // Indica si en la base de datos ya se han inicializado las materias
-    public void yaInicializado() {
-        inicializado = true;
-    }
-
     // Inicializa la base de datos con un conjunto de materias predefinido
-    // (se ejecutara una sola vez)
+    // (se inicializaran las materias unicamente si no existen ya)
     public void inicializar() {
+        // Si ya hay materias en la base de datos, no se hace nada
+        if (matRepo.count() > 0) {
+            return;
+        }
         Materia mat = new Materia();
         mat.setNombre("Matemáticas II");
         mat.setIdMateria(1L);

@@ -27,6 +27,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriBuilderFactory;
@@ -37,6 +38,7 @@ import sii.ms_corrector.services.MateriaService;
 import sii.ms_corrector.util.JwtGenerator;
 import sii.ms_corrector.dtos.*;
 
+@ActiveProfiles("dev")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DisplayName("En el servicio de corrector:")
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)

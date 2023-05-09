@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +38,7 @@ import sii.ms_evalexamenes.util.JwtGenerator;
 
 @RestController
 @RequestMapping("/notificaciones")
+@CrossOrigin(origins = "http://localhost:4200/")
 public class NotificacionNotasController {
 
     private static final List<String> medios = new ArrayList<>();

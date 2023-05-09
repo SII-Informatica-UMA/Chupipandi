@@ -12,6 +12,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +31,7 @@ import sii.ms_evalexamenes.services.ExamenService;
 
 @RestController
 @RequestMapping("/notas")
+@CrossOrigin(origins = "http://localhost:4200/")
 public class NotasController {
 
     private ExamenService service;
@@ -73,7 +75,6 @@ public class NotasController {
     @GetMapping
     public ResponseEntity<List<ExamenDTO>> getNotas(@RequestParam String dni, @RequestParam String apellido) throws JsonMappingException, JsonProcessingException {
         var peticion = get("http", "localhost", server.getWebServer().getPort(), "/estudiantes");
-
         var respuesta = new RestTemplate().exchange(peticion, new ParameterizedTypeReference<List<Map<String, Object>>>() {});
         Optional<Map<String, Object>> dniRespuesta = respuesta.getBody().stream().filter(est -> est.get("dni").equals(dni)).findFirst();
         if (!(dniRespuesta.isPresent() && dniRespuesta.get().get("apellido1").equals(apellido)))
@@ -89,7 +90,6 @@ public class NotasController {
         for (Examen e : notas.get()){
             lista.add(ExamenDTO.fromExamen(e));
         }
-        System.out.println(lista);
         return ResponseEntity.ok(lista);
     }
 }

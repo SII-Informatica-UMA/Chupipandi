@@ -1,0 +1,1 @@
+CALL mvn spring-boot:stop

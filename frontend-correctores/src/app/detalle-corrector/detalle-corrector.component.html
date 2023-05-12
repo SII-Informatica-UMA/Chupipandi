@@ -1,0 +1,40 @@
+<div class="container">
+    <div class="row">
+      <h2 >Corrector {{corrector?.id}}</h2>
+    </div>
+  
+  <div class="row">
+    <label class="col-md-3" for="idEntidad">Id. Entidad:</label>
+    <span class="col-md-9 offset-2 offset-md-0">{{corrector?.id}}</span>
+  </div>
+  <div class="row">
+    <label class="col-md-3" for="idUsuario">Id. Usuario:</label>
+    <span class="col-md-9 offset-2 offset-md-0">{{corrector?.identificadorUsuario}}</span>
+  </div>
+  <div class="row">
+    <label class="col-md-3" for="telefono">Teléfono:</label>
+    <span class="col-md-9 offset-2 offset-md-0">{{corrector?.telefono}}</span>
+  </div>
+  <div class="row">
+    <label class="col-md-3" for="maxcorr">Máx. Correcciones:</label>
+    <span class="col-md-9 offset-2 offset-md-0">{{corrector?.maximasCorrecciones}}</span>
+  </div>
+  <div class="row">
+    <label class="col-md-3" for="materias">Materias:</label>
+    <div>
+      <ul>
+        <li *ngFor="let materia of corrector?.materias">
+          Id.Materia: {{ materia.idMateria }}, Id.Convocatoria: {{ materia.idConvocatoria }}
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="row">
+    <button class="col-auto btn btn-outline-primary" (click)="eliminarCorrector()">Eliminar <i class="bi bi-trash-fill"></i></button>
+    <div class="col-1"></div>
+    <button class="col-auto btn btn-outline-primary" (click)="editarCorrector()">Editar <i class="bi bi-pencil-fill"></i></button>
+  </div>
+  
+  </div>
+  

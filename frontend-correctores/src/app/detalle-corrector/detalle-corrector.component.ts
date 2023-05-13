@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Corrector, CorrectorNuevo } from '../interfaces';
-import { CorrectorService } from '../corrector.service';
+import { Corrector, CorrectorNuevo } from '../model/interfaces';
+import { CorrectorService } from '../service/corrector.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormularioCorrectorComponent } from '../formulario-corrector/formulario-corrector.component';
 

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Corrector, CorrectorNuevo } from './interfaces';
+import { Corrector, CorrectorNuevo } from '../model/interfaces';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
-import { ErrorModalComponentComponent } from './error-modal-component/error-modal-component.component';
+import { ErrorModalComponentComponent } from '../error-modal-component/error-modal-component.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Injectable({

@@ -13,8 +13,6 @@ import sii.ms_corrector.services.exceptions.PeticionIncorrecta;
 public class MateriaService {
     private MateriaRepository matRepo;
 
-    // private boolean inicializado = false;
-
     @Autowired
     public MateriaService(MateriaRepository matRepo) {
         this.matRepo = matRepo;

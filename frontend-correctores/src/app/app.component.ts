@@ -3,6 +3,7 @@ import { Corrector, CorrectorNuevo } from './interfaces';
 import { CorrectorService } from './corrector.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormularioCorrectorComponent } from './formulario-corrector/formulario-corrector.component';
+import { debounceTime } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +15,7 @@ export class AppComponent implements OnInit {
   correctores: Corrector[] = [];
   correctorElegido?: Corrector;
   idConvBusq?: bigint;
+  busquedaFallida: boolean = false;
 
   constructor(private correctorService: CorrectorService, private modalService: NgbModal) { }
 
@@ -66,10 +68,10 @@ export class AppComponent implements OnInit {
   // TODO: Implementar correctamente la busqueda (de momento no hace nada) 
   busqCorrectores() {
     this.correctorService.getCorrectores(this.idConvBusq).subscribe(correctores => {
-      console.log(this.correctores);
-      console.log(correctores);
+      this.busquedaFallida = (correctores.length === 0);
       this.correctores = correctores;
     });
+    this.correctorElegido = undefined;
   }
 
 }

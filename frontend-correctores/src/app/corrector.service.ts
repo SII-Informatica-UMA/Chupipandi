@@ -20,12 +20,7 @@ export class CorrectorService {
     constructor(private http: HttpClient, private modalService: NgbModal) { }
 
     getCorrectores(idConv?: bigint): Observable<Corrector[]> {
-        let uri = ''
-        if (idConv) {
-            uri = `${this.correctoresUrl}?idConvoc=${idConv}`;
-        } else {
-            uri = this.correctoresUrl;
-        }
+        let uri = idConv ? `${this.correctoresUrl}?idConvocatoria=${idConv}` : this.correctoresUrl;
         return this.http.get<Corrector[]>(uri, { headers: this.headers }).pipe(catchError(e => this.handleError(e)));
     }
 
@@ -57,7 +52,7 @@ export class CorrectorService {
         // TODO: Tratar de definir mejor los mensajes de error 400 (ver cómo desde el backend mandar un mensaje personalizado)
         switch (error.status) {
             case 400:
-                errorMessage = "Error en materia";
+                errorMessage = "Error del cliente";
                 break;
             case 403:
                 errorMessage = "Error en el token o en los permisos";

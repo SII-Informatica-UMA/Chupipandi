@@ -13,7 +13,7 @@
   </div>
   <div class="row">
     <label class="col-md-3" for="telefono">Teléfono:</label>
-    <span class="col-md-9 offset-2 offset-md-0">{{corrector?.telefono}}</span>
+    <span class="col-md-9 offset-2 offset-md-0">{{(corrector?.telefono) ? corrector?.telefono : 'Sin teléfono' }} </span>
   </div>
   <div class="row">
     <label class="col-md-3" for="maxcorr">Máx. Correcciones:</label>

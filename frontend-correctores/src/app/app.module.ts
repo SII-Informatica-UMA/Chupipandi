@@ -6,7 +6,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpClientModule } from '@angular/common/http';
 import { DetalleCorrectorComponent } from './detalle-corrector/detalle-corrector.component';
 import { FormularioCorrectorComponent } from './formulario-corrector/formulario-corrector.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ErrorModalComponentComponent } from './error-modal-component/error-modal-component.component';
 
 @NgModule({
@@ -20,7 +20,8 @@ import { ErrorModalComponentComponent } from './error-modal-component/error-moda
     BrowserModule,
     NgbModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

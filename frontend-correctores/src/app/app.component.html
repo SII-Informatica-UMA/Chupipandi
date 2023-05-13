@@ -5,7 +5,7 @@
       <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon1">Id. Convocatoria:</span>
         <input type="text" class="form-control" placeholder="Convocatoria" [(ngModel)]="idConvBusq" (input)="busqCorrectores()">
-        <!-- <button type="button" class="btn btn-primary bi bi-search" (click)="busqCorrectores()"></button> -->
+        <button type="button" class="btn btn-primary bi bi-search" (click)="busqCorrectores()"></button>
       </div>
       <div class="list-group">
         <button *ngFor="let corrector of correctores"
@@ -14,10 +14,8 @@
           [class.active]="corrector === correctorElegido">Corrector con ID: {{corrector.identificadorUsuario}}</button>
       </div>
       <br *ngIf="!busquedaFallida">
-      <!-- TODO: Para cuando se implemente la busqueda, alerta si no se encuentra ninguno -->
-      <!-- o "altert alert-warning" -->
       <div *ngIf="busquedaFallida" class="alert alert-info" role="alert">
-        No se han encontrado correctores con el id {{idConvBusq}}
+        No se han encontrado convocatorias con el id {{ idConvBusq }}
       </div>
       <button type="button" class="btn btn-outline-primary bi bi-plus-lg" (click)="aniadirCorrector()"></button>
     </div>
@@ -28,4 +26,3 @@
         ></app-detalle-corrector>
     </div>
   </div>
-</div>

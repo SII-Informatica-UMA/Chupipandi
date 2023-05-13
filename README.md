@@ -6,7 +6,7 @@ Implementación microservicios de Gestión de Correctores y Evaluación de Exám
 Para probar este microservicio, es necesario tener activo el microservicio de gestión de correctores, ya que un método del primero depende del segundo:
 1. Desde la carpeta del proyecto GestionCorrectores: 
 ```bash
-mvn clean package; java -jar -Dspring.profiles.active=prod target/ms_corrector-0.0.1-SNAPSHOT.jar
+mvn clean package; java -jar target/ms_corrector-0.0.1-SNAPSHOT.jar
 ```
 2. Esperar a que se inicie el microservicio por completo.
 3. Desde la carpeta del proyecto EvaluacionExamenes: 
@@ -22,13 +22,19 @@ De esta forma, estarán funcionando los dos microservicios.
 > Se presupone para tanto para la ejecución de cualquiera de los siguientes comandos, se está en la raíz del proyecto GestionCorrectores.
 1. Ejecutar `mvn clean package`
 2. Disntinguimos dos tipos de ejecución
-    - Ejecución en memoria: `java -jar -Dspring.profiles.active=dev target/ms_corrector-0.0.1-SNAPSHOT.jar`
-    - Ejecución con persistencia: `java -jar -Dspring.profiles.active=prod target/ms_corrector-0.0.1-SNAPSHOT.jar`
+    - Ejecución en memoria (por defecto si no se especifica nada):
+    ```java
+    java -jar -Dspring.profiles.active=dev target/ms_corrector-0.0.1-SNAPSHOT.jar
+    ```
+    - Ejecución con persistencia:
+    ```java
+    java -jar -Dspring.profiles.active=prod target/ms_corrector-0.0.1-SNAPSHOT.jar
+    ```
 
 ### Ejecutar mediante `start.bat` y `stop.bat`
 1. Ejecutar `./start.bat`. Parámetros disponibles:
     - `-b`: ejecuta la operación en segundo plano
-    - `prod`: ejecuta la operación en modo producción (spring profile `prod`) (con persistencia de datos)
+    - `prod`: ejecuta la operación en modo producción (activa spring profile `prod`) (con persistencia de datos)
     - `-skip`: para saltarse la fase de comprobación de tests
 > **Note**
 > Si no se le especifica el modo de ejecución, el perfil por defecto es `dev` (en memoria)

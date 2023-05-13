@@ -24,17 +24,11 @@ export class CorrectorService {
         return this.http.get<Corrector[]>(uri, { headers: this.headers }).pipe(catchError(e => this.handleError(e)));
     }
 
-    // getCorrectoresPorConvocatoria(idConv: bigint): Observable<Corrector[]> {
-    //     return this.http.get<Corrector[]>(`${this.correctoresUrl}?idConvoc=${idConv}`, { headers: this.headers })
-    //             .pipe(catchError(e => this.handleError(e)));
-    // }
-
     addCorrector(corrector: CorrectorNuevo): Observable<HttpResponse<Corrector>> {
         return this.http.post<Corrector>(this.correctoresUrl, corrector, { headers: this.headers, observe: 'response' })
             .pipe(catchError(e => this.handleError(e)));
     }
 
-    // me estan pasando un CorrectorNuevo, pero necesito el ID que solo lo tiene el Corrector
     editCorrector(corrector: CorrectorNuevo, id: bigint): Observable<HttpResponse<Corrector>> {
         return this.http.put<Corrector>(`${this.correctoresUrl}/${id}`, corrector, { headers: this.headers, observe: 'response' })
             .pipe(catchError(e => this.handleError(e)));
@@ -49,8 +43,10 @@ export class CorrectorService {
         let errorMessage = '';
         const modalRef = this.modalService.open(ErrorModalComponentComponent);
         modalRef.componentInstance.errorCode = `Error code: ${error.status}`;
-        // TODO: Tratar de definir mejor los mensajes de error 400 (ver cómo desde el backend mandar un mensaje personalizado)
         switch (error.status) {
+            case 0:
+                errorMessage = "Error de angular";
+                break;
             case 400:
                 errorMessage = "Error del cliente";
                 break;
@@ -59,6 +55,9 @@ export class CorrectorService {
                 break;
             case 404:
                 errorMessage = "No se encontró el recurso";
+                break;
+            case 409:
+                errorMessage = "Ya existe un corrector con ese identificador de usuario";
                 break;
             default:
                 errorMessage = `Error desconocido: ${error.error.message}`;

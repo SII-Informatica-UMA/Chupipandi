@@ -22,7 +22,7 @@ export class DetalleCorrectorComponent {
     ref.componentInstance.corrector = {...this.corrector};
     ref.result.then((corrector: CorrectorNuevo) => {
       this.correctorEditado.emit(corrector);
-    });
+    }, () => { console.log("Edición cancelada") });
   }
 
   eliminarCorrector(): void {

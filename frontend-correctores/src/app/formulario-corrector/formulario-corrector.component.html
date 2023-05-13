@@ -3,23 +3,52 @@
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cierre usuario')"></button>
   </div>
   <div class="modal-body">
-    <div class="form-group">
+    <form [formGroup]="correctForm">
+      
+      <div class="form-field">
         <label for="iduser">Id. Usuario:</label>
-        <input class="form-control" id="iduser" [(ngModel)]="corrector.identificadorUsuario" placeholder="Identificar de Usuario">
-        <label for="telefono">Teléfono:</label>
-        <input class="form-control" id="telefono" [(ngModel)]="corrector.telefono" placeholder="(34) 123456789">
-        <label for="maxcorr">Máx. Correcciones:</label>
-        <input class="form-control" id="maxcorr" [(ngModel)]="corrector.maximasCorrecciones" placeholder="Máximos exámenes a corregir">
-        <!-- <div class="form-check form-switch"> -->
-          <!-- <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
-          <label class="form-check-label" for="flexSwitchCheckDefault">Introducir Nueva Convocatoria</label> -->
-        <!-- </div> -->
-        <label for="idconvoc">Id. Convocatoria:</label>
-        <input class="form-control" id="idconvoc" [(ngModel)]="corrector.identificadorConvocatoria" placeholder="Identificador de Convocatoria">
-        <label for="materia">Materia:</label>
-        <input class="form-control" id="materia" [(ngModel)]="corrector.materia" placeholder="Id o nombre de nueva materia">
-  </div>
+        <input type="text" class="form-control" formControlName="identificadorUsuario" placeholder="Identificador de Usuario">
+      </div>
+      
+      <div class="form-field">
+        <label for="telefono">Teléfono: (opcional)</label>
+        <input type="text" class="form-control" formControlName="telefono" placeholder="(34) 123456789">
+      </div>
+      
+      <div class="form-field">
+        <label for="maximasCorrecciones">Máx. Correcciones:</label>
+        <input type="text" class="form-control" formControlName="maximasCorrecciones" placeholder="Máximos exámenes a corregir">
+      </div>
+
+      <div *ngIf="accion === 'Editar'" class="form-field form-check form-switch">
+        <input class="form-check-input" formControlName="flexSwitchCheckDefault" type="checkbox" [checked]="introducir" id="flexSwitchCheckDefault" [(ngModel)]="introducir">
+        <label class="form-check-label" for="flexSwitchCheckDefault">Introducir Nueva Convocatoria</label>
+      </div>
+      <div class="form-field">
+        <label *ngIf="introducir || accion === 'Añadir'" for="idconvoc">Id. Convocatoria:</label>
+        <input *ngIf="introducir || accion === 'Añadir'" class="form-control" formControlName="identificadorConvocatoria" id="idconvoc" placeholder="Identificador de Convocatoria">
+      </div>
+      <div class="form-field">
+        <label *ngIf="introducir || accion === 'Añadir'" for="materia">Materia:</label>
+        <input *ngIf="introducir || accion === 'Añadir'" class="form-control" formControlName="materia" id="materia" placeholder="Id o nombre de la materia">
+      </div>
+
+      <!-- <label for="iduser">Id. Usuario:</label>
+      <input class="form-control" id="iduser" [(ngModel)]="corrector.identificadorUsuario" placeholder="Identificador de Usuario">
+      <label for="telefono">Teléfono:</label>
+      <input class="form-control" id="telefono" [(ngModel)]="corrector.telefono" placeholder="(34) 123456789">
+      <label for="maxcorr">Máx. Correcciones:</label>
+      <input class="form-control" id="maxcorr" [(ngModel)]="corrector.maximasCorrecciones" placeholder="Máximos exámenes a corregir">
+      <div *ngIf="accion === 'Editar'" class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" [checked]="introducir" id="flexSwitchCheckDefault" [(ngModel)]="introducir">
+        <label class="form-check-label" for="flexSwitchCheckDefault">Introducir Nueva Convocatoria</label>
+      </div>
+      <label *ngIf="introducir || accion === 'Añadir'" for="idconvoc">Id. Convocatoria:</label>
+      <input *ngIf="introducir || accion === 'Añadir'" class="form-control" id="idconvoc" [(ngModel)]="corrector.identificadorConvocatoria" placeholder="Identificador de Convocatoria">
+      <label *ngIf="introducir || accion === 'Añadir'" for="materia">Materia:</label>
+      <input *ngIf="introducir || accion === 'Añadir'" class="form-control" id="materia" [(ngModel)]="corrector.materia" placeholder="Id o nombre de la materia"> -->
+  </form>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="guardarCorrector()">Guardar</button>
+    <button title="Mensaje" data-tooltip="submit" class="btn btn-outline-dark" [disabled]="!correctForm.valid" (click)="guardarCorrector()">Guardar</button>
   </div>
   

@@ -111,9 +111,19 @@ public class CorrectorService {
         if (corRepo.existsByIdUsuario(entidadCorrector.getIdUsuario()) && !entidadCorrector.getIdUsuario().equals(corrector.getIdUsuario())) {
             throw new CorrectorYaExiste();
         }
-        corrector.setIdUsuario(entidadCorrector.getIdUsuario());
-        corrector.setTelefono(entidadCorrector.getTelefono());
-        corrector.setMaximasCorrecciones(entidadCorrector.getMaximasCorrecciones());
+        if (entidadCorrector.getIdUsuario() != null) {
+            corrector.setIdUsuario(entidadCorrector.getIdUsuario());
+        }
+        if (!entidadCorrector.getTelefono().isEmpty()) {
+            corrector.setTelefono(entidadCorrector.getTelefono());
+        }
+        if (entidadCorrector.getMaximasCorrecciones() != null) {
+            corrector.setMaximasCorrecciones(entidadCorrector.getMaximasCorrecciones());
+        }
+
+        if (correctorMod.getMateria() == null || correctorMod.getIdentificadorConvocatoria() == null) {
+            return corRepo.save(corrector);
+        }
 
         Materia mat = correctorMod.getMateria().materia();
 

@@ -4,6 +4,7 @@
   </div>
   <div class="modal-body">
     <form [formGroup]="correctForm">
+      
       <div class="form-field">
         <label for="iduser">Id. Usuario:</label>
         <input type="text" class="form-control" formControlName="identificadorUsuario" placeholder="Identificador de Usuario">
@@ -20,19 +21,21 @@
       </div>
 
       <div *ngIf="accion === 'Editar'" class="form-field form-check form-switch">
-        <input class="form-check-input" formControlName="flexSwitchCheckDefault" type="checkbox" [checked]="introducir" id="flexSwitchCheckDefault" [(ngModel)]="introducir">
+        <input class="form-check-input" formControlName="flexSwitchCheckDefault" type="checkbox" id="flexSwitchCheckDefault">
         <label class="form-check-label" for="flexSwitchCheckDefault">Introducir Nueva Convocatoria</label>
       </div>
       <div class="form-field">
-        <label *ngIf="introducir || accion === 'Añadir'" for="idconvoc">Id. Convocatoria:</label>
-        <input *ngIf="introducir || accion === 'Añadir'" class="form-control" formControlName="identificadorConvocatoria" id="idconvoc" placeholder="Identificador de Convocatoria">
+        <label *ngIf="checkActivo || accion === 'Añadir'" for="materia">Materia:</label>
+        <input *ngIf="checkActivo || accion === 'Añadir'" class="form-control" formControlName="materia" id="materia" placeholder="Id o nombre de la materia">
       </div>
       <div class="form-field">
-        <label *ngIf="introducir || accion === 'Añadir'" for="materia">Materia:</label>
-        <input *ngIf="introducir || accion === 'Añadir'" class="form-control" formControlName="materia" id="materia" placeholder="Id o nombre de la materia">
+        <label *ngIf="checkActivo || accion === 'Añadir'" for="idconvoc">Id. Convocatoria:</label>
+        <input *ngIf="checkActivo || accion === 'Añadir'" class="form-control" formControlName="identificadorConvocatoria" id="idconvoc" placeholder="Identificador de Convocatoria">
       </div>
     </form>
   <div class="modal-footer">
-    <button title="Mensaje" data-tooltip="submit" class="btn btn-outline-dark" [disabled]="!correctForm.valid" (click)="guardarCorrector()">Guardar</button>
+    <span class="d-inline-block" tabindex="0" title="Completa campos obligatorios" data-bs-toggle="tooltip">
+      <button class="btn btn-outline-dark" [disabled]="!correctForm.valid" (click)="guardarCorrector()">Guardar</button>
+    </span>
   </div>
   

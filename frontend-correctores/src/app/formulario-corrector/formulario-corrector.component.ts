@@ -9,16 +9,10 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class FormularioCorrectorComponent {
   accion: "Añadir" | "Editar" | undefined;
-  introducir: boolean = false;
 
   public correctForm: FormGroup;
 
-  get identificadorUsuario() { return this.correctForm.get('identificadorUsuario'); }
-  get telefono() { return this.correctForm.get('telefono'); }
-  get maximasCorrecciones() { return this.correctForm.get('maximasCorrecciones'); }
-  get flexSwitchCheckDefault() { return this.correctForm.get('flexSwitchCheckDefault'); }
-  get identificadorConvocatoria() { return this.correctForm.get('identificadorConvocatoria'); }
-  get materia() { return this.correctForm.get('materia'); }
+  get checkActivo() { return this.correctForm.get('flexSwitchCheckDefault')?.value; }
   
   constructor(public modal: NgbActiveModal) {
     this.correctForm = new FormGroup({});
@@ -32,7 +26,7 @@ export class FormularioCorrectorComponent {
       this.correctForm.addControl('flexSwitchCheckDefault', new FormControl(''));
       this.correctForm.addControl('identificadorConvocatoria', new FormControl('', Validators.required));
       this.correctForm.addControl('materia', new FormControl('', Validators.required));
-    } else {
+    } else if (this.accion === "Editar") {
       this.correctForm.addControl('identificadorUsuario', new FormControl(''));
       this.correctForm.addControl('telefono', new FormControl(''));
       this.correctForm.addControl('maximasCorrecciones', new FormControl(''));

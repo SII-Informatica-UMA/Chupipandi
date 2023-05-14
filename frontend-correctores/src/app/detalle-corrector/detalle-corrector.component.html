@@ -3,10 +3,6 @@
       <h2 >Corrector N-{{corrector?.identificadorUsuario}}</h2>
     </div>
   
-  <!-- <div class="row">
-    <label class="col-md-3" for="idEntidad">Id. Entidad:</label>
-    <span class="col-md-9 offset-2 offset-md-0">{{corrector?.id}}</span>
-  </div> -->
   <div class="row">
     <label class="col-md-3" for="idUsuario">Id. Usuario:</label>
     <span class="col-md-9 offset-2 offset-md-0">{{corrector?.identificadorUsuario}}</span>
@@ -19,22 +15,27 @@
     <label class="col-md-3" for="maxcorr">Máx. Correcciones:</label>
     <span class="col-md-9 offset-2 offset-md-0">{{corrector?.maximasCorrecciones}}</span>
   </div>
-  <div class="row">
-    <label class="col-md-3" for="materias">Materias:</label>
-    <div>
-      <ul>
-        <li *ngFor="let materia of corrector?.materias">
-          Id.Materia: {{ materia.idMateria }}, Id.Convocatoria: {{ materia.idConvocatoria }}
-        </li>
-      </ul>
+  <div class="col-md-5">
+  <table class="table table-hover table-striped table-sm table-bordered border-secondary caption-top">
+    <caption>Lista de materias en convocatoria</caption>
+    <thead>
+      <tr>
+        <th scope="col" class="text-center">Id. Materia</th>
+        <th scope="col" class="text-center">Id. Convocatoria</th>
+      </tr>
+    </thead>
+      <tbody>
+        <tr *ngFor="let materia of corrector?.materias">
+          <td class="text-center">{{materia.idMateria}}</td>
+          <td class="text-center">{{materia.idConvocatoria}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="row crud-bt">
+      <button class="col-auto btn btn-outline-primary" (click)="eliminarCorrector()">Eliminar <i class="bi bi-trash-fill"></i></button>
+      <div class="col-1"></div>
+      <button class="col-auto btn btn-outline-primary" (click)="editarCorrector()">Editar <i class="bi bi-pencil-fill"></i></button>
     </div>
   </div>
-  
-  <div class="row">
-    <button class="col-auto btn btn-outline-primary" (click)="eliminarCorrector()">Eliminar <i class="bi bi-trash-fill"></i></button>
-    <div class="col-1"></div>
-    <button class="col-auto btn btn-outline-primary" (click)="editarCorrector()">Editar <i class="bi bi-pencil-fill"></i></button>
-  </div>
-  
   </div>
   

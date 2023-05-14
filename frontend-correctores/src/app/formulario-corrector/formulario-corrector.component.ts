@@ -21,18 +21,25 @@ export class FormularioCorrectorComponent {
   get materia() { return this.correctForm.get('materia'); }
   
   constructor(public modal: NgbActiveModal) {
-    this.correctForm = this.createFormGroup();
+    this.correctForm = new FormGroup({});
   }
 
-  createFormGroup() {
-    return new FormGroup({
-      identificadorUsuario: new FormControl('', Validators.required),
-      telefono: new FormControl(''),
-      maximasCorrecciones: new FormControl('', Validators.required),
-      flexSwitchCheckDefault: new FormControl(''),
-      identificadorConvocatoria: new FormControl('', Validators.required),
-      materia : new FormControl('', Validators.required)
-    });
+  createFormGroup(): void {
+    if (this.accion === "Añadir") {
+      this.correctForm.addControl('identificadorUsuario', new FormControl('', Validators.required));
+      this.correctForm.addControl('telefono', new FormControl(''));
+      this.correctForm.addControl('maximasCorrecciones', new FormControl('', Validators.required));
+      this.correctForm.addControl('flexSwitchCheckDefault', new FormControl(''));
+      this.correctForm.addControl('identificadorConvocatoria', new FormControl('', Validators.required));
+      this.correctForm.addControl('materia', new FormControl('', Validators.required));
+    } else {
+      this.correctForm.addControl('identificadorUsuario', new FormControl(''));
+      this.correctForm.addControl('telefono', new FormControl(''));
+      this.correctForm.addControl('maximasCorrecciones', new FormControl(''));
+      this.correctForm.addControl('flexSwitchCheckDefault', new FormControl(''));
+      this.correctForm.addControl('identificadorConvocatoria', new FormControl(''));
+      this.correctForm.addControl('materia', new FormControl(''));
+    }
   }
 
   // Si usamos opcion de deshabilitar el boton de guardar hasta que el formulario sea valido

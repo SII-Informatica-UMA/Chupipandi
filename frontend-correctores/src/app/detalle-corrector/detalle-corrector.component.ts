@@ -20,6 +20,7 @@ export class DetalleCorrectorComponent {
     let ref = this.modalService.open(FormularioCorrectorComponent);
     ref.componentInstance.accion = "Editar";
     ref.componentInstance.corrector = {...this.corrector};
+    ref.componentInstance.createFormGroup();
     ref.result.then((corrector: CorrectorNuevo) => {
       this.correctorEditado.emit(corrector);
     }, () => { console.log("Edición cancelada") });

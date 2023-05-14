@@ -22,12 +22,12 @@ export class AppComponent implements OnInit {
     this.actualizaCorrectores();
   }
 
-  private actualizaCorrectores(idUsuario?: bigint): void {
+  private actualizaCorrectores(id?: bigint): void {
     this.correctorService.getCorrectores()
       .subscribe(correctores => {
         this.correctores = correctores;
-        if (idUsuario) {
-          this.correctorElegido = this.correctores.find(corrector => corrector.identificadorUsuario === idUsuario);
+        if (id) {
+          this.correctorElegido = this.correctores.find(corrector => corrector.id === id);
         }
       });
   }
@@ -39,7 +39,7 @@ export class AppComponent implements OnInit {
   aniadirCorrector(): void {
     let ref = this.modalService.open(FormularioCorrectorComponent);
     ref.componentInstance.accion = "Añadir";
-    ref.componentInstance.corrector = { identificadorUsuario: 0, identificadorConvocatoria: undefined, telefono: '', materia: '', maximasCorrecciones: 0 };
+    ref.componentInstance.createFormGroup();
     ref.result.then((corrector: CorrectorNuevo) => {
       this.correctorService.addCorrector(corrector)
         .subscribe(c => {
@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
   editarCorrector(corrector: CorrectorNuevo, id: bigint): void {
     this.correctorService.editCorrector(corrector, id)
       .subscribe(() => {
-        this.actualizaCorrectores(corrector.identificadorUsuario);
+        this.actualizaCorrectores(id);
       });
   }
 

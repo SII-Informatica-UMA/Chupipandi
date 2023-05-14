@@ -4,7 +4,8 @@
       <h1>Lista de correctores</h1>
       <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon1">Id. Convocatoria:</span>
-        <input type="text" class="form-control" placeholder="Convocatoria" [(ngModel)]="idConvBusq" (input)="busqCorrectores()">
+        <input type="text" class="form-control" placeholder="Convocatoria" [(ngModel)]="idConvBusq"
+          (input)="busqCorrectores()">
         <button type="button" class="btn btn-primary bi bi-search" (click)="busqCorrectores()"></button>
       </div>
       <div class="list-group">
@@ -22,7 +23,7 @@
     <div class="col-md-6" *ngIf="correctorElegido">
       <app-detalle-corrector [corrector]="correctorElegido"
         (correctorEditado)="editarCorrector($event, correctorElegido.id)"
-        (correctorEliminado)="eliminarCorrector($event)"
-        ></app-detalle-corrector>
+        (correctorEliminado)="eliminarCorrector($event)"></app-detalle-corrector>
     </div>
   </div>
+</div>

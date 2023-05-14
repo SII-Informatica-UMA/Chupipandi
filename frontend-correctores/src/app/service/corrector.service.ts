@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Corrector, CorrectorNuevo } from '../model/interfaces';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse, HttpStatusCode } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { ErrorModalComponentComponent } from '../error-modal-component/error-modal-component.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -42,22 +42,26 @@ export class CorrectorService {
     handleError(error: any) {
         let errorMessage = '';
         const modalRef = this.modalService.open(ErrorModalComponentComponent);
-        modalRef.componentInstance.errorCode = `Error code: ${error.status}`;
+        modalRef.componentInstance.errorCode = `Error code ${error.status}: `;
         switch (error.status) {
             case 0:
-                errorMessage = "Error de angular";
+                errorMessage = "Error de angular ¿?";
                 break;
-            case 400:
+            case HttpStatusCode.BadRequest:
                 errorMessage = "Error del cliente";
+                modalRef.componentInstance.errorCode += "Bad Request";
                 break;
-            case 403:
+            case HttpStatusCode.Forbidden:
                 errorMessage = "Error en el token o en los permisos";
+                modalRef.componentInstance.errorCode += "Forbidden";
                 break;
-            case 404:
+            case HttpStatusCode.NotFound:
                 errorMessage = "No se encontró el recurso";
+                modalRef.componentInstance.errorCode += "Not Found";
                 break;
-            case 409:
+            case HttpStatusCode.Conflict:
                 errorMessage = "Ya existe un corrector con ese identificador de usuario";
+                modalRef.componentInstance.errorCode += "Conflict";
                 break;
             default:
                 errorMessage = `Error desconocido: ${error.error.message}`;

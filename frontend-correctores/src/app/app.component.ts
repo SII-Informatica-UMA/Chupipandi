@@ -67,8 +67,8 @@ export class AppComponent implements OnInit {
     this.correctorService.getCorrectores(this.idConvBusq).subscribe(correctores => {
       this.busquedaFallida = (correctores.length === 0);
       this.correctores = correctores;
+      this.correctorElegido = (this.correctores.length > 0) ? this.correctores[0] : undefined;
     });
-    this.correctorElegido = undefined;
   }
 
 }

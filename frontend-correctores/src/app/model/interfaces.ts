@@ -12,11 +12,14 @@ export interface MateriaEnConvocatoria {
   idConvocatoria: bigint;
 }
 
-// TODO: De cara al formulario, ver que campos son obligatorios y cuales no
 export interface CorrectorNuevo {
   identificadorUsuario: bigint;
   identificadorConvocatoria?: bigint;
   telefono: string;
-  materia: bigint | string;
+  materia: Materia;
   maximasCorrecciones: number;
+}
+
+export interface Materia {
+  materia: bigint | string;
 }

@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Examen } from "./examen";
-import { Correcion } from "./correcion";
+import { Correccion } from "./correccion";
 import { HttpClient, HttpResponse } from "@angular/common/http"
 import { Observable } from "rxjs";
 
@@ -16,7 +16,7 @@ export class ExamenService {
     return this.http.put<Examen>(this.baseURI + '/' + examen.id, examen);
   }
 
-  getCorrecion(): Observable<Correcion> {
-    return this.http.get<Correcion>(this.baseURI + '/correciones');
+  getCorrecion(): Observable<Correccion> {
+    return this.http.get<Correccion>(this.baseURI + '/correciones');
   }
 }

@@ -1,3 +1,8 @@
+<p>
+  <ngb-alert #notFoundAlert *ngIf="!alertClosed" type="danger" (closed)="alertClosed = true">
+    <strong>ERROR:</strong> No se han encontrado notas para el estudiante con DNI {{ dni }} y apellido {{ apellido }}.
+  </ngb-alert>
+</p>
 <div class="container">
   <div class="row">
     <div class="col-md-6">

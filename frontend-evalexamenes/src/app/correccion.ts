@@ -1,4 +1,4 @@
-export interface Correcion {
+export interface Correccion {
   corregidos: number[],
   pendientes: number[]
 }

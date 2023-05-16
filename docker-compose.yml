@@ -1,0 +1,79 @@
+# This file is a copy of the exaple provided in the 
+# documentation of the official Wordpress docker image (https://hub.docker.com/_/wordpress?tab=description)
+version: '3.1'
+
+services:
+  backend-correctores:
+    build: ./back/GestionCorrectores
+    depends_on:
+      db-correctores:
+        condition: service_healthy
+    restart: always
+    ports:
+        - 8081:8080
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:mysql://db-correctores:3306/correctores"
+      SPRING_DATASOURCE_DRIVERCLASSNAME: com.mysql.cj.jdbc.Driver
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: sa
+      SPRING_JPA_GENERATE_DDL: "true"
+      SPRING_H2_CONSOLE_ENABLED: "false"
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQLDialect
+
+  backend-evalexamenes:
+    build: ./back/EvaluacionExamenes
+    depends_on:
+      db-evalexamenes:
+        condition: service_healthy
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:mysql://db-evalexamenes:3306/evalexamenes"
+      SPRING_DATASOURCE_DRIVERCLASSNAME: com.mysql.cj.jdbc.Driver
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: sa
+      SPRING_JPA_GENERATE_DDL: "true"
+      SPRING_H2_CONSOLE_ENABLED: "false"
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQLDialect
+
+  db-correctores:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: correctores
+      MYSQL_USER: sa
+      MYSQL_PASSWORD: sa
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db-correctores:/var/lib/mysql
+    healthcheck:
+      test: "/usr/bin/mysql --user=sa --password=sa --execute \"SHOW DATABASES;\""
+      interval: 5s
+      timeout: 2s
+      retries: 60
+
+  db-evalexamenes:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: evalexamenes
+      MYSQL_USER: sa
+      MYSQL_PASSWORD: sa
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db-evalexamenes:/var/lib/mysql
+    healthcheck:
+      test: "/usr/bin/mysql --user=sa --password=sa --execute \"SHOW DATABASES;\""
+      interval: 5s
+      timeout: 2s
+      retries: 60
+
+  frontend-evalexamenes:
+    build: ./front/frontend-evalexamenes
+    ports:
+      - 4200:80
+    
+volumes:
+  db-correctores:
+  db-evalexamenes:

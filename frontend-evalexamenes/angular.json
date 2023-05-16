@@ -4,6 +4,9 @@
   "newProjectRoot": "projects",
   "projects": {
     "frontend-ms_evalexamenes": {
+      "i18n": {
+        "sourceLocale": "es-ES"
+      },
       "projectType": "application",
       "schematics": {},
       "root": "",

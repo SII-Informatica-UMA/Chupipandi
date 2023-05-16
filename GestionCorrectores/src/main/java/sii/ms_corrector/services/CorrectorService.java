@@ -117,7 +117,8 @@ public class CorrectorService {
         if (!entidadCorrector.getTelefono().isEmpty()) {
             corrector.setTelefono(entidadCorrector.getTelefono());
         }
-        if (entidadCorrector.getMaximasCorrecciones() != null) {
+        // Cuando no se modifica el valor de maximasCorrecciones, el valor que se recibe del formulario es 0, no null
+        if (entidadCorrector.getMaximasCorrecciones() != null && entidadCorrector.getMaximasCorrecciones() != 0) {
             corrector.setMaximasCorrecciones(entidadCorrector.getMaximasCorrecciones());
         }
 

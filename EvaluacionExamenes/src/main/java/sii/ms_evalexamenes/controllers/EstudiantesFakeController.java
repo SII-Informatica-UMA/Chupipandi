@@ -39,6 +39,7 @@ public class EstudiantesFakeController {
     /**
      * Endpoint que imita el endpoint del microservicio de gestión de estudiantes (necesario para la comprobación del GET de /notas)
      * @return {@code 200 OK} - Siempre devuelve OK ya que siempre hay estudiantes en la lista
+     * @annotation {@link GeneratedFakeEndpoint} Anotación para evitar el recubrimiento de JaCoCo al ser un endpoint que no pertenece a nuestro microservicio
      */
     @GeneratedFakeEndpoint
     @GetMapping
@@ -74,21 +75,20 @@ public class EstudiantesFakeController {
      * Método auxiliar para generar DNIs válidos
      * @param dni {@link String} SSN estadounidense
      * @return {@link String} DNI válido con letra
+     * @annotation {@link GeneratedFakeEndpoint} Anotación para evitar el recubrimiento de JaCoCo al ser un método de un controller que no pertenece a nuestro microservicio
      */
+    @GeneratedFakeEndpoint
     private static String getValidDNI(String dni) {
         char[] letras = {'T', 'R', 'W', 'A', 'G', 'M', 'Y', 'F', 'P', 'D', 'X',
         'B', 'N', 'J', 'Z', 'S', 'Q', 'V', 'H', 'L', 'C', 'K', 'E'};
 
-        int n = 0;
         String dniNuevo = "";
 
         for (char c : dni.substring(1).toCharArray()) {
-            if (c != '-' && c != ' ') {
+            if (c != '-' && c != ' ')
                 dniNuevo += c; 
-                n += Integer.valueOf(c);
-            }
         }
 
-        return dniNuevo + letras[n % 23];
+        return dniNuevo + letras[Integer.valueOf(dniNuevo) % 23];
     }
 }

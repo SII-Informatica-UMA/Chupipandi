@@ -72,9 +72,6 @@ public class NotasController {
      */
     @GetMapping
     public ResponseEntity<List<ExamenDTO>> getNotas(@RequestParam String dni, @RequestParam String apellido) throws JsonMappingException, JsonProcessingException {
-        
-        //El objeto optional que nos devuelve el metodo getExamenByDniAndApellido nunca apararece como null por lo tanto no devuelve excepcion
-        //Siempre devuelve una lista
         var peticion = get("http", "localhost", server.getWebServer().getPort(), "/estudiantes");
 
         var respuesta = new RestTemplate().exchange(peticion, new ParameterizedTypeReference<List<Map<String, Object>>>() {});
@@ -84,8 +81,6 @@ public class NotasController {
         Long id = Integer.toUnsignedLong((Integer)(dniRespuesta.get().get("id")));
         Optional<List<Examen>> notas = service.getExamenByDniAndApellido(id, apellido);
         
-        // notas.isPresent siempre es igual a True 
-        // Podemos Comprobar si la lista esta vacia
         if(notas.get().isEmpty()){
             return ResponseEntity.notFound().build();
         }

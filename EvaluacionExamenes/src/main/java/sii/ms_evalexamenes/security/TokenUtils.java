@@ -6,6 +6,7 @@ import java.util.Map;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 
 @SuppressWarnings("unchecked")  // saltaba un aviso por la no comprobacion de tipos (en 'claims.get()')
@@ -24,7 +25,7 @@ public class TokenUtils {
         try {
             // Si el token no es valido (por firma incorrecta o por fecha exp) salta la excepcion
             claims = Jwts.parserBuilder().setSigningKey(KEY.getBytes()).build().parseClaimsJws(token).getBody();
-        } catch (SignatureException | ExpiredJwtException e) {
+        } catch (SignatureException | ExpiredJwtException | MalformedJwtException e) {
             return false;
         }
         List<String> userRoles = claims.get("roles", List.class).stream().map(rol -> (String) rol).toList();

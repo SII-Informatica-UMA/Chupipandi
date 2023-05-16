@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -157,7 +156,7 @@ public class EvalExamenesTests {
 		 */
 
 		@Test
-		@DisplayName("Devuelve 403 al acceder a un Examen Concreto NO Existente SIN Autenticacion")
+		@DisplayName("Devuelve 403 (al acceder a un Examen Concreto NO Existente) get/examenes/{id} SIN Autenticacion")
 		public void testgetExamen1() {
 			var peticion = get("http", "localhost",port, "/examenes/1","");
 			var respuesta = restTemplate.exchange(peticion,Void.class); 
@@ -170,7 +169,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Devuelve 200 al acceder a un Examen Concreto SI Existente CON Autenticacion")
+		@DisplayName("Devuelve 200 (Devuelve Examen) get/examenes/{id} CON Autenticacion")
 		public void testgetExamen2() { 
 			ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
 			examenRepository.save(examen.examen());
@@ -188,7 +187,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Devuelve 404 al acceder a un Examen Concreto NO Existente CON Autenticacion")
+		@DisplayName("Devuelve 404 (al acceder a un Examen Concreto NO Existente) get /examenes/{id} CON Autenticacion")
 		public void testgetExamen3() { 
 			var peticion = get("http", "localhost",port, "/examenes/1",token);
 			var respuesta = restTemplate.exchange(peticion,Void.class);   
@@ -206,36 +205,36 @@ public class EvalExamenesTests {
 
 
 		@Test
-		@DisplayName("Devuelve 200 al modificar nota a un Examen Concreto SI Existente CON Autenticacion")
+		@DisplayName("Devuelve 200 (Modificar nota a un Examen Concreto SI Existente) put examenes/{id} CON Autenticacion")
 		public void testputexamenes() {
 			ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
 			ExamenDTO nuevoexamen = new ExamenDTO(2L, 2L, 2L, 2F);
 			examenRepository.save(examen.examen());
 
 			var peticion = put("http", "localhost",port, "/examenes/1",nuevoexamen,token);
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<ExamenDTO>>() {});                 
+			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <ExamenDTO>() {});                 
 			
 
 
-			Optional<Examen> examenModificado = examenRepository.findById(1L);
+			// Optional<Examen> examenModificado = examenRepository.findById(1L);
 
 			assertThat(respuesta.getStatusCode().is2xxSuccessful());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
-			assertEquals(examenModificado.get().getCalificacion(),nuevoexamen.getNota());
-			assertNotEquals(examenModificado.get().getMateriaId(),nuevoexamen.getMateria());
-			assertNotEquals(examenModificado.get().getId(),nuevoexamen.getId());
-			assertNotEquals(examenModificado.get().getAlumnoId(),nuevoexamen.getCodigoAlumno());
+			assertEquals(nuevoexamen.getNota(),respuesta.getBody().getNota());
+			assertNotEquals(nuevoexamen.getMateria(),respuesta.getBody().getMateria());
+			assertNotEquals(nuevoexamen.getId(),respuesta.getBody().getId());
+			assertNotEquals(nuevoexamen.getCodigoAlumno(),respuesta.getBody().getCodigoAlumno());
 
 
 		} 
 
 		@Test
-		@DisplayName("Devuelve 404 al modificar nota a un Examen Concreto NO Existente CON Autenticacion")
+		@DisplayName("Devuelve 404 (al modificar nota a un Examen Concreto NO Existente) put examenes/{id} CON Autenticacion")
 		public void testputexamenes1() {
 			ExamenDTO nuevoexamen = new ExamenDTO(1L, 1L, 1L, 2F);
 
 			var peticion = put("http", "localhost",port, "/examenes/1",nuevoexamen,token);
-			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<ExamenDTO>>() {});    
+			var respuesta = restTemplate.exchange(peticion, ExamenDTO.class); 
 
 			assertThat(respuesta.getStatusCode().is4xxClientError());
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(404);
@@ -244,7 +243,7 @@ public class EvalExamenesTests {
 		} 
 
 		@Test
-		@DisplayName("Devuelve 403 al modificar nota a un Examen Concreto SI Existente SIN Autenticacion")
+		@DisplayName("Devuelve 403 (Acceso Denegado al modificar nota a un Examen Concreto) put examenes/{id} SI Existente SIN Autenticacion")
 		public void testputexamenes2() {
 			ExamenDTO examen = new ExamenDTO(1L, 1L, 1L, 1F);
 			examenRepository.save(examen.examen());
@@ -269,7 +268,7 @@ public class EvalExamenesTests {
 
 
 		@Test
-		@DisplayName("Devuelve 200 al acceder a Asignaciones CON Autenticacion")
+		@DisplayName("Devuelve 200 (al acceder a Asignaciones vacias) get /examenes/asignacion CON Autenticacion")
 		public void testgetasignacion1() {
 			var peticion = get("http", "localhost",port, "/examenes/asignacion",token);
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference <List<AsignacionDTO>>() {});  
@@ -285,7 +284,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Devuelve 403 al acceder a Asignaciones SIN Autenticacion")
+		@DisplayName("Devuelve 403 (Acceso Denegado) get /examenes/asignacion SIN Autenticacion")
 		public void testgetasignacion2() {
 			var peticion = get("http", "localhost",port, "/examenes/asignacion","");
 			var respuesta = restTemplate.exchange(peticion,Void.class); 
@@ -303,7 +302,7 @@ public class EvalExamenesTests {
 
 
 		@Test
-		@DisplayName("Devuelve 200 al modificar una Asignacion CON Autenticacion")
+		@DisplayName("Devuelve 200 (asignacion modificaca) put /examenes/asignacion CON Autenticacion")
 		public void testputasignacion1() {
 			//Añadimos Examenes 1 y 2, Asignamos Corrector 1 y 2 respectivamente 
 			//Cambiarmos Corrector del Examen 2 a 1 
@@ -334,7 +333,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Devuelve 403 al modificar una Asignacion SIN Autenticacion")
+		@DisplayName("Devuelve 403 (Acceso No Autorizado) put /examenes/asignacion SIN Autenticacion")
 		public void testputasignacion2() {			
 			AsignacionDTO asignacion = new AsignacionDTO(1L, 1L);
 
@@ -356,7 +355,7 @@ public class EvalExamenesTests {
 		 */
 
 		@Test
-		@DisplayName("Devuelve 200 al añadir notificaciones notas CON Autenticacion")
+		@DisplayName("Devuelve 200 (notas Añadidas) post /notificaciones/notas CON Autenticacion")
 		public void postNotificacionesNotas() {
 
 			NotificacionNotasDTO notificacion = new NotificacionNotasDTO(
@@ -379,7 +378,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Devuelve 403 al añadir notificaciones/notas SIN Autenticacion")
+		@DisplayName("Devuelve 403 (Acceso Denegado) post /notificaciones/notas SIN Autenticacion")
 		public void postNotificacionesNotas1() {
 
 			NotificacionNotasDTO notificacion = new NotificacionNotasDTO(
@@ -405,7 +404,7 @@ public class EvalExamenesTests {
 		 */
 
 		@Test
-		@DisplayName("Devuelve 200 al añadir un Examen CON Autenticacion")
+		@DisplayName("Devuelve 200 (Examen Añadido) post /examenes CON Autenticacion")
 		public void testpostExamen() { 
 			
 			ExamenNuevoDTO examen = new ExamenNuevoDTO(1L, 1L);
@@ -421,7 +420,7 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("Devuelve 403 al añadir un Examen SIN Autenticacion")
+		@DisplayName("Devuelve 403 (Acceso Denegado) al añadir un Examen SIN Autenticacion")
 		public void testpostExamen1() { 
 			ExamenNuevoDTO examen = new ExamenNuevoDTO(1L, 1L);
 			var peticion = post("http", "localhost",port, "/examenes",examen,"");
@@ -437,13 +436,12 @@ public class EvalExamenesTests {
 
 		/**
 		 * Pruebas GET /notas
-		 * @throws URISyntaxException
 		 */
 		
 		
 		@Test
-		@DisplayName("Devuelve 200 al acceder a las Notas de un estudiante CON Autenticacion")
-		public void testgetnotas() throws URISyntaxException { 
+		@DisplayName("Devuelve 200 (Notas Estudiante) get /notas?dni=05981804X&apellido=González CON Autenticacion")
+		public void testgetnotas(){ 
 			Examen examenEjemplo = new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), 1L,  1L, 1L);
 			examenRepository.save(examenEjemplo);   
 
@@ -458,10 +456,8 @@ public class EvalExamenesTests {
 		
 
 		@Test
-		@DisplayName("Devuelve 404 al acceder a las Notas de un estudiante CON Autenticacion")
+		@DisplayName("Devuelve 404 (Estudiante no encontrado) get /notas?dni=1&apellido=Cocainomano CON Autenticacion")
 		public void testgetnotas1() { 
-
-			
 			var peticion = get("http", "localhost",port, "/notas", "", "05981804X", "González");
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<List<ExamenDTO>>() {});
 
@@ -476,7 +472,7 @@ public class EvalExamenesTests {
 		 */
 		
 		 @Test
-		 @DisplayName("Devuelve 200 al acceder a las correcciones CON Autenticacion")
+		 @DisplayName("Devuelve 200 (al acceder a las correcciones) get /examenes/correciones CON Autenticacion")
 		 public void getCorrecciones() {
 			var peticion = get("http", "localhost", port, "/examenes/correcciones", token);
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<EstadoCorrecionesDTO>() {});
@@ -490,7 +486,7 @@ public class EvalExamenesTests {
 		 }
 
 		 @Test
-		 @DisplayName("Devuelve 403 al acceder a las correcciones SIN Autenticacion")
+		 @DisplayName("Devuelve 403 (Acceso denegado) get /examenes/correciones SIN Autenticacion")
 		 public void getCorrecciones1() {
 			var peticion = get("http", "localhost", port, "/examenes/correcciones", "");
 			var respuesta = restTemplate.exchange(peticion,new ParameterizedTypeReference<EstadoCorrecionesDTO>() {});
@@ -528,7 +524,7 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("Examen encontrado")
+		@DisplayName("Devuelve 200 (Examen encontrado) get /examenes/{id} CON Autorizacion")
 		public void devuelveExamen() {
 
 			var peticion = get("http", "localhost",port, "/examenes/1", token);
@@ -541,7 +537,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Examen no encontrado")
+		@DisplayName("Devuelve 404 (Examen no encontrado) get /examenes/{id} CON Autorizacion")
 		public void noDevuelveExamen() {
 
 			var peticion = get("http", "localhost",port, "/examenes/9999", token);
@@ -553,7 +549,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Nota del examen modificada")
+		@DisplayName("Devuelve 200 (Nota Examen Modificada) put /examenes/{id} CON Autorizacion")
 		public void modificarNota() {
 
 			Examen examenModificado = examenEjemplo[0];
@@ -562,23 +558,18 @@ public class EvalExamenesTests {
 
 			var peticion = put("http", "localhost",port, "/examenes/1", examenDTOModificado, token);
 		
-			var respuesta = restTemplate.exchange(peticion,Void.class);
+			var respuesta = restTemplate.exchange(peticion,ExamenDTO.class);
 				
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
-			assertThat(respuesta.hasBody()).isEqualTo(false);
-			
-			var peticion2 = get("http", "localhost",port, "/examenes/1", token);
-			var respuesta2 = restTemplate.exchange(peticion2,
-				new ParameterizedTypeReference<ExamenDTO>() {});
+			assertThat(respuesta.hasBody()).isEqualTo(true);
 				
-			assertThat(respuesta2.getStatusCode().value()).isEqualTo(200);
-			assertThat(respuesta2.getBody()).isNotNull();
-			assertThat(compararExamenDTO(respuesta2.getBody(), examenDTOEjemplo)).isFalse();
-			assertThat(compararExamenDTO(respuesta2.getBody(), examenDTOModificado)).isTrue();
+			assertThat(respuesta.getStatusCode().is2xxSuccessful());
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			assertEquals(examenDTOModificado.getNota(),respuesta.getBody().getNota());
 		}
 
 		@Test
-		@DisplayName("Asignacion encontrada")
+		@DisplayName("Devuelve 200 (Asignacion encontrada) get /examenes/asignacion CON Autorizacion")
 		public void asignacionEncontrada() {
 			var peticion = get("http", "localhost",port, "/examenes/asignacion", token);
 			var respuesta = restTemplate.exchange(peticion,
@@ -590,7 +581,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Modificar asignacion")
+		@DisplayName("Devuelve 200 (Modificiacion Correcta) put /examenes/asignacion CON Autorizacion")
 		public void modificarAsignacion() {
 			AsignacionDTO asignacionModificada = AsignacionDTO.fromExamen(examenEjemplo[0]);
 			asignacionModificada.setIdCorrector(9999L);
@@ -613,7 +604,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Post examen")
+		@DisplayName("Devuelve 200 (Examen Añadido) Post /examenes CON autorizacion")
 		public void postExamen() {
 			ExamenNuevoDTO examenNuevoDTO = new ExamenNuevoDTO(99L, 99L);
 			
@@ -626,7 +617,7 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("Get Estado correciones")
+		@DisplayName("Devuelve 200 (Correciones Disponibles) Get /examenes/correcciones CON autorizacion")
 		public void getCorrecciones() {
 			Examen examenModificado = examenEjemplo[0];
 			examenModificado.setCalificacion(null);
@@ -649,7 +640,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Devuelve 200 al añadir un Examen CON Autenticacion")
+		@DisplayName("Devuelve 200 (al añadir un Examen con correctores asignados) post /examenes CON Autenticacion")
 		public void testpostExamen() { 
 
 			String payload = "{\"identificadorUsuario\": 99, \"identificadorConvocatoria\": 1, \"telefono\": \"123456789\", \"materia\": {\"id\": 1, \"nombre\": \"Matematicas\"}, \"maximasCorrecciones\": 20}";
@@ -677,9 +668,38 @@ public class EvalExamenesTests {
 			assertThat(respuesta3	.getStatusCode().value()).isEqualTo(200);
 
 		}
+		@Test
+		@DisplayName("Devuelve 200 (al añadir un Examen Cuya Materia no tiene correctores asignados) post /examenes CON Autenticacion")
+		public void testpostExamen1() { 
+
+			String payload = "{\"identificadorUsuario\": 99, \"identificadorConvocatoria\": 1, \"telefono\": \"123456789\", \"materia\": {\"id\": 1, \"nombre\": \"Matematicas\"}, \"maximasCorrecciones\": 20}";
+			var peticion0 = post("http", "localhost", 8081, "/correctores", payload, token);
+			var respuesta0 = restTemplate.exchange(peticion0, Void.class);
+			assertThat(respuesta0.getStatusCode().value()).isEqualTo(201);
+			String pathID = respuesta0.getHeaders().get("Location").get(0).substring(respuesta0.getHeaders().get("Location").get(0).length()-1);
+
+
+
+			ExamenNuevoDTO examen = new ExamenNuevoDTO(99L, 99L);
+			var peticion = post("http", "localhost",port, "/examenes",examen,token);
+			var respuesta1 = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});
+			assertThat(respuesta1.getStatusCode().is2xxSuccessful());
+			assertThat(respuesta1.getStatusCode().value()).isEqualTo(201);
+			var respuesta2 = restTemplate.exchange(peticion,new ParameterizedTypeReference<ExamenDTO>() {});
+
+			assertThat(respuesta2.getStatusCode().is2xxSuccessful());
+			assertThat(respuesta2	.getStatusCode().value()).isEqualTo(201);
+			assertEquals(respuesta2.getHeaders().getContentLength(),0);
+			assertFalse(respuesta2.hasBody());
+			
+			var peticion3 = delete("http", "localhost", 8081, "/correctores/" + pathID, token);
+			var respuesta3 = restTemplate.exchange(peticion3,Void.class);
+			assertThat(respuesta3	.getStatusCode().value()).isEqualTo(200);
+
+		}
 
 		@Test
-		@DisplayName("Devuelve 409 al añadir un Examen CON Autenticacion")
+		@DisplayName("Devuelve 409 (al añadir un Examen ya Existente ) post /examenes CON Autenticacion")
 		public void testpostExamenDemasiados() { 
 
 			String payload = "{\"identificadorUsuario\": 99, \"identificadorConvocatoria\": 1, \"telefono\": \"123456789\", \"materia\": {\"id\": 1, \"nombre\": \"Matematicas\"}, \"maximasCorrecciones\": -1}";
@@ -709,8 +729,9 @@ public class EvalExamenesTests {
 	@Nested
 	@DisplayName("Tests Notificaciones")
 	public class notificacionesTests {
+
 		@Test
-		@DisplayName("Post notificacion de notas")
+		@DisplayName("Devuelve 200 (Medios SI contemplados) Post /notificaciones/nostas CON autorizacion")
 		public void notificaciones() {
 			NotificacionNotasDTO notificacion = 
 				new NotificacionNotasDTO(	"Asunto", 
@@ -727,7 +748,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Post notificacion de notas todos los medios")
+		@DisplayName("Devuelve 400 (Medios SI contemplados) Post /notificaciones/nostas CON autorizacion")
 		public void notificacionesTodosMedios() {
 			NotificacionNotasDTO notificacion = 
 				new NotificacionNotasDTO(	"Asunto", 
@@ -745,7 +766,7 @@ public class EvalExamenesTests {
 	}
 
 	@Nested
-	@DisplayName("Tests notas")
+	@DisplayName("Tests GET notas")
 	public class notasTests {
 
 		Examen examenEjemplo = new Examen(1L, (float)5.0, new Timestamp(System.currentTimeMillis()), 1L,  1L, 1L);
@@ -756,7 +777,7 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("Get notas por dni y apellidos")
+		@DisplayName("Devuelve 200  Get /notas?dni=1&apellido=rodriguez de examenes SI Existentes CON autorizacion")
 		public void getNotas() {
 			var peticion = get("http", "localhost",port, "/notas", token, "05981804X", "González");
 			var respuesta = restTemplate.exchange(peticion,
@@ -770,7 +791,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Get notas por dni y apellido no correcto")
+		@DisplayName("Get notas por dni y apellido no correcto (devuelve 404)")
 		public void getNotasApellidoIncorrecto() {
 			var peticion = get("http", "localhost",port, "/notas", token, "05981804X", "Gonzále");
 			var respuesta = restTemplate.exchange(peticion,
@@ -781,7 +802,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Get notas por dni no válido")
+		@DisplayName("Get notas por dni no válido (devuelve 404)")
 		public void getNotasDNIIncorrecto() {
 			var peticion = get("http", "localhost",port, "/notas", token, "12345678A", "González");
 			var respuesta = restTemplate.exchange(peticion,
@@ -793,10 +814,10 @@ public class EvalExamenesTests {
 	}
 
 	@Nested
-	@DisplayName("Tests sin autorizacion")
+	@DisplayName("Pruebas 403 Token no Validos ")
 	public class noAutorizacion{
 		@Test
-		@DisplayName("Get examen")
+		@DisplayName("Devuelve 403 Get /examen/{id} SIN autenticacion")
 		public void getExamen() {
 			var peticion = get("http", "localhost",port, "/examenes/1", "");
 			var respuesta = restTemplate.exchange(peticion, Void.class);
@@ -804,7 +825,7 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("Put examen")
+		@DisplayName("Devuelve 403 Put /examen/{id} SIN autenticacion")
 		public void putExamen() {
 			var peticion = put("http", "localhost",port, "/examenes/1", new ExamenDTO(), "");
 			var respuesta = restTemplate.exchange(peticion, Void.class);
@@ -812,7 +833,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Get examenes asignacion")
+		@DisplayName("Devuelve 403 Get examenes asignacion SIN autenticacion")
 		public void getExamenesAsignacion() {
 			var peticion = get("http", "localhost",port, "/examenes/asignacion", "");
 			var respuesta = restTemplate.exchange(peticion, Void.class);
@@ -820,7 +841,7 @@ public class EvalExamenesTests {
 		}
 		
 		@Test
-		@DisplayName("Put examenes asignacion")
+		@DisplayName("Devuelve 403 Put /examenes asignacion SIN autenticacion")
 		public void putExamenesAsignacion() {
 			var peticion = put("http", "localhost",port, "/examenes/asignacion", new ArrayList<AsignacionDTO>(), "");
 			var respuesta = restTemplate.exchange(peticion, Void.class);
@@ -828,7 +849,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Post notificacion de notas")
+		@DisplayName("Devuelve 403 Post /notificaciones/notas SIN autenticacion")
 		public void postNotas() {
 			var peticion = post("http", "localhost",port, "/notificaciones/notas", new NotificacionNotasDTO(), "");
 			var respuesta = restTemplate.exchange(peticion, Void.class);
@@ -836,7 +857,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Post examenes")
+		@DisplayName("Devuelve 403 Post /examenes SIN autenticacion")
 		public void postExamene() {
 			var peticion = post("http", "localhost",port, "/examenes", new ExamenNuevoDTO(), "");
 			var respuesta = restTemplate.exchange(peticion, Void.class);
@@ -844,7 +865,7 @@ public class EvalExamenesTests {
 		}
 
 		@Test
-		@DisplayName("Get correcciones")
+		@DisplayName("Devuelve 403 Get /examenes/correcciones SIN autenticacion")
 		public void getCorrecciones() {
 			var peticion = get("http", "localhost",port, "/examenes/correcciones", "");
 			var respuesta = restTemplate.exchange(peticion, Void.class);

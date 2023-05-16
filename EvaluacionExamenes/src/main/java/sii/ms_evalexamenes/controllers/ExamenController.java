@@ -88,7 +88,7 @@ public class ExamenController {
         Examen ex = examen.examen();
         ex.setId(id);
         service.updateExamen(ex);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ExamenDTO.fromExamen(service.getExamenById(id).get()));
     }
 
    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -192,9 +192,4 @@ public class ExamenController {
     @ExceptionHandler(UnauthorizedAccessException.class)
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
     public void unauthorizedAccess() {}
-
-    // @ExceptionHandler(AlreadyExistsException.class)
-    // @ResponseStatus(code = HttpStatus.CONFLICT)
-    // public void alreadyExists() {}
-
 }

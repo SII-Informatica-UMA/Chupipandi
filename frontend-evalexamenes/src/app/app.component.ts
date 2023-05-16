@@ -1,12 +1,12 @@
 import { Component, ViewChild } from '@angular/core';
-import { TitleStrategy } from '@angular/router';
 import { NgbAlert, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Correccion } from './correccion';
 import { Estudiante } from './estudiante';
 import { Examen } from './examen';
 import { ExamenService } from './examen.service';
 import { FormularioNotasComponent } from './formulario-notas/formulario-notas.component';
+import { FormularioNotificacionComponent } from './formulario-notificacion/formulario-notificacion.component';
 import { NotasService } from './notas.service';
+import { NotificacionService } from './notificacion.service';
 
 @Component({
   selector: 'app-root',
@@ -15,38 +15,56 @@ import { NotasService } from './notas.service';
 })
 export class AppComponent {
   notas?: Examen[];
-  correccion?: Correccion;
   dni?: string;
   apellido?: string;
-  alertClosed: boolean = true;
+  notFoundAlertClosed: boolean = true;
+  notFoundTimer: any;
+  activeNav: number = 1;
+
 
   @ViewChild('notFoundAlert', { static: false }) notFoundAlert?: NgbAlert;
+  @ViewChild('formNotas', { static: false }) formularioNotas: FormularioNotasComponent;
+  @ViewChild('formNoti', { static: false }) formularioNotificacion?: FormularioNotificacionComponent;
 
-  constructor(private examenService: ExamenService, private notasService: NotasService, private modalService: NgbModal) {}
-
-  getNotas(): void {
-    let ref = this.modalService.open(FormularioNotasComponent);
-    ref.componentInstance.estudiante = {dni: '', apellido: ''};
-    ref.result.then((estudiante: Estudiante) => {
-      this.dni = estudiante.dni;
-      this.apellido = estudiante.apellido;
-      this.notasService.getNotas(this.dni, this.apellido)
-        .subscribe({
-          next: (notas) => this.notas = notas,
-          error: () => this.notas = [],
-          complete: () => console.log('Complete')
-        });
-      this.alertClosed = !(this.notas?.length == 0);
-      if (!this.alertClosed) setTimeout(() => this.notFoundAlert?.close(), 5000);
-      else {
-        this.notFoundAlert?.close();
-        this.alertClosed = true
-      }
-    })
+  constructor(private notificacionService: NotificacionService, private examenService: ExamenService, private notasService: NotasService, private modalService: NgbModal) {
+    this.formularioNotas = new FormularioNotasComponent;
+    this.notFoundTimer = setTimeout(() => null, 5000);
   }
 
-  getCorrecion(): void {
-    this.examenService.getCorrecion()
-      .subscribe(correccion => this.correccion = correccion);
+  getNotas(): void {
+    clearTimeout(this.notFoundTimer);
+    let estudiante: Estudiante = this.formularioNotas.estudiante;
+    console.log(estudiante)
+    this.dni = estudiante.dni;
+    this.apellido = estudiante.apellido;
+    this.notasService.getNotas(this.dni, this.apellido)
+      .subscribe({
+        next: (notas) => this.notas = notas,
+        error: () => this.notas = []
+      });
+    this.notFoundAlertClosed = !(this.notas?.length == 0);
+    if (!this.notFoundAlertClosed) this.notFoundTimer = setTimeout(() => this.notFoundAlert?.close(), 5000);
+    else {
+      this.notFoundAlert?.close();
+      this.notFoundAlertClosed = true
+    }
+    this.formularioNotas.estudiante = {dni: '', apellido: ''};
+  }
+
+  restartNotificacion(): void {
+    if (this.formularioNotificacion)
+      this.formularioNotificacion.notificacion = {plantillaAsunto: '', plantillaCuerpo: '', programacionEnvio: new Date, medios: []};
+  }
+
+  sendNotificacion(): void {
+    if (this.formularioNotificacion)
+      this.notificacionService.postNotificacion(this.formularioNotificacion.notificacion)
+        .subscribe({
+          error: (error) => console.log(error)
+        })
+  }
+
+  private actualizaComponentes(): void {
+
   }
 }

@@ -1,16 +1,49 @@
 <p>
-  <ngb-alert #notFoundAlert *ngIf="!alertClosed" type="danger" (closed)="alertClosed = true">
+  <ngb-alert #notFoundAlert *ngIf="!notFoundAlertClosed" type="danger" (closed)="notFoundAlertClosed = true">
     <strong>ERROR:</strong> No se han encontrado notas para el estudiante con DNI {{ dni }} y apellido {{ apellido }}.
   </ngb-alert>
 </p>
 <div class="container">
   <div class="row">
-    <div class="col-md-6">
-      <h1>Elige una opción</h1>
-      <button type="button" class="btn btn-outline-primary" (click)="getNotas()">Ver calificaciones de un estudiante</button>
+    <h2>Elige una opción</h2>
+    <ul ngbNav #nav="ngbNav" [(activeId)]="activeNav" class="nav-tabs">
+      <li [ngbNavItem]="1">
+        <button ngbNavLink>Modificar la nota de un examen</button>
+        <ng-template ngbNavContent>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="2">
+        <button ngbNavLink>Consultar exámenes corregidos y pendientes</button>
+        <ng-template ngbNavContent>
+          <app-detalle-correccion></app-detalle-correccion>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="3">
+        <button ngbNavLink (click)="restartNotificacion()">Notificar notas a estudiantes</button>
+        <ng-template ngbNavContent>
+          <app-formulario-notificacion #formNoti></app-formulario-notificacion>
+          <button [disabled]="true" type="button" class="btn btn-primary bi-send" (click)="sendNotificacion()"></button>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="4">
+        <button ngbNavLink (click)="notas = []">Ver calificaciones de un estudiante</button>
+        <ng-template ngbNavContent>
+          <app-formulario-notas #formNotas></app-formulario-notas>
+          <button type="button" class="btn btn-primary bi bi-search" (click)="getNotas()"></button>
+        </ng-template>
+      </li>
+    </ul>
+    <div class="row" *ngIf="activeNav == 2">
+      <div [ngbNavOutlet]="nav" class="col-md-6"></div>
     </div>
-    <div class="col-md-6">
-      <app-detalle-notas [notas]="notas"></app-detalle-notas>
+    <div class="row" *ngIf="activeNav == 3">
+      <div [ngbNavOutlet]="nav" class="col-md-6"></div>
+    </div>
+    <div class="row" *ngIf="activeNav == 4">
+      <div [ngbNavOutlet]="nav" class="col-md-6"></div>
+      <div class="col-md-6">
+        <app-detalle-notas [notas]="notas"></app-detalle-notas>
+      </div>
     </div>
   </div>
 </div>

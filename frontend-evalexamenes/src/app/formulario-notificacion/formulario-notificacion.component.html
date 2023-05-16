@@ -1,0 +1,23 @@
+<style>
+  .form-control {
+    width: 200px;
+  }
+</style>
+
+<div class="form-group">
+    <label for="plantillaAsunto">Asunto:</label>
+    <textarea [required]="true" class="form-control" id="plantillaAsunto" [(ngModel)]="notificacion.plantillaAsunto" placeholder="Escriba el asunto de la notificación..."></textarea>
+    <label for="plantillaCuerpo">Cuerpo:</label>
+    <textarea class="form-control" id="plantillaCuerpo" [(ngModel)]="notificacion.plantillaCuerpo" placeholder="Escriba el cuerpo de la notificación..."></textarea>
+    <label>Caracteres: {{ notificacion.plantillaCuerpo.length }} </label><hr>
+    <label for="fecha">Fecha de envío:</label>
+    <input class="form-control" placeholder="dd/mm/yyyy" #c1="ngModel" name="d1" [(ngModel)]="model2" ngbDatepicker #d1="ngbDatepicker">
+    <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d1.toggle()" type="button"></button>
+    <button class="btn btn-sm btn-outline-primary" (click)="model2 = today">Elegir el día de hoy</button>
+    <ngb-timepicker [(ngModel)]="hora" [meridian]="meridian"></ngb-timepicker>
+    <label>Medios:</label><br>
+    <input type="checkbox" class="form-check-input" id="medioSMS">
+    <label class="form-check-label" for="medioSMS">SMS</label><br>
+    <input type="checkbox" class="form-check-input" id="medioEMAIL">
+    <label class="form-check-label" for="medioEMAIL">EMAIL</label>
+</div>

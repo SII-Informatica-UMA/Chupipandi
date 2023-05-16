@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Corrector, CorrectorNuevo } from './model/interfaces';
 import { CorrectorService } from './service/corrector.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -22,6 +22,42 @@ export class AppComponent implements OnInit {
     this.actualizaCorrectores();
   }
 
+  @HostListener('keydown', ['$event'])
+  onKeyDown(e: KeyboardEvent) {
+    switch (e.key) {
+      case "ArrowDown":
+        let newPosDown = (this.correctores.indexOf(this.correctorElegido ?? this.correctores[0]) + 1) % this.correctores.length;
+        this.correctorElegido = this.correctores[newPosDown];
+        break;
+      case "ArrowUp":
+        let newPosUp = (this.correctores.indexOf(this.correctorElegido ?? this.correctores[0]) - 1 + this.correctores.length) % this.correctores.length;
+        this.correctorElegido = this.correctores[newPosUp];
+        break;
+      case "Delete":
+        if (this.correctorElegido) {
+          this.eliminarCorrector(this.correctorElegido.id);
+        }
+        break;
+      case "Enter":
+        if (this.correctorElegido) {
+          let ref = this.modalService.open(FormularioCorrectorComponent);
+          ref.componentInstance.accion = "Editar";
+          // Clona el objeto corrector y se lo pasa al formulario (no es necesario ya)
+          // ref.componentInstance.corrector = { ...this.correctorElegido };
+          ref.componentInstance.createFormGroup();
+          ref.result.then((corrector: CorrectorNuevo) => {
+            this.editarCorrector(corrector, this.correctorElegido?.id ?? 0n);
+          }, () => { console.log("Edición cancelada") });
+        }
+        break;
+      case "Escape":
+        this.correctorElegido = undefined;
+        break;
+      default:
+        console.log("Tecla no reconocida");
+      }
+  }
+
   private actualizaCorrectores(id?: bigint): void {
     this.correctorService.getCorrectores()
       .subscribe(correctores => {
@@ -43,7 +79,7 @@ export class AppComponent implements OnInit {
     ref.result.then((corrector: CorrectorNuevo) => {
       this.correctorService.addCorrector(corrector)
         .subscribe(c => {
-          this.actualizaCorrectores();
+          this.actualizaCorrectores(c.body?.id);
         })
     }, () => { console.log("Añadir cancelado") });
   }

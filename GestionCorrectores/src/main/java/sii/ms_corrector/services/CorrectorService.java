@@ -122,7 +122,12 @@ public class CorrectorService {
             corrector.setMaximasCorrecciones(entidadCorrector.getMaximasCorrecciones());
         }
 
-        if (correctorMod.getMateria() == null || correctorMod.getIdentificadorConvocatoria() == null) {
+        // Para que se pueda actualizar los otros campos sin que tengamos que especificar una materia y una convocatoria
+        // En el formulario se comprobara que se ha introducido UNA MATERIA y UNA CONVOCATORIA en caso de que se quiera modificar
+        
+        // Si el identificador de la convocatoria es null, quiere decir que se están modificando otros campos, que no metiendo nuevas
+        // convocatorias. Por tanto, simplemente guardamos los datos que llevamos y no comprobamos nada más
+        if (correctorMod.getIdentificadorConvocatoria() == null) {
             return corRepo.save(corrector);
         }
 

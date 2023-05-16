@@ -19,7 +19,8 @@ export class DetalleCorrectorComponent {
   editarCorrector(): void {
     let ref = this.modalService.open(FormularioCorrectorComponent);
     ref.componentInstance.accion = "Editar";
-    ref.componentInstance.corrector = {...this.corrector};
+    // Clona el objeto corrector y se lo pasa al formulario (no es necesario ya)
+    // ref.componentInstance.corrector = {...this.corrector};
     ref.componentInstance.createFormGroup();
     ref.result.then((corrector: CorrectorNuevo) => {
       this.correctorEditado.emit(corrector);

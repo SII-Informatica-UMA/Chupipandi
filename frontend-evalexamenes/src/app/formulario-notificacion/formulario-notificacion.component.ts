@@ -51,11 +51,7 @@ export class DateParserFormatter extends NgbDateParserFormatter {
   templateUrl: './formulario-notificacion.component.html',
   styleUrls: ['./formulario-notificacion.component.css'],
   standalone: true,
-  imports: [NgbTimepickerModule, FormsModule, NgbDatepickerModule],
-  providers: [
-    { provide: NgbDateAdapter, useClass: DateAdapter},
-    { provide: NgbDateParserFormatter, useClass: DateParserFormatter}
-  ]
+  imports: [NgbTimepickerModule, FormsModule, NgbDatepickerModule]
 })
 
 @Injectable({

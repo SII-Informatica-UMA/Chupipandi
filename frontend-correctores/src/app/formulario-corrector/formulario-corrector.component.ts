@@ -19,18 +19,18 @@ export class FormularioCorrectorComponent {
     if (this.accion === "Añadir") {
       // Para que el formulario muestre abierto los campos de nueva convocatoria (en añadir es obligatorio)
       this.collapsed = false;
-      this.correctForm.addControl('identificadorUsuario', new FormControl('', Validators.required));
-      this.correctForm.addControl('telefono', new FormControl(''));
-      this.correctForm.addControl('maximasCorrecciones', new FormControl('', Validators.required));
+      this.correctForm.addControl('identificadorUsuario', new FormControl('', [Validators.required, Validators.min(1)]));
+      this.correctForm.addControl('telefono', new FormControl('', Validators.pattern("^([0-9]{3}-){2}[0-9]{3}$")));
+      this.correctForm.addControl('maximasCorrecciones', new FormControl('', [Validators.required, Validators.min(1)]));
       this.correctForm.addControl('flexSwitchCheckDefault', new FormControl(''));
-      this.correctForm.addControl('identificadorConvocatoria', new FormControl('', Validators.required));
+      this.correctForm.addControl('identificadorConvocatoria', new FormControl('', [Validators.required, Validators.min(1)]));
       this.correctForm.addControl('materia', new FormControl('', Validators.required));
     } else if (this.accion === "Editar") {
-      this.correctForm.addControl('identificadorUsuario', new FormControl(''));
-      this.correctForm.addControl('telefono', new FormControl(''));
-      this.correctForm.addControl('maximasCorrecciones', new FormControl(''));
+      this.correctForm.addControl('identificadorUsuario', new FormControl('', Validators.min(1)));
+      this.correctForm.addControl('telefono', new FormControl('', Validators.pattern("^([0-9]{3}-){2}[0-9]{3}$")));
+      this.correctForm.addControl('maximasCorrecciones', new FormControl('', Validators.min(1)));
       this.correctForm.addControl('flexSwitchCheckDefault', new FormControl(''));
-      this.correctForm.addControl('identificadorConvocatoria', new FormControl(''));
+      this.correctForm.addControl('identificadorConvocatoria', new FormControl('', Validators.min(1)));
       this.correctForm.addControl('materia', new FormControl(''));
     }
   }
@@ -40,6 +40,8 @@ export class FormularioCorrectorComponent {
     if (!this.correctForm.invalid) {
       // Quitamos el campo del switch para que no se envie al backend
       this.correctForm.removeControl('flexSwitchCheckDefault');
+      // Añadimos el prefijo de España al telefono
+      this.correctForm.get('telefono')?.setValue("+34 " + this.correctForm.get('telefono')?.value);
       this.modal.close(this.correctForm.value);
     }
   }

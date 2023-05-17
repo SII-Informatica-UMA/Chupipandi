@@ -22,7 +22,7 @@ export class FormularioCorrectorComponent {
       this.correctForm.addControl('identificadorUsuario', new FormControl('', [Validators.required, Validators.min(1)]));
       this.correctForm.addControl('telefono', new FormControl('', Validators.pattern("^[0-9]{9}$")));
       this.correctForm.addControl('maximasCorrecciones', new FormControl('', [Validators.required, Validators.min(1)]));
-      this.correctForm.addControl('flexSwitchCheckDefault', new FormControl(''));
+      // this.correctForm.addControl('flexSwitchCheckDefault', new FormControl(''));
       this.correctForm.addControl('identificadorConvocatoria', new FormControl('', [Validators.required, Validators.min(1)]));
       this.correctForm.addControl('materia', new FormControl('', Validators.required));
     } else if (this.accion === "Editar") {
@@ -37,7 +37,7 @@ export class FormularioCorrectorComponent {
 
   // Si usamos opcion de deshabilitar el boton de guardar hasta que el formulario sea valido
   guardarCorrector(): void {
-    if (!this.correctForm.invalid) {
+    if (this.correctForm.valid) {
       // Quitamos el campo del switch para que no se envie al backend
       this.correctForm.removeControl('flexSwitchCheckDefault');
       // Añadimos el telefono (solo si se ha editado): separadores y prefijo de España

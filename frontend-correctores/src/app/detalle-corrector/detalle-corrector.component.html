@@ -5,15 +5,15 @@
   
   <div class="row">
     <label class="col-md-3" for="idUsuario">Id. Usuario:</label>
-    <span class="col-md-9 offset-2 offset-md-0">{{corrector?.identificadorUsuario}}</span>
+    <span id="identificador" class="col-md-9 offset-2 offset-md-0">{{corrector?.identificadorUsuario}}</span>
   </div>
   <div class="row">
     <label class="col-md-3" for="telefono">Teléfono:</label>
-    <span class="col-md-9 offset-2 offset-md-0">{{(corrector?.telefono) ? corrector?.telefono : 'Sin teléfono' }} </span>
+    <span id="telefono" class="col-md-9 offset-2 offset-md-0">{{(corrector?.telefono) ? corrector?.telefono : 'Sin teléfono' }} </span>
   </div>
   <div class="row">
     <label class="col-md-3" for="maxcorr">Máx. Correcciones:</label>
-    <span class="col-md-9 offset-2 offset-md-0">{{corrector?.maximasCorrecciones}}</span>
+    <span id="maxCorr" class="col-md-9 offset-2 offset-md-0">{{corrector?.maximasCorrecciones}}</span>
   </div>
   <div class="col-md-5">
   <table class="table table-hover table-striped table-sm table-bordered border-secondary caption-top">

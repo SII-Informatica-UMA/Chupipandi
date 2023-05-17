@@ -34,11 +34,11 @@ describe('DetalleCorrectorComponent', () => {
   });
 
   // it('should emit correctorEditado event when editarCorrector is called', () => {
-  //   const mockCorrector: Corrector = { id: 1n, identificadorUsuario: 1n, telefono: '954362837',
+  //   const mockCorrector: Corrector = { id: 1n, identificadorUsuario: 1n, telefono: '+34 954-362-837',
   //     maximasCorrecciones: 21, materias: [{ idMateria: 1n, idConvocatoria: 1n }] };
   //   const mockMateria: Materia = { materia: 1n };
   //   const mockCorrectorNuevo: CorrectorNuevo = { identificadorUsuario: 1n,
-  //     identificadorConvocatoria: 1n, telefono: '954362837', materia: mockMateria, 
+  //     identificadorConvocatoria: 1n, telefono: '+34 954-362-837', materia: mockMateria, 
   //     maximasCorrecciones: 21 };
     
   //   ventana = modalService.open(FormularioCorrectorComponent);
@@ -63,7 +63,7 @@ describe('DetalleCorrectorComponent', () => {
   // });
 
   it('should emit correctorEliminado event when eliminarCorrector is called', () => {
-    const mockCorrector: Corrector = { id: 1n, identificadorUsuario: 1n, telefono: '954362837',
+    const mockCorrector: Corrector = { id: 1n, identificadorUsuario: 1n, telefono: '+34 954-362-837',
       maximasCorrecciones: 21, materias: [{ idMateria: 1n, idConvocatoria: 1n }] };
 
     spyOn(component.correctorEliminado, 'emit');
@@ -75,27 +75,46 @@ describe('DetalleCorrectorComponent', () => {
   });
 
   it('should display corrector details', () => {
-    const mockCorrector: Corrector = { id: 1n, identificadorUsuario: 1n, telefono: '954362837',
-      maximasCorrecciones: 21, materias: [{ idMateria: 1n, idConvocatoria: 1n }] };
+    const mockCorrector: Corrector = {
+      id: 1n,
+      identificadorUsuario: 1n,
+      telefono: '+34 954-362-837',
+      maximasCorrecciones: 21,
+      materias: [
+        { 
+          idMateria: 1n,
+          idConvocatoria: 1n
+        }
+      ]
+    };
 
     component.corrector = mockCorrector;
     fixture.detectChanges();
 
     const idUsuarioLabel = fixture.debugElement.query(By.css('label[for="idUsuario"]'));
-    const idUsuarioSpan = fixture.debugElement.query(By.css('#identificador'));
-    const telefonoLabel = fixture.debugElement.query(By.css('label[for="telefono"]'));
-    const telefonoSpan = fixture.debugElement.query(By.css('#telefono'));
-    const maxcorrLabel = fixture.debugElement.query(By.css('label[for="maxcorr"]'));
-    const maxcorrSpan = fixture.debugElement.query(By.css('#maxCorr'));
-    const materiaRows = fixture.debugElement.queryAll(By.css('tbody tr'));
-
     expect(idUsuarioLabel.nativeElement.textContent).toContain('Id. Usuario:');
+    
+    const idUsuarioSpan = fixture.debugElement.query(By.css('#idUsuario'));
     expect(idUsuarioSpan.nativeElement.textContent).toContain(mockCorrector.identificadorUsuario.toString());
+    
+
+    const telefonoLabel = fixture.debugElement.query(By.css('label[for="telefono"]'));
     expect(telefonoLabel.nativeElement.textContent).toContain('Teléfono:');
+    
+    const telefonoSpan = fixture.debugElement.query(By.css('#telefono'));
     expect(telefonoSpan.nativeElement.textContent).toContain(mockCorrector.telefono);
+    
+
+    const maxcorrLabel = fixture.debugElement.query(By.css('label[for="maxcorr"]'));
     expect(maxcorrLabel.nativeElement.textContent).toContain('Máx. Correcciones:');
+    
+    const maxcorrSpan = fixture.debugElement.query(By.css('#maxcorr'));
     expect(maxcorrSpan.nativeElement.textContent).toContain(mockCorrector.maximasCorrecciones.toString());
+    
+    
+    const materiaRows = fixture.debugElement.queryAll(By.css('tbody tr'));
     expect(materiaRows.length).toBe(mockCorrector.materias.length);
+
   });
 
 });

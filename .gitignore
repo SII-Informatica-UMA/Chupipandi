@@ -60,3 +60,4 @@ esquema.ddl
 .vscode/
 
 TestCorrectorLogger.txt
+test-skip-runme.bat

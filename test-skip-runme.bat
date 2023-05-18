@@ -1,6 +1,3 @@
-:: Iniciar Base de Datos
-start cmd.exe @cmd /k "java -cp h2-2.1.210.jar org.h2.tools.Server -ifNotExists"
-
 :: Iniciar el servicio Gestion de correctores
 CALL mvn -f ./GestionCorrectores/pom.xml -Dmaven.test.skip=true clean package 
 timeout /t 3

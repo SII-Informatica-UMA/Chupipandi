@@ -1,7 +1,7 @@
-import { TranslationWidth } from "@angular/common";
-import { Component, Injectable } from "@angular/core";
-import { FormsModule } from "@angular/forms";
-import { NgbCalendar, NgbDate, NgbDateAdapter, NgbDateParserFormatter, NgbDatepickerI18n, NgbDatepickerModule, NgbDateStruct, NgbTimepickerModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgIf } from "@angular/common";
+import { Component, EventEmitter, Injectable, Output } from "@angular/core";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { NgbCalendar, NgbDateAdapter, NgbDateParserFormatter, NgbDatepickerI18n, NgbDatepickerModule, NgbDateStruct, NgbTimepickerModule } from "@ng-bootstrap/ng-bootstrap";
 import { Notificacion } from "../notificacion";
 
 const I18N_VALUES = {
@@ -92,7 +92,7 @@ export class DateParserFormatter extends NgbDateParserFormatter {
   templateUrl: './formulario-notificacion.component.html',
   styleUrls: ['./formulario-notificacion.component.css'],
   standalone: true,
-  imports: [NgbTimepickerModule, FormsModule, NgbDatepickerModule],
+  imports: [NgbTimepickerModule, FormsModule, NgbDatepickerModule, ReactiveFormsModule, NgIf],
   providers: [I18n, {provide: NgbDatepickerI18n, useClass: DatePickerI18n},
               DateAdapter, {provide: NgbDateAdapter, useClass: DateAdapter},
               DateParserFormatter, {provide: NgbDateParserFormatter, useClass: DateParserFormatter}]
@@ -102,13 +102,16 @@ export class DateParserFormatter extends NgbDateParserFormatter {
   providedIn: 'root'
 })
 export class FormularioNotificacionComponent {
-  notificacion: Notificacion = {plantillaAsunto: '', plantillaCuerpo: '', programacionEnvio: new Date, medios: []};
+  notificacion: Notificacion = {plantillaAsunto: '', plantillaCuerpo: '', programacionEnvio: '', medios: []};
   hora: any = { hour: 0, minute: 0, second: 0};
-  meridian: boolean = true;
+  emailChecked: boolean = false;
+  smsChecked: boolean = false;
+  maxLengthAsunto: number = 200;
+  maxLengthCuerpo: number = 500;
+  @Output() eventEmitter: EventEmitter<Notificacion> = new EventEmitter<Notificacion>();
 
-
-  model?: NgbDateStruct;
-  modelString?: string;
+  fecha?: NgbDateStruct | null;
+  fechaString?: string;
 
   constructor(private ngbCalendar: NgbCalendar, private dateAdapter: NgbDateAdapter<string>) {}
 
@@ -116,14 +119,42 @@ export class FormularioNotificacionComponent {
     return this.ngbCalendar.getToday();
   }
 
-  get todayString() {
-    return this.dateAdapter.toModel(this.ngbCalendar.getToday())!
-  }
-
   get fechaYHora() {
-    let fecha = `${this.model?.year}-${this.model?.month}-${this.model?.day}T${this.hora.hour}:${this.hora.minute}:${this.hora.second}.000Z`;
-    return fecha;
+    if (this.fechaString)
+      this.fecha = this.dateAdapter.fromModel(this.fechaString);
+    let addZeroDate = (toZero: number | undefined) => typeof toZero != 'undefined' && toZero < 10 ? '0' : '';
+    let fechaString = `${addZeroDate(this.fecha?.year) + this.fecha?.year}-${addZeroDate(this.fecha?.month) + this.fecha?.month}-${addZeroDate(this.fecha?.day) + this.fecha?.day}T${addZeroDate(this.hora.hour) + this.hora.hour}:${addZeroDate(this.hora.minute) + this.hora.minute}:${addZeroDate(this.hora.second) + this.hora.second}.000Z`;
+    return fechaString;
   }
 
+  changeMedios(checked: boolean, checkedValue: string): void {
+    if (checked && !this.notificacion.medios.includes(checkedValue)) this.notificacion.medios.push(checkedValue)
+    else if (!checked && this.notificacion.medios.includes(checkedValue)) this.notificacion.medios.splice(this.notificacion.medios.indexOf(checkedValue), 1);
+  }
 
+  checkHora(): void {
+    let outputDate = new Date();
+    let now = new Date();
+    console.log(now.getHours());
+    outputDate.setHours(this.hora.hour);
+    outputDate.setMinutes(this.hora.minute);
+    outputDate.setSeconds(this.hora.second);
+    if (this.fecha?.day == this.today.day && this.fecha?.month == this.today.month && this.fecha?.year == this.today.year) {
+      if (outputDate < now)
+        this.hora = {hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds()};
+    }
+  }
+
+  checkForm(): boolean {
+    this.checkHora();
+    this.notificacion.programacionEnvio = this.fechaYHora;
+    return this.notificacion.plantillaAsunto != '' && this.notificacion.plantillaCuerpo != '' && this.fechaString != '' && this.notificacion.medios.length != 0;
+  }
+
+  getDate(dateToConvert: string): string {
+    let regexpDate = /[\-:.TZ]/g
+    let elements = dateToConvert.split(regexpDate);
+
+    return `${elements[2]}/${elements[1]}/${elements[0]} ${elements[3]}:${elements[4]}:${elements[5]}`;
+  }
 }

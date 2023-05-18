@@ -2,7 +2,6 @@ import { NgFor, NgIf } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { NgbAccordionModule } from "@ng-bootstrap/ng-bootstrap";
 import { Examen } from "../examen";
-import { ExamenService } from "../examen.service";
 
 @Component({
   selector: 'app-detalle-notas',

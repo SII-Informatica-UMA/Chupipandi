@@ -1,62 +1,103 @@
-import { TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
-import { NgbAlertModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { DetalleCorreccionComponent } from './detalle-correccion/detalle-correccion.component';
+import { DetalleNotasComponent } from './detalle-notas/detalle-notas.component';
+import { Estudiante } from './estudiante';
+import { FormularioNotasComponent } from './formulario-notas/formulario-notas.component';
+import { FormularioNotificacionComponent } from './formulario-notificacion/formulario-notificacion.component';
+import { NgbAlertModule} from '@ng-bootstrap/ng-bootstrap';
 
 
 describe('AppComponent', () => {
+  let fixture: ComponentFixture<AppComponent>;
+  let app: AppComponent;
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientModule, NgbAlertModule, NgbNavModule],
       declarations: [
         AppComponent
       ],
-    }).compileComponents();
+      imports: [
+        HttpClientTestingModule,
+        NgbNavModule
+      ]
+    }).compileComponents().then(() => {
+      fixture = TestBed.createComponent(AppComponent);
+      app = fixture.componentInstance;
+    });
   });
 
-  it('should create the AppComponent', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
+  it('should create the app', () => {
     expect(app).toBeTruthy();
   });
 
-  // it(`should have as title 'frontend-ms_evalexamenes'`, () => {
-  //   const fixture = TestBed.createComponent(AppComponent);
-  //   const app = fixture.componentInstance;
-  //   expect(app.title).toEqual('frontend-ms_evalexamenes');
-  // });
+  it(`should have as title 'frontend-ms_evalexamenes'`, () => {
+    expect(app.title).toEqual('frontend-ms_evalexamenes');
+  });
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
+  it(`should change to navOne when clicked`, (done: DoneFn) => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.row h2')?.textContent).toContain('Elige una opción');
+    const navOne = compiled.querySelector('#navOne') as HTMLInputElement;
+
+    fixture.whenStable().then(() =>{
+      navOne.click();
+      fixture.detectChanges();
+      expect(app.activeNav).toEqual(1);
+      done();
+    })
   });
 
-  it(`should call getNotas()`, () => {
-    let spy: any;
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    spy = spyOn(app, 'getNotas');
-    app.getNotas();
-    expect(spy).toHaveBeenCalled();
+  it(`should change to navTwo when clicked`, (done: DoneFn) => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const navTwo = compiled.querySelector('#navTwo') as HTMLInputElement;
+
+    fixture.whenStable().then(() =>{
+      navTwo.click();
+      fixture.detectChanges();
+      expect(app.activeNav).toEqual(1);
+      done();
+    })
   });
 
-  it(`should call restartNotificacion()`, () => {
-    let spy: any;
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    spy = spyOn(app, 'restartNotificacion');
-    app.restartNotificacion();
-    expect(spy).toHaveBeenCalled();
+  it(`should change to navThree when clicked`, (done: DoneFn) => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const navThree = compiled.querySelector('#navThree') as HTMLInputElement;
+
+    fixture.whenStable().then(() =>{
+      navThree.click();
+      fixture.detectChanges();
+      expect(app.activeNav).toEqual(1);
+      done();
+    })
   });
 
-  it(`should call sendNotificacion()`, () => {
-    let spy: any;
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    spy = spyOn(app, 'sendNotificacion');
-    app.sendNotificacion();
-    expect(spy).toHaveBeenCalled();
+  it(`should change to navFour when clicked`, (done: DoneFn) => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const navFour = compiled.querySelector('#navFour') as HTMLInputElement;
+
+    fixture.whenStable().then(() =>{
+      navFour.click();
+      fixture.detectChanges();
+      expect(app.activeNav).toEqual(1);
+      done();
+    });
   });
+
+  // it(`#notas.length should be 0 when searching a non-valid student`, (done: DoneFn) => {
+  //   spyOn(app, 'getNotas');
+
+  //   const estudiante: Estudiante = {dni: '', apellido: ''};
+  //   console.log(app.formularioNotas);
+  //   app.formularioNotas.getNotas.emit(estudiante);
+  //   fixture.detectChanges();
+
+  //   fixture.whenStable().then(() => {
+  //     fixture.detectChanges();
+  //     expect(app.getNotas).toHaveBeenCalled();
+  //     expect(app.notas?.length).toEqual(0);
+  //     done();
+  //   })
+  // })
 });

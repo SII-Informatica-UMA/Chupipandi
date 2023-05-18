@@ -1,7 +1,7 @@
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
 import { Examen } from "./examen";
-import { HttpClient, HttpParams, HttpResponse } from "@angular/common/http";
-import { catchError, Observable, of, retry, throwError } from "rxjs";
 
 @Injectable({
   providedIn: 'root'

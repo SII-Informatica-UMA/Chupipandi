@@ -5,7 +5,7 @@
   "projects": {
     "frontend-ms_evalexamenes": {
       "i18n": {
-        "sourceLocale": "es-ES"
+        "sourceLocale": "es"
       },
       "projectType": "application",
       "schematics": {},

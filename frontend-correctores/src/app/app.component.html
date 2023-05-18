@@ -4,9 +4,11 @@
       <h1>Lista de correctores</h1>
       <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon1">Id. Convocatoria:</span>
-        <input type="text" class="form-control" placeholder="Convocatoria" [(ngModel)]="idConvBusq"
-          (input)="busqCorrectores()">
-        <button type="button" class="btn btn-primary bi bi-search" (click)="busqCorrectores()"></button>
+        <input id="searchInput" type="text" class="form-control" placeholder="Convocatoria" [(ngModel)]="idConvBusq"
+        (input)="busqCorrectores()">
+        <span class="input-group-text bi bi-search" id="basic-addon2"></span>
+        <!-- Para la implementacion donde se busca SOLO al hacer click en el boton -->
+        <!-- <button type="button" class="btn btn-primary bi bi-search" (click)="busqCorrectores()"></button> -->
       </div>
       <div class="list-group">
         <button *ngFor="let corrector of correctores"

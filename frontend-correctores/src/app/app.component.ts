@@ -10,7 +10,6 @@ import { FormularioCorrectorComponent } from './formulario-corrector/formulario-
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'frontend-correctores';
   correctores: Corrector[] = [];
   correctorElegido?: Corrector;
   idConvBusq?: bigint;
@@ -58,7 +57,7 @@ export class AppComponent implements OnInit {
       }
   }
 
-  private actualizaCorrectores(id?: bigint): void {
+  actualizaCorrectores(id?: bigint): void {
     this.correctorService.getCorrectores()
       .subscribe(correctores => {
         this.correctores = correctores;

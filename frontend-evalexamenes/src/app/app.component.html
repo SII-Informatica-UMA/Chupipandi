@@ -8,33 +8,28 @@
     <h2>Elige una opción</h2>
     <ul ngbNav id="nav" #nav="ngbNav" [(activeId)]="activeNav" class="nav-tabs">
       <li id="navItemOne" [ngbNavItem]="1">
-        <button id="navOne" ngbNavLink>Modificar la nota de un examen</button>
+        <button id="navOne" ngbNavLink>Consultar exámenes corregidos y pendientes</button>
         <ng-template ngbNavContent>
+          <app-detalle-correccion (modifiedCorrecion)="actualizaComponentes()"></app-detalle-correccion>
         </ng-template>
       </li>
       <li id="navItemTwo" [ngbNavItem]="2">
-        <button id="navTwo" ngbNavLink>Consultar exámenes corregidos y pendientes</button>
+        <button id="navTwo" ngbNavLink (click)="restartNotificacion()">Notificar notas a estudiantes</button>
         <ng-template ngbNavContent>
-          <app-detalle-correccion></app-detalle-correccion>
+          <app-formulario-notificacion #formNoti (sendNotificacion)="sendNotificacion()"></app-formulario-notificacion>
         </ng-template>
       </li>
       <li id="navItemThree" [ngbNavItem]="3">
-        <button id="navThree" ngbNavLink (click)="restartNotificacion()">Notificar notas a estudiantes</button>
-        <ng-template ngbNavContent>
-          <app-formulario-notificacion #formNoti (eventEmitter)="sendNotificacion()"></app-formulario-notificacion>
-        </ng-template>
-      </li>
-      <li id="navItemFour" [ngbNavItem]="4">
-        <button id="navFour" ngbNavLink (click)="notas = []">Ver calificaciones de un estudiante</button>
+        <button id="navThree" ngbNavLink (click)="notas = []">Ver calificaciones de un estudiante</button>
         <ng-template ngbNavContent>
           <app-formulario-notas #formNotas (getNotas)="getNotas()"></app-formulario-notas>
         </ng-template>
       </li>
     </ul>
-    <div class="row" *ngIf="activeNav == 2">
+    <div class="row" *ngIf="activeNav == 1">
       <div [ngbNavOutlet]="nav" class="col-md-6"></div>
     </div>
-    <div class="row" *ngIf="activeNav == 3">
+    <div class="row" *ngIf="activeNav == 2">
       <div [ngbNavOutlet]="nav" class="col-md-6"></div>
       <div *ngIf="notificacion" class="col-md-6">
         <h2>Última notificación enviada</h2>
@@ -66,7 +61,7 @@
         </div>
       </div>
     </div>
-    <div class="row" *ngIf="activeNav == 4">
+    <div class="row" *ngIf="activeNav == 3">
       <div [ngbNavOutlet]="nav" class="col-md-6"></div>
       <div class="col-md-6">
         <app-detalle-notas [notas]="notas"></app-detalle-notas>

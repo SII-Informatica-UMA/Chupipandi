@@ -1,3 +1,10 @@
+<style>
+  .nota-input {
+    width: 100px;
+    height: 30px;
+  }
+</style>
+
 <div *ngIf="corregidos?.length || pendientes?.length" class="container">
   <div class="row">
     <div class="col-md-6">
@@ -13,7 +20,7 @@
     <div ngbAccordion>
       <div ngbAccordionItem *ngIf="corregidos?.length" [collapsed]="true">
         <h2 ngbAccordionHeader>
-          <button ngbAccordionButton>
+          <button (click)="sort()" ngbAccordionButton>
             Corregidos
           </button>
         </h2>
@@ -32,7 +39,7 @@
       </div>
       <div ngbAccordionItem *ngIf="pendientes?.length" [collapsed]="true">
         <h2 ngbAccordionHeader>
-          <button ngbAccordionButton>
+          <button (click)="sort()" ngbAccordionButton>
             Pendientes
           </button>
         </h2>
@@ -42,7 +49,7 @@
               <div class="list-group">
                 <button *ngFor="let examen of pendientes"
                   class="list-group-item list-group-item-action"
-                  (click)="examenElegido = examen"
+                  (click)="examenElegido = examen; modificandoNota = false"
                   [class.active]="examenElegido === examen">Examen ID {{ examen.id }}</button>
               </div>
             </ng-template>
@@ -53,28 +60,32 @@
   </div>
   <div *ngIf="examenElegido != null" class="col-md-6">
     <div class="row">
-      <label class="col-md-3" for="materia">
+      <label class="col-md-6" for="materia">
         ID de materia:
       </label>
-      <span class="col-md-9 offset-2 offset-md-0">
+      <span class="col-md-6">
         {{ examenElegido.materia }}
       </span>
     </div>
     <div class="row">
-      <label class="col-md-3" for="codigoAlumno">
+      <label class="col-md-6" for="codigoAlumno">
         ID de alumno:
       </label>
-      <span class="col-md-9 offset-2 offset-md-0">
+      <span class="col-md-6">
         {{ examenElegido.codigoAlumno }}
       </span>
     </div>
     <div class="row">
-      <label class="col-md-3" for="nota">
+      <label class="col-md-6" for="nota">
         Nota:
       </label>
-      <span class="col-md-9 offset-2 offset-md-0">
-        {{ examenElegido.nota || 'no corregido' }}
+      <span [hidden]="modificandoNota" class="col-md-6">
+        {{ examenElegido.nota == null ? 'no corregido' : examenElegido.nota }}
       </span>
+      <input [hidden]="!modificandoNota" type="text" class="nota-input form-control" [(ngModel)]="examenElegido.nota" placeholder="Nota">
+    </div>
+    <div class="row">
+        <button id="modify" class="btn btn-primary bi bi-pencil" (click)="modificarNota()"> Modificar nota</button>
     </div>
   </div>
 </div>

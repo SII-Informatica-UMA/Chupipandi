@@ -113,7 +113,7 @@ export class FormularioNotificacionComponent {
   fecha?: NgbDateStruct | null;
   fechaString?: string;
 
-  constructor(private ngbCalendar: NgbCalendar, private dateAdapter: NgbDateAdapter<string>) {}
+  constructor(private ngbCalendar: NgbCalendar, public dateAdapter: NgbDateAdapter<string>) {}
 
   get today() {
     return this.ngbCalendar.getToday();
@@ -123,7 +123,7 @@ export class FormularioNotificacionComponent {
     if (this.fechaString)
       this.fecha = this.dateAdapter.fromModel(this.fechaString);
     let addZeroDate = (toZero: number | undefined) => typeof toZero != 'undefined' && toZero < 10 ? '0' : '';
-    let fechaString = `${addZeroDate(this.fecha?.year) + this.fecha?.year}-${addZeroDate(this.fecha?.month) + this.fecha?.month}-${addZeroDate(this.fecha?.day) + this.fecha?.day}T${addZeroDate(this.hora.hour) + this.hora.hour}:${addZeroDate(this.hora.minute) + this.hora.minute}:${addZeroDate(this.hora.second) + this.hora.second}.000Z`;
+    let fechaString = `${this.fecha?.year}-${addZeroDate(this.fecha?.month) + this.fecha?.month}-${addZeroDate(this.fecha?.day) + this.fecha?.day}T${addZeroDate(this.hora.hour) + this.hora.hour}:${addZeroDate(this.hora.minute) + this.hora.minute}:${addZeroDate(this.hora.second) + this.hora.second}.000Z`;
     return fechaString;
   }
 
@@ -135,11 +135,11 @@ export class FormularioNotificacionComponent {
   checkHora(): void {
     let outputDate = new Date();
     let now = new Date();
-    console.log(now.getHours());
     outputDate.setHours(this.hora.hour);
     outputDate.setMinutes(this.hora.minute);
     outputDate.setSeconds(this.hora.second);
     if (this.fecha?.day == this.today.day && this.fecha?.month == this.today.month && this.fecha?.year == this.today.year) {
+      
       if (outputDate < now)
         this.hora = {hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds()};
     }

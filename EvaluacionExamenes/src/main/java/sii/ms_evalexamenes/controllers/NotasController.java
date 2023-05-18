@@ -76,8 +76,8 @@ public class NotasController {
     public ResponseEntity<List<ExamenDTO>> getNotas(@RequestParam String dni, @RequestParam String apellido) throws JsonMappingException, JsonProcessingException {
         var peticion = get("http", "localhost", server.getWebServer().getPort(), "/estudiantes");
         var respuesta = new RestTemplate().exchange(peticion, new ParameterizedTypeReference<List<Map<String, Object>>>() {});
-        Optional<Map<String, Object>> dniRespuesta = respuesta.getBody().stream().filter(est -> est.get("dni").equals(dni)).findFirst();
-        if (!(dniRespuesta.isPresent() && dniRespuesta.get().get("apellido1").equals(apellido)))
+        Optional<Map<String, Object>> dniRespuesta = respuesta.getBody().stream().filter(est -> est.get("dni").toString().equalsIgnoreCase(dni)).findFirst();
+        if (!(dniRespuesta.isPresent() && dniRespuesta.get().get("apellido1").toString().equalsIgnoreCase(apellido)))
             return ResponseEntity.notFound().build();
         Long id = Integer.toUnsignedLong((Integer)(dniRespuesta.get().get("id")));
         Optional<List<Examen>> notas = service.getExamenByDniAndApellido(id, apellido);

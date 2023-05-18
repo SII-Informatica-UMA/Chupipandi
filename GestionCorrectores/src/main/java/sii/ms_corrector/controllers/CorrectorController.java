@@ -9,6 +9,7 @@ import java.util.function.Function;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,7 @@ import sii.ms_corrector.services.exceptions.CorrectorYaExiste;
 import sii.ms_corrector.services.exceptions.PeticionIncorrecta;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/correctores")
 public class CorrectorController {
 
@@ -66,8 +68,8 @@ public class CorrectorController {
 	public ResponseEntity<CorrectorDTO> obtenerCorrector(@PathVariable Long id, @RequestHeader Map<String,String> header) {
 		if (!TokenUtils.comprobarAcceso(header, Arrays.asList("VICERRECTORADO")))
 			throw new AccesoNoAutorizado();
-		Corrector contactoById = service.getCorrectorById(id);
-		return ResponseEntity.ok(CorrectorDTO.fromCorrector(contactoById));
+		Corrector correctorById = service.getCorrectorById(id);
+		return ResponseEntity.ok(CorrectorDTO.fromCorrector(correctorById));
 	}
 
 	/**

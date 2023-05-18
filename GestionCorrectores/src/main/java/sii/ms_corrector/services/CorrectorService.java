@@ -66,10 +66,7 @@ public class CorrectorService {
     }
 
     public Corrector getCorrectorById(Long id) {
-        if (!corRepo.existsById(id)) {
-            throw new CorrectorNoEncontrado();
-        }
-        return corRepo.findById(id).get();
+        return corRepo.findById(id).orElseThrow(() -> new CorrectorNoEncontrado());
     }
 
     public Long añadirCorrector(CorrectorNuevoDTO nuevoCorrectorDTO) {
@@ -106,19 +103,27 @@ public class CorrectorService {
 	public Corrector modificarCorrector(Long id, CorrectorNuevoDTO correctorMod) {
         Corrector entidadCorrector = correctorMod.corrector();
         entidadCorrector.setId(id);
-		if (!corRepo.existsById(entidadCorrector.getId())) {
-			throw new CorrectorNoEncontrado();
-        }
-        Corrector corrector = corRepo.findById(entidadCorrector.getId()).get();
+		
+        Corrector corrector = corRepo.findById(entidadCorrector.getId()).orElseThrow(() -> new CorrectorNoEncontrado());
         
         // Si tratamos de cambiarle el idUsuario por uno que ya existia, lanzamos un conflicto
         // Si 'ese que ya existia' es el propio corrector que se trata de modificar, no pasa nada
         if (corRepo.existsByIdUsuario(entidadCorrector.getIdUsuario()) && !entidadCorrector.getIdUsuario().equals(corrector.getIdUsuario())) {
             throw new CorrectorYaExiste();
         }
-        corrector.setIdUsuario(entidadCorrector.getIdUsuario());
-        corrector.setTelefono(entidadCorrector.getTelefono());
-        corrector.setMaximasCorrecciones(entidadCorrector.getMaximasCorrecciones());
+        if (entidadCorrector.getIdUsuario() != null) {
+            corrector.setIdUsuario(entidadCorrector.getIdUsuario());
+        }
+        if (!entidadCorrector.getTelefono().isEmpty()) {
+            corrector.setTelefono(entidadCorrector.getTelefono());
+        }
+        if (entidadCorrector.getMaximasCorrecciones() != null) {
+            corrector.setMaximasCorrecciones(entidadCorrector.getMaximasCorrecciones());
+        }
+
+        if (correctorMod.getMateria() == null || correctorMod.getIdentificadorConvocatoria() == null) {
+            return corRepo.save(corrector);
+        }
 
         Materia mat = correctorMod.getMateria().materia();
 
@@ -150,10 +155,8 @@ public class CorrectorService {
 	}
 
 	public void eliminarCorrector(Long id) {
-		if (corRepo.existsById(id)) {
-			corRepo.deleteById(id);
-		} else {
+		if (!corRepo.existsById(id))
 			throw new CorrectorNoEncontrado();
-		}
+        corRepo.deleteById(id);
 	}
 }

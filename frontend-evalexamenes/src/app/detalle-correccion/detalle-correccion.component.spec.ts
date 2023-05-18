@@ -4,6 +4,8 @@ import { DetalleCorreccionComponent } from './detalle-correccion.component';
 import { ExamenService } from '../examen.service';
 import { Examen } from '../examen';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { By } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
 
 
 describe('DetalleCorreccionComponent', () => {
@@ -14,7 +16,7 @@ describe('DetalleCorreccionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [],
-	  imports: [HttpClientTestingModule],
+	  imports: [HttpClientTestingModule, FormsModule],
       providers: [ExamenService],
     }).compileComponents();
   });

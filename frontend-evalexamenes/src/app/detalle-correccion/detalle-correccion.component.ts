@@ -60,6 +60,8 @@ export class DetalleCorreccionComponent {
       if (this.examenElegido) {
         if (this.examenElegido.nota < 0)
           this.examenElegido.nota = 0;
+        if (this.examenElegido.nota > 10)
+          this.examenElegido.nota = 10;
         this.examenService.putExamen(this.examenElegido)
             .subscribe({
               next: (examen) => this.examenElegido = examen,

@@ -1,6 +1,6 @@
 import { NgFor, NgIf } from "@angular/common";
 import { Component, EventEmitter } from "@angular/core";
-import { FormsModule, NgModel } from "@angular/forms";
+import { FormsModule } from "@angular/forms";
 import { NgbAccordionModule } from "@ng-bootstrap/ng-bootstrap";
 import { Examen } from "../examen";
 import { ExamenService } from "../examen.service";

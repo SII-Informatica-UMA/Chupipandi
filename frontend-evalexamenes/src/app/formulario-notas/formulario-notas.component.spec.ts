@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, NgModel } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { NgbAccordionModule } from '@ng-bootstrap/ng-bootstrap';
-import { AppComponent } from '../app.component';
 import { FormularioNotasComponent } from './formulario-notas.component';
 
 describe('FormularioNotasComponent', () => {

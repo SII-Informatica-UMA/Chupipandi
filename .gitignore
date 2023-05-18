@@ -61,3 +61,6 @@ esquema.ddl
 
 TestCorrectorLogger.txt
 test-skip-runme.bat
+docker-compose.yml
+front/
+back/

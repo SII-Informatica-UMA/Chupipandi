@@ -12,13 +12,13 @@ describe('ErrorModalComponentComponent', () => {
         declarations: [ErrorModalComponentComponent],
         imports: [NgbCollapseModule],
         providers: [NgbActiveModal]
-      }).compileComponents();
-
-    fixture = TestBed.createComponent(ErrorModalComponentComponent);
-    component = fixture.componentInstance;
-    component.errorCode = '500';
-    component.errorMessage = 'Internal Server Error';
-    fixture.detectChanges();
+      }).compileComponents().then(() => {
+        fixture = TestBed.createComponent(ErrorModalComponentComponent);
+        component = fixture.componentInstance;
+        component.errorCode = '500';
+        component.errorMessage = 'Internal Server Error';
+        fixture.detectChanges();
+      });
   });
 
   it('deberia mostrar el codigo de error', () => {

@@ -21,14 +21,12 @@ describe('DetalleCorrectorComponent', () => {
       imports: [HttpClientTestingModule],
       declarations: [DetalleCorrectorComponent],
       providers: [CorrectorService, NgbModal, NgbActiveModal]
-    }).compileComponents();
-  });
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(DetalleCorrectorComponent);
-    component = fixture.componentInstance;
-    
-    correctorService = TestBed.inject(CorrectorService);
+    }).compileComponents().then(() => {
+      fixture = TestBed.createComponent(DetalleCorrectorComponent);
+      component = fixture.componentInstance;
+      
+      correctorService = TestBed.inject(CorrectorService);
+    });
   });
 
   it('hacer click en el boton "Editar" deberia llamar al metodo editarCorrector', (done: DoneFn) => {

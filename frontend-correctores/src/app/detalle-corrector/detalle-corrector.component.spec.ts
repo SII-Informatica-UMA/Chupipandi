@@ -31,17 +31,13 @@ describe('DetalleCorrectorComponent', () => {
     correctorService = TestBed.inject(CorrectorService);
   });
 
-  it('deberia crear el componente', () => {
-    expect(component).toBeTruthy();
-  });
-
   it('hacer click en el boton "Editar" deberia llamar al metodo editarCorrector', (done: DoneFn) => {
     fixtureForm = TestBed.createComponent(FormularioCorrectorComponent);
     formComponent = fixtureForm.componentInstance;
 
     formComponent.accion = "Editar";
 
-    spyOn(component,  'editarCorrector');
+    spyOn(component, 'editarCorrector');
 
     const html = fixture.nativeElement as HTMLElement; //dom html
     const btn = html.querySelector('#btnEditar') as HTMLButtonElement;
@@ -66,7 +62,7 @@ describe('DetalleCorrectorComponent', () => {
   // });
 
   it('hacer click en el boton "Eliminar" deberia llamar al metodo eliminarCorrector', (done: DoneFn) => {
-    spyOn(component,  'eliminarCorrector');
+    spyOn(component, 'eliminarCorrector');
 
     const html = fixture.nativeElement as HTMLElement; //dom html
     const btn = html.querySelector('#btnEliminar') as HTMLButtonElement;

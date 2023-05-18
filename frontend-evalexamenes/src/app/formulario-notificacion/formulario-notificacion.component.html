@@ -36,5 +36,5 @@
   </div>
 </div><hr>
 <div class="row">
-  <button [disabled]="!checkForm()" type="button" class="btn btn-primary bi-send" (click)="eventEmitter.emit(notificacion)"></button>
+  <button [disabled]="!checkForm()" type="button" class="btn btn-primary bi-send" (click)="sendNotificacion.emit()"></button>
 </div>

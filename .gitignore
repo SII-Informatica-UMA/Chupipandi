@@ -59,8 +59,11 @@ esquema.ddl
 # ----- IDE config files: -----
 .vscode/
 
-TestCorrectorLogger.txt
+TestCorrectorLogger.txt*
 test-skip-runme.bat
-docker-compose.yml
-front/
-back/
+
+# ----------------------------------------------------
+# ----- Github Node gitignore: -----
+*node_modules/
+*.angular/
+

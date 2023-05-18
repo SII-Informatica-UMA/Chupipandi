@@ -1,14 +1,7 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
-import { DetalleCorreccionComponent } from './detalle-correccion/detalle-correccion.component';
-import { DetalleNotasComponent } from './detalle-notas/detalle-notas.component';
-import { Estudiante } from './estudiante';
-import { FormularioNotasComponent } from './formulario-notas/formulario-notas.component';
-import { FormularioNotificacionComponent } from './formulario-notificacion/formulario-notificacion.component';
-import { NgbAlertModule} from '@ng-bootstrap/ng-bootstrap';
 
 
 describe('AppComponent', () => {

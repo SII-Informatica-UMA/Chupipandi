@@ -41,8 +41,6 @@ export class AppComponent implements OnInit {
         if (this.correctorElegido) {
           let ref = this.modalService.open(FormularioCorrectorComponent);
           ref.componentInstance.accion = "Editar";
-          // Clona el objeto corrector y se lo pasa al formulario (no es necesario ya)
-          // ref.componentInstance.corrector = { ...this.correctorElegido };
           ref.componentInstance.createFormGroup();
           ref.result.then((corrector: CorrectorNuevo) => {
             this.editarCorrector(corrector, this.correctorElegido?.id ?? 0n);
@@ -98,6 +96,10 @@ export class AppComponent implements OnInit {
     this.correctorElegido = undefined;
   }
 
+  // Aunque se visualicen instantáneamente los cambios en la lista de correctores,
+  // el 'id' que se envia en la peticion que se hace al back para que se actualice
+  // la lista de correctores es un valor entero, no un string, por lo que para buscar
+  // un corrector hay que proporcionar el id de la convocatoria entero, no un prefijo
   busqCorrectores() {
     this.correctorService.getCorrectores(this.idConvBusq).subscribe(correctores => {
       this.busquedaFallida = (correctores.length === 0);

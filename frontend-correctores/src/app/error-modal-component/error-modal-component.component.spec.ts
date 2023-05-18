@@ -22,18 +22,18 @@ describe('ErrorModalComponentComponent', () => {
   });
 
   it('deberia mostrar el codigo de error', () => {
-    const errorCodeElement = fixture.nativeElement.querySelector('.modal-title');
+    let errorCodeElement = fixture.nativeElement.querySelector('.modal-title');
     expect(errorCodeElement.textContent).toContain('500');
   });
 
   it('deberia mostrar el mensaje de error', () => {
-    const errorMessageElement = fixture.nativeElement.querySelector('.modal-body');
+    let errorMessageElement = fixture.nativeElement.querySelector('.modal-body');
     expect(errorMessageElement.textContent).toContain('Internal Server Error');
   });
 
   it('deberia cerrar la ventana cuando se hace click en el boton de cerrar', () => {
     spyOn(component.modal, 'dismiss');
-    const closeButton = fixture.nativeElement.querySelector('.btn-secondary');
+    let closeButton = fixture.nativeElement.querySelector('.btn-secondary');
     closeButton.click();
     expect(component.modal.dismiss).toHaveBeenCalled();
   });

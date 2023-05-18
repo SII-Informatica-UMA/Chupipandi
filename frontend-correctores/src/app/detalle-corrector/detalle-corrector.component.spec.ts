@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { By } from '@angular/platform-browser';
-import { Corrector, CorrectorNuevo, Materia } from '../model/interfaces';
+import { Corrector } from '../model/interfaces';
 import { DetalleCorrectorComponent } from './detalle-corrector.component';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormularioCorrectorComponent } from '../formulario-corrector/formulario-corrector.component';
@@ -46,18 +46,6 @@ describe('DetalleCorrectorComponent', () => {
       done();
     });
   });
-
-  // it('deberia emitir el evento correctorEliminado cuando se llama al metodo eliminarCorrector', () => {
-  //   const mockCorrector: Corrector = { id: 1n, identificadorUsuario: 1n, telefono: '+34 954-362-837',
-  //     maximasCorrecciones: 21, materias: [{ idMateria: 1n, idConvocatoria: 1n }] };
-
-  //   spyOn(component.correctorEliminado, 'emit');
-
-  //   component.corrector = mockCorrector;
-  //   component.eliminarCorrector();
-
-  //   expect(component.correctorEliminado.emit).toHaveBeenCalledWith(mockCorrector.id);
-  // });
 
   it('hacer click en el boton "Eliminar" deberia llamar al metodo eliminarCorrector', (done: DoneFn) => {
     spyOn(component, 'eliminarCorrector');

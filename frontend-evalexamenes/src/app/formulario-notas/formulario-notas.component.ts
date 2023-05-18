@@ -1,5 +1,4 @@
-import { Component, EventEmitter, forwardRef, Injectable, Output } from "@angular/core";
-import { NG_VALUE_ACCESSOR } from "@angular/forms";
+import { Component, EventEmitter, Injectable, Output } from "@angular/core";
 import { Estudiante } from "../estudiante";
 @Component({
   selector: 'app-formulario-notas',

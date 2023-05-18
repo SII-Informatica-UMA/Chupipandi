@@ -14,6 +14,7 @@ import { ExamenService } from "../examen.service";
 export class DetalleCorreccionComponent {
   corregidos: Examen[];
   pendientes: Examen[];
+  examenElegido?: Examen;
 
   constructor(private examenService: ExamenService) {
     this.corregidos = [];

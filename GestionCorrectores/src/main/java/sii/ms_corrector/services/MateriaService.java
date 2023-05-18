@@ -33,6 +33,8 @@ public class MateriaService {
             return matRepo.findByNombre(mat.getNombre());
         } else {
             // error en la peticion: id y nombre a nulos, o bien no existe esa materia
+            // Como en el frontend (si se quiere añadir una convocatoria) se obliga a proporcionar el id/nombre de la materia
+            // y el identificador de la convocatoria, esta excepcion solo saltará cuando el id/nombre de la materia no exista en la BD
             throw new PeticionIncorrecta();
         }
     }

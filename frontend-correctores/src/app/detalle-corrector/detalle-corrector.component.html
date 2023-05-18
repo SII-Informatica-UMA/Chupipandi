@@ -1,0 +1,41 @@
+<div class="container">
+    <div class="row">
+      <h2 >Corrector N-{{corrector?.identificadorUsuario}}</h2>
+    </div>
+  
+  <div class="row">
+    <label class="col-md-3" for="idUsuario">Id. Usuario:</label>
+    <span id="idUsuario" class="col-md-9 offset-2 offset-md-0">{{corrector?.identificadorUsuario}}</span>
+  </div>
+  <div class="row">
+    <label class="col-md-3" for="telefono">Teléfono:</label>
+    <span id="telefono" class="col-md-9 offset-2 offset-md-0">{{(corrector?.telefono) ? corrector?.telefono : 'Sin teléfono' }} </span>
+  </div>
+  <div class="row">
+    <label class="col-md-3" for="maxcorr">Máx. Correcciones:</label>
+    <span id="maxcorr" class="col-md-9 offset-2 offset-md-0">{{corrector?.maximasCorrecciones}}</span>
+  </div>
+  <div class="col-md-5">
+  <table class="table table-hover table-striped table-sm table-bordered border-secondary caption-top">
+    <caption>Lista de materias en convocatoria</caption>
+    <thead>
+      <tr>
+        <th scope="col" class="text-center">Id. Materia</th>
+        <th scope="col" class="text-center">Id. Convocatoria</th>
+      </tr>
+    </thead>
+      <tbody>
+        <tr *ngFor="let materia of corrector?.materias">
+          <td class="text-center">{{materia.idMateria}}</td>
+          <td class="text-center">{{materia.idConvocatoria}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="row crud-bt">
+      <button id="btnEliminar" class="col-auto btn btn-outline-primary" (click)="eliminarCorrector()">Eliminar <i class="bi bi-trash-fill"></i></button>
+      <div class="col-1"></div>
+      <button id="btnEditar" class="col-auto btn btn-outline-primary" (click)="editarCorrector()">Editar <i class="bi bi-pencil-fill"></i></button>
+    </div>
+  </div>
+  </div>
+  

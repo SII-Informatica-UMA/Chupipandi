@@ -12,7 +12,7 @@
       </div>
       <div class="list-group">
         <button *ngFor="let corrector of correctores"
-          class="list-group-item list-group-item-action"
+          class="list-group-item list-group-item-action list-group-item-success"
           (click)="elegirCorrector(corrector)"
           [class.active]="corrector === correctorElegido">Corrector con ID: {{corrector.identificadorUsuario}}</button>
       </div>
@@ -20,7 +20,7 @@
       <div *ngIf="busquedaFallida" class="alert alert-info" role="alert">
         No se han encontrado convocatorias con el id {{ idConvBusq }}
       </div>
-      <button type="button" class="btn btn-outline-primary bi bi-plus-lg" (click)="aniadirCorrector()"></button>
+      <button type="button" class="btn btn-outline-success bi bi-plus-lg" (click)="aniadirCorrector()"></button>
     </div>
     <div class="col-md-6" *ngIf="correctorElegido">
       <app-detalle-corrector [corrector]="correctorElegido"

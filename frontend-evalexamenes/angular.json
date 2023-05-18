@@ -3,7 +3,10 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "frontend-correctores": {
+    "frontend-ms_evalexamenes": {
+      "i18n": {
+        "sourceLocale": "es"
+      },
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +16,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/frontend-correctores",
+            "outputPath": "dist/frontend-ms_evalexamenes",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -25,6 +28,8 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "src/styles.css"
             ],
             "scripts": []
@@ -60,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "frontend-correctores:build:production"
+              "browserTarget": "frontend-ms_evalexamenes:build:production"
             },
             "development": {
-              "browserTarget": "frontend-correctores:build:development"
+              "browserTarget": "frontend-ms_evalexamenes:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -71,7 +76,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "frontend-correctores:build"
+            "browserTarget": "frontend-ms_evalexamenes:build"
           }
         },
         "test": {
@@ -94,5 +99,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

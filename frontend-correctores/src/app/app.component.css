@@ -1,0 +1,12 @@
+#searchInput {
+    background-color: #d1e7dd;
+}
+
+.input-group-text {
+    background-color: #0f5132;
+    color: #ffffff;
+}
+
+#searchInput:focus {
+    box-shadow: 0 0 0 0.1rem #0f5132;
+}

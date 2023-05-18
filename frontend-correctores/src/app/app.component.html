@@ -1,0 +1,31 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-5">
+      <h1>Lista de correctores</h1>
+      <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">Id. Convocatoria:</span>
+        <input id="searchInput" type="text" class="form-control" placeholder="Convocatoria" [(ngModel)]="idConvBusq"
+        (input)="busqCorrectores()">
+        <span class="input-group-text bi bi-search" id="basic-addon2"></span>
+        <!-- Para la implementacion donde se busca SOLO al hacer click en el boton -->
+        <!-- <button type="button" class="btn btn-primary bi bi-search" (click)="busqCorrectores()"></button> -->
+      </div>
+      <div class="list-group">
+        <button *ngFor="let corrector of correctores"
+          class="list-group-item list-group-item-action list-group-item-success"
+          (click)="elegirCorrector(corrector)"
+          [class.active]="corrector === correctorElegido">Corrector con ID: {{corrector.identificadorUsuario}}</button>
+      </div>
+      <br *ngIf="!busquedaFallida">
+      <div *ngIf="busquedaFallida" class="alert alert-info" role="alert">
+        No se han encontrado convocatorias con el id {{ idConvBusq }}
+      </div>
+      <button type="button" class="btn btn-outline-success bi bi-plus-lg" (click)="aniadirCorrector()"></button>
+    </div>
+    <div class="col-md-6" *ngIf="correctorElegido">
+      <app-detalle-corrector [corrector]="correctorElegido"
+        (correctorEditado)="editarCorrector($event, correctorElegido.id)"
+        (correctorEliminado)="eliminarCorrector($event)"></app-detalle-corrector>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,8 @@
+.form-field {
+    margin: 10px;
+    margin-top: 0px;
+}
+
+#flexSwitchCheckDefault:checked {
+    background-color: #198754;
+}

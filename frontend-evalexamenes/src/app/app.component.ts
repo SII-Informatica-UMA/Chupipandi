@@ -1,9 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
-import { NgbAlert, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbAlert } from '@ng-bootstrap/ng-bootstrap';
+import { DetalleCorreccionComponent } from './detalle-correccion/detalle-correccion.component';
 import { Estudiante } from './estudiante';
 import { Examen } from './examen';
-import { ExamenService } from './examen.service';
 import { FormularioNotasComponent } from './formulario-notas/formulario-notas.component';
 import { FormularioNotificacionComponent } from './formulario-notificacion/formulario-notificacion.component';
 import { NotasService } from './notas.service';
@@ -25,13 +24,13 @@ export class AppComponent {
   activeNav: number = 1;
   notificacion?: Notificacion;
 
-
   @ViewChild('notFoundAlert', { static: false }) notFoundAlert?: NgbAlert;
   @ViewChild('notiError', { static: false }) notiError?: NgbAlert;
   @ViewChild('formNotas', { static: false }) formularioNotas: FormularioNotasComponent;
   @ViewChild('formNoti', { static: false }) formularioNotificacion?: FormularioNotificacionComponent;
+  @ViewChild('detalleCorreccion', { static: false }) detalleCorrecion?: DetalleCorreccionComponent;
 
-  constructor(private notificacionService: NotificacionService, private examenService: ExamenService, private notasService: NotasService, private modalService: NgbModal) {
+  constructor(private notificacionService: NotificacionService, private notasService: NotasService) {
     this.formularioNotas = new FormularioNotasComponent;
     this.notFoundTimer = setTimeout(() => null, 5000);
   }
@@ -71,7 +70,7 @@ export class AppComponent {
   sendNotificacion(): void {
     if (this.formularioNotificacion) {
       this.notificacion = this.formularioNotificacion.notificacion;
-      this.notificacionService.postNotificacion(this.formularioNotificacion.notificacion)
+      this.notificacionService.postNotificacion(this.notificacion)
         .subscribe({
           error: (error) => console.log(`ERROR POST NOTIFICACIÓN: ${error}`)
         });
@@ -79,7 +78,10 @@ export class AppComponent {
     this.restartNotificacion();
   }
 
-  private actualizaComponentes(): void {
-
+  actualizaComponentes(): void {
+    if (this.detalleCorrecion) {
+      this.detalleCorrecion.getCorreccion();
+      this.detalleCorrecion.sort();
+    }
   }
 }

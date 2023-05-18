@@ -108,7 +108,7 @@ export class FormularioNotificacionComponent {
   smsChecked: boolean = false;
   maxLengthAsunto: number = 200;
   maxLengthCuerpo: number = 500;
-  @Output() eventEmitter: EventEmitter<Notificacion> = new EventEmitter<Notificacion>();
+  @Output() sendNotificacion: EventEmitter<any> = new EventEmitter<any>();
 
   fecha?: NgbDateStruct | null;
   fechaString?: string;
@@ -139,7 +139,7 @@ export class FormularioNotificacionComponent {
     outputDate.setMinutes(this.hora.minute);
     outputDate.setSeconds(this.hora.second);
     if (this.fecha?.day == this.today.day && this.fecha?.month == this.today.month && this.fecha?.year == this.today.year) {
-      
+
       if (outputDate < now)
         this.hora = {hour: now.getHours(), minute: now.getMinutes(), second: now.getSeconds()};
     }

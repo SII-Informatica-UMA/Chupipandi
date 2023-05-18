@@ -59,7 +59,7 @@ esquema.ddl
 # ----- IDE config files: -----
 .vscode/
 
-TestCorrectorLogger.txt
+TestCorrectorLogger.txt*
 test-skip-runme.bat
 
 # ----------------------------------------------------

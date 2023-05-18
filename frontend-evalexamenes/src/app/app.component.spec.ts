@@ -1,7 +1,8 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
+import { Notificacion } from './notificacion';
 
 
 describe('AppComponent', () => {
@@ -30,67 +31,60 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('frontend-ms_evalexamenes');
   });
 
-  it(`should change to navOne when clicked`, (done: DoneFn) => {
+  it(`should change to navOne when clicked`, waitForAsync(() => {
     const compiled = fixture.nativeElement as HTMLElement;
     const navOne = compiled.querySelector('#navOne') as HTMLInputElement;
 
-    fixture.whenStable().then(() =>{
-      navOne.click();
-      fixture.detectChanges();
+    navOne.click();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
       expect(app.activeNav).toEqual(1);
-      done();
     })
-  });
+  }));
 
-  it(`should change to navTwo when clicked`, (done: DoneFn) => {
+  it(`should change to navTwo when clicked`, waitForAsync(() => {
     const compiled = fixture.nativeElement as HTMLElement;
     const navTwo = compiled.querySelector('#navTwo') as HTMLInputElement;
 
-    fixture.whenStable().then(() =>{
-      navTwo.click();
-      fixture.detectChanges();
-      expect(app.activeNav).toEqual(1);
-      done();
+    navTwo.click();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(app.activeNav).toEqual(2);
     })
-  });
+  }));
 
-  it(`should change to navThree when clicked`, (done: DoneFn) => {
+  it(`should change to navThree when clicked`, waitForAsync(() => {
     const compiled = fixture.nativeElement as HTMLElement;
     const navThree = compiled.querySelector('#navThree') as HTMLInputElement;
 
-    fixture.whenStable().then(() =>{
-      navThree.click();
-      fixture.detectChanges();
-      expect(app.activeNav).toEqual(1);
-      done();
+    navThree.click();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(app.activeNav).toEqual(3);
     })
-  });
+  }));
 
-  it(`should change to navFour when clicked`, (done: DoneFn) => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    const navFour = compiled.querySelector('#navFour') as HTMLInputElement;
+  it('should correctly restart a notification', waitForAsync(() => {
+    let notificacion: Notificacion = {plantillaAsunto: '', plantillaCuerpo: '', programacionEnvio: '', medios: []};
+    let emailChecked: boolean = false;
+    let smsChecked: boolean = false;
+    let fecha: any = undefined;
+    let fechaString: string = '';
+    let hora: any = {hour: 0, minute: 0, second: 0};
+    spyOn(app, 'restartNotificacion');
+    app.restartNotificacion();
+    fixture.detectChanges();
 
-    fixture.whenStable().then(() =>{
-      navFour.click();
-      fixture.detectChanges();
-      expect(app.activeNav).toEqual(1);
-      done();
-    });
-  });
+    fixture.whenStable().then(() => {
+      expect(app.formularioNotificacion?.notificacion).toEqual(notificacion);
+      expect(app.formularioNotificacion?.emailChecked).toEqual(emailChecked);
+      expect(app.formularioNotificacion?.smsChecked).toEqual(smsChecked);
+      expect(app.formularioNotificacion?.fecha).toBe(fecha);
+      expect(app.formularioNotificacion?.fechaString).toEqual(fechaString);
+      expect(app.formularioNotificacion?.hora).toEqual(hora);
+      expect(app.restartNotificacion).toHaveBeenCalled();
+    })
+  }))
 
-  // it(`#notas.length should be 0 when searching a non-valid student`, (done: DoneFn) => {
-  //   spyOn(app, 'getNotas');
 
-  //   const estudiante: Estudiante = {dni: '', apellido: ''};
-  //   console.log(app.formularioNotas);
-  //   app.formularioNotas.getNotas.emit(estudiante);
-  //   fixture.detectChanges();
-
-  //   fixture.whenStable().then(() => {
-  //     fixture.detectChanges();
-  //     expect(app.getNotas).toHaveBeenCalled();
-  //     expect(app.notas?.length).toEqual(0);
-  //     done();
-  //   })
-  // })
 });

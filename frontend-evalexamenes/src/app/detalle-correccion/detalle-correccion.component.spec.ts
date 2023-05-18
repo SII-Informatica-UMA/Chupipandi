@@ -1,9 +1,10 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of, throwError } from 'rxjs';
-import { DetalleCorreccionComponent } from './detalle-correccion.component';
-import { ExamenService } from '../examen.service';
-import { Examen } from '../examen';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormsModule } from '@angular/forms';
+import { of, throwError } from 'rxjs';
+import { Examen } from '../examen';
+import { ExamenService } from '../examen.service';
+import { DetalleCorreccionComponent } from './detalle-correccion.component';
 
 
 describe('DetalleCorreccionComponent', () => {
@@ -14,7 +15,7 @@ describe('DetalleCorreccionComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [],
-	  imports: [HttpClientTestingModule],
+	  imports: [HttpClientTestingModule, FormsModule],
       providers: [ExamenService],
     }).compileComponents();
   });

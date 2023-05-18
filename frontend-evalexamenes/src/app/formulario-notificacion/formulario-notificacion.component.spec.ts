@@ -32,7 +32,7 @@ describe('AppComponent', () => {
 		app.fechaString = '2021-05-05';
 		expect(app.fechaYHora).toEqual('5-05-2021T00:00:00.000Z');
 	});
-	
+
 	it(`should include a new 'medio'`, () => {
 		app.notificacion.medios = []
 		app.changeMedios(true, 'Mail');
@@ -44,19 +44,19 @@ describe('AppComponent', () => {
 		app.changeMedios(true, 'Mail');
 		expect(app.notificacion.medios).toEqual(['Mail']);
 	});
-	
+
 	it(`should not include nor delete a new 'medio'`, () => {
 		app.notificacion.medios = []
 		app.changeMedios(false, 'Mail');
 		expect(app.notificacion.medios).toEqual([]);
 	});
-	
+
 	it(`should exclude new 'medio'`, () => {
 		app.notificacion.medios = ['Mail']
 		app.changeMedios(false, 'Mail');
 		expect(app.notificacion.medios).toEqual([]);
 	});
-	
+
 	it(`should update the time if the date is today and the time is earlier than the current time`, () => {
 		const now = new Date();
 
@@ -70,7 +70,7 @@ describe('AppComponent', () => {
 		expect(app.hora.second).toBe(now.getSeconds());
 
 	});
-	
+
 	it(`should not update the time if the date is not today`, () => {
 		const now = new Date();
 
@@ -87,20 +87,20 @@ describe('AppComponent', () => {
 
 	it('should not update the time if the date is today but the time is the same or later than the current time', () => {
 		const now = new Date();
-	
+
 		app.fecha = { day: now.getDate(), month: now.getMonth() + 1, year: now.getFullYear() };
 		app.hora = { hour: now.getHours() + 2, minute: now.getMinutes(), second: now.getSeconds() };
-	
+
 		app.checkHora();
-		
+
 		expect(app.hora.hour).toBe(now.getHours() + 2);
 		expect(app.hora.minute).toBe(now.getMinutes());
 		expect(app.hora.second).toBe(now.getSeconds());
 	  });
-	
+
 
 	it(`should run getDate(date) and format the date`, () => {
-		expect(app.getDate('2023-05-18T10:05:48.731Z')).toEqual('18/05/2023 10:05:48');	
+		expect(app.getDate('2023-05-18T10:05:48.731Z')).toEqual('18/05/2023 10:05:48');
 	});
 
 	it(`should checkForm() when all notificacion fields are filled and return true`, () => {
@@ -147,5 +147,5 @@ describe('AppComponent', () => {
 
 		expect(app.checkForm()).toEqual(false);
 	});
-	
+
 });

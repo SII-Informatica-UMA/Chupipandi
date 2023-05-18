@@ -1,9 +1,3 @@
-<style>
-  .form-control {
-    width: 200px;
-  }
-</style>
-
 <div class="form-group row">
   <div class="col-md-6">
     <label for="plantillaAsunto">Asunto:</label>
@@ -19,7 +13,7 @@
     <label for="fecha">Fecha de envío:</label><br>
     <div class="input-group">
       <input class="form-control" placeholder="dd/mm/yyyy" name="d1" [maxDate]="{day: today.day, month: today.month, year: today.year + 10}" [minDate]="today" (ngModelChange)="checkHora()" [(ngModel)]="fechaString" ngbDatepicker #d1="ngbDatepicker">
-      <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d1.toggle()" type="button"></button>
+      <button class="btn btn-outline-success bi bi-calendar3" (click)="d1.toggle()" type="button"></button>
     </div>
     <label *ngIf="fechaString === undefined" style="color: red">Selecciona una fecha</label>
     <ngb-timepicker [(ngModel)]="hora" [seconds]="true" [meridian]="false" (ngModelChange)="checkHora()"></ngb-timepicker>
@@ -36,5 +30,5 @@
   </div>
 </div><hr>
 <div class="row">
-  <button [disabled]="!checkForm()" type="button" class="btn btn-primary bi-send" (click)="eventEmitter.emit(notificacion)"></button>
+  <button [disabled]="!checkForm()" type="button" class="btn btn-success bi-send" (click)="sendNotificacion.emit()"></button>
 </div>

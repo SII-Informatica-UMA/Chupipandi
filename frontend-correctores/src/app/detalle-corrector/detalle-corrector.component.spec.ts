@@ -3,78 +3,82 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { By } from '@angular/platform-browser';
 import { Corrector, CorrectorNuevo, Materia } from '../model/interfaces';
 import { DetalleCorrectorComponent } from './detalle-corrector.component';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormularioCorrectorComponent } from '../formulario-corrector/formulario-corrector.component';
 import { CorrectorService } from '../service/corrector.service';
 
 describe('DetalleCorrectorComponent', () => {
   let fixture: ComponentFixture<DetalleCorrectorComponent>;
   let component: DetalleCorrectorComponent;
-  let ventana: NgbModalRef;
+  
+  let fixtureForm: ComponentFixture<FormularioCorrectorComponent>;
+  let formComponent: FormularioCorrectorComponent;
+  
   let correctorService: CorrectorService;
-  let modalService: NgbModal;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       declarations: [DetalleCorrectorComponent],
-      providers: [CorrectorService, NgbModal]
+      providers: [CorrectorService, NgbModal, NgbActiveModal]
     }).compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DetalleCorrectorComponent);
     component = fixture.componentInstance;
+    
     correctorService = TestBed.inject(CorrectorService);
-    modalService = TestBed.inject(NgbModal);
   });
 
-  it('should create the component', () => {
+  it('deberia crear el componente', () => {
     expect(component).toBeTruthy();
   });
 
-  // it('should emit correctorEditado event when editarCorrector is called', () => {
-  //   const mockCorrector: Corrector = { id: 1n, identificadorUsuario: 1n, telefono: '+34 954-362-837',
-  //     maximasCorrecciones: 21, materias: [{ idMateria: 1n, idConvocatoria: 1n }] };
-  //   const mockMateria: Materia = { materia: 1n };
-  //   const mockCorrectorNuevo: CorrectorNuevo = { identificadorUsuario: 1n,
-  //     identificadorConvocatoria: 1n, telefono: '+34 954-362-837', materia: mockMateria, 
-  //     maximasCorrecciones: 21 };
-    
-  //   ventana = modalService.open(FormularioCorrectorComponent);
-  //   ventana.componentInstance.accion = "Editar";
-  //   ventana.componentInstance.createFormGroup();
-  //   // spyOn(modalService, 'open').and.returnValue({ result: Promise.resolve(mockCorrectorNuevo) });
-    
-  //   spyOn(ventana.componentInstance.correctorEditado, 'emit');
+  it('hacer click en el boton "Editar" deberia llamar al metodo editarCorrector', (done: DoneFn) => {
+    fixtureForm = TestBed.createComponent(FormularioCorrectorComponent);
+    formComponent = fixtureForm.componentInstance;
 
-  //   // component.corrector = mockCorrector;
-  //   // component.editarCorrector();
+    formComponent.accion = "Editar";
 
-  //   fixture.detectChanges();
+    spyOn(component,  'editarCorrector');
 
-  //   const editarButton = fixture.debugElement.query(By.css('.btn-outline-primary'));
-  //   editarButton.nativeElement.click();
+    const html = fixture.nativeElement as HTMLElement; //dom html
+    const btn = html.querySelector('#btnEditar') as HTMLButtonElement;
+    btn.click();
 
-  //   fixture.whenStable().then(() => {
-  //     expect(modalService.open).toHaveBeenCalledWith(FormularioCorrectorComponent);
-  //     expect(component.correctorEditado.emit).toHaveBeenCalledWith(mockCorrectorNuevo);
-  //   });
-  // });
-
-  it('should emit correctorEliminado event when eliminarCorrector is called', () => {
-    const mockCorrector: Corrector = { id: 1n, identificadorUsuario: 1n, telefono: '+34 954-362-837',
-      maximasCorrecciones: 21, materias: [{ idMateria: 1n, idConvocatoria: 1n }] };
-
-    spyOn(component.correctorEliminado, 'emit');
-
-    component.corrector = mockCorrector;
-    component.eliminarCorrector();
-
-    expect(component.correctorEliminado.emit).toHaveBeenCalledWith(mockCorrector.id);
+    fixture.whenStable().then(() => {
+      expect(component.editarCorrector).toHaveBeenCalled();
+      done();
+    });
   });
 
-  it('should display corrector details', () => {
+  // it('deberia emitir el evento correctorEliminado cuando se llama al metodo eliminarCorrector', () => {
+  //   const mockCorrector: Corrector = { id: 1n, identificadorUsuario: 1n, telefono: '+34 954-362-837',
+  //     maximasCorrecciones: 21, materias: [{ idMateria: 1n, idConvocatoria: 1n }] };
+
+  //   spyOn(component.correctorEliminado, 'emit');
+
+  //   component.corrector = mockCorrector;
+  //   component.eliminarCorrector();
+
+  //   expect(component.correctorEliminado.emit).toHaveBeenCalledWith(mockCorrector.id);
+  // });
+
+  it('hacer click en el boton "Eliminar" deberia llamar al metodo eliminarCorrector', (done: DoneFn) => {
+    spyOn(component,  'eliminarCorrector');
+
+    const html = fixture.nativeElement as HTMLElement; //dom html
+    const btn = html.querySelector('#btnEliminar') as HTMLButtonElement;
+    btn.click();
+
+    fixture.whenStable().then(() => {
+      expect(component.eliminarCorrector).toHaveBeenCalled();
+      done();
+    });
+  });
+
+  it('deberia mostrar la informacion del corrector', () => {
     const mockCorrector: Corrector = {
       id: 1n,
       identificadorUsuario: 1n,
@@ -112,6 +116,8 @@ describe('DetalleCorrectorComponent', () => {
     expect(maxcorrSpan.nativeElement.textContent).toContain(mockCorrector.maximasCorrecciones.toString());
     
     
+    // Por simplicidad comprobamos que el numero de materias que se muestran es igual
+    // al numero de materias que le estamos añadiendo a traves del mockCorrector
     const materiaRows = fixture.debugElement.queryAll(By.css('tbody tr'));
     expect(materiaRows.length).toBe(mockCorrector.materias.length);
 

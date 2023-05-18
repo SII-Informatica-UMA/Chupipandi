@@ -1,14 +1,3 @@
-<style>
-  .nota-input {
-    width: 100px;
-    height: 30px;
-  }
-
-  #modify {
-    margin-top: 10px;
-  }
-</style>
-
 <div *ngIf="corregidos?.length || pendientes?.length" class="container">
   <div class="row">
     <div class="col-md-6">
@@ -33,7 +22,7 @@
             <ng-template>
               <div class="list-group">
                 <button *ngFor="let examen of corregidos"
-                  class="list-group-item list-group-item-action"
+                  class="list-group-item list-group-item-action list-group-item-success"
                   (click)="examenElegido = examen"
                   [class.active]="examenElegido === examen">Examen ID {{ examen.id }}</button>
               </div>
@@ -52,7 +41,7 @@
             <ng-template>
               <div class="list-group">
                 <button *ngFor="let examen of pendientes"
-                  class="list-group-item list-group-item-action"
+                  class="list-group-item list-group-item-action list-group-item-success"
                   (click)="examenElegido = examen; modificandoNota = false"
                   [class.active]="examenElegido === examen">Examen ID {{ examen.id }}</button>
               </div>
@@ -89,7 +78,7 @@
       <input [hidden]="!modificandoNota" type="text" class="nota-input form-control" [(ngModel)]="examenElegido.nota" placeholder="Nota">
     </div>
     <div class="row">
-        <button id="modify" class="btn btn-primary bi bi-pencil" (click)="modificarNota()"> Modificar nota</button>
+        <button id="modify" class="btn btn-success bi bi-pencil" (click)="modificarNota()"> Modificar nota</button>
     </div>
   </div>
 </div>

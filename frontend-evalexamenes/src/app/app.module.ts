@@ -23,7 +23,8 @@ import { FormularioNotificacionComponent } from './formulario-notificacion/formu
     NgbNavModule,
     DetalleNotasComponent,
     DetalleCorreccionComponent,
-    FormularioNotificacionComponent
+    FormularioNotificacionComponent,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

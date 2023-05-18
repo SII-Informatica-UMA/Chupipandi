@@ -5,8 +5,9 @@
 </style>
 
 <div class="form-group">
-    <label for="dni">DNI:</label>
-    <input type="text" class="form-control" id="dni" [(ngModel)]="estudiante.dni" placeholder="DNI">
-    <label for="apellido">Apellido:</label>
-    <input type="text" class="form-control" id="apellido" [(ngModel)]="estudiante.apellido" placeholder="Apellido">
+  <label for="dni">DNI:</label>
+  <input type="text" class="form-control required" id="dni" [(ngModel)]="estudiante.dni" placeholder="DNI">
+  <label for="apellido">Apellido:</label>
+  <input type="text" class="form-control" id="apellido" [(ngModel)]="estudiante.apellido" placeholder="Apellido"><hr>
+  <button type="button" class="btn btn-primary bi bi-search" (click)="getNotas.emit(estudiante)"></button>
 </div>

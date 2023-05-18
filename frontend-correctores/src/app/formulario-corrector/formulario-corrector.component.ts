@@ -50,6 +50,7 @@ export class FormularioCorrectorComponent {
   }
   
   nuevaConvoc(): void {
+    this.collapsed = !this.collapsed;
     if (!this.collapsed) {
       // Si se despliega el formulario de nueva convocatoria, se añaden los validadores
       this.correctForm.controls['materia'].addValidators(Validators.required);

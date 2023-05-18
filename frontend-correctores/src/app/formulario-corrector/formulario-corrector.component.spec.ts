@@ -4,7 +4,7 @@ import { FormularioCorrectorComponent } from './formulario-corrector.component';
 import { FormsModule, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 
-describe('El componente FormularioCorrectorComponent', () => {
+describe('FormularioCorrectorComponent', () => {
   let component: FormularioCorrectorComponent;
   let fixture: ComponentFixture<FormularioCorrectorComponent>;
   let compiled: HTMLElement;
@@ -75,13 +75,13 @@ describe('El componente FormularioCorrectorComponent', () => {
   it('deberian ser visibles (y obligatorios) los campos para la convocatoria', () => {
     component.accion = "Añadir";
     component.createFormGroup();
+    fixture.detectChanges();
 
     // Collapsed es false -> campos visibles
     expect(component.collapsed).toBeFalsy();
     // Campos de la convocatoria son obligatorios
     expect(component.correctForm.get('identificadorConvocatoria')?.hasValidator(Validators.required)).toBeTruthy();
     expect(component.correctForm.get('materia')?.hasValidator(Validators.required)).toBeTruthy();
-    fixture.detectChanges();
 
     // El formulario ahora es invalido, y por tanto el boton de submit esta deshabilitado
     expect(component.correctForm.valid).toBeFalsy();
@@ -89,9 +89,10 @@ describe('El componente FormularioCorrectorComponent', () => {
     expect(submitButton.disabled).toBeTruthy();
   });
 
-  it('deberia alternarse la visibilidad de los campos para la convocatoria al pinchar en el switch', () => {
+  it('deberia alternarse la visibilidad de los campos para la convocatoria al pinchar en el switch', (done: DoneFn) => {
     component.accion = "Editar";
     component.createFormGroup();
+    fixture.detectChanges();
 
     // Collapsed es true -> campos ocultos
     expect(component.collapsed).toBeTruthy();
@@ -99,21 +100,25 @@ describe('El componente FormularioCorrectorComponent', () => {
     expect(component.correctForm.get('identificadorConvocatoria')?.hasValidator(Validators.required)).toBeFalsy();
     expect(component.correctForm.get('materia')?.hasValidator(Validators.required)).toBeFalsy();
 
-    // Como puedo simular el click en el switch?
-    // let switchBtn = compiled.querySelector('#flexSwitchCheckDefaul') as HTMLInputElement;
-
-    // Simulo el click en el switch ¿?
-    component.collapsed = !component.collapsed;
-    component.nuevaConvoc();
-    fixture.autoDetectChanges();
-
-    // console.log("validator" + component.correctForm.get('identificadorConvocatoria')?.validator);
-    expect(component.correctForm.get('identificadorConvocatoria')?.hasValidator(Validators.required)).toBeTruthy();
-    expect(component.correctForm.get('materia')?.hasValidator(Validators.required)).toBeTruthy();
+    let switchBtn = compiled.querySelector('#flexSwitchCheckDefault') as HTMLInputElement;
     
-    // El formulario ahora es invalido, y por tanto el boton de submit esta deshabilitado
-    expect(component.correctForm.valid).toBeFalsy();
-    const submitButton = fixture.nativeElement.querySelector('#submit-btn');
-    expect(submitButton.disabled).toBeTruthy();
+    // Simulo un click en el switch
+    fixture.whenStable().then(() => {
+      switchBtn.click();
+      fixture.detectChanges();
+      // Collapsed es false -> campos visibles
+      expect(component.collapsed).toBeFalsy();
+      
+      // Campos de la convocatoria ahora son obligatorios
+      expect(component.correctForm.get('identificadorConvocatoria')?.hasValidator(Validators.required)).toBeTruthy();
+      expect(component.correctForm.get('materia')?.hasValidator(Validators.required)).toBeTruthy();
+      
+      // El formulario ahora es invalido, y por tanto el boton de submit esta deshabilitado
+      expect(component.correctForm.valid).toBeFalsy();
+      let submitButton = fixture.nativeElement.querySelector('#submit-btn');
+      expect(submitButton.disabled).toBeTruthy();
+      done();
+    });
+
   });
 });

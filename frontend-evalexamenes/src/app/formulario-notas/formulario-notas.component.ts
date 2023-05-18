@@ -11,7 +11,7 @@ import { Estudiante } from "../estudiante";
 })
 export class FormularioNotasComponent {
   estudiante: Estudiante = {dni: '', apellido: ''};
-  @Output() getNotas: EventEmitter<Estudiante> = new EventEmitter<Estudiante>();
+  @Output() getNotas: EventEmitter<any> = new EventEmitter<any>();
 
   constructor() { }
 }

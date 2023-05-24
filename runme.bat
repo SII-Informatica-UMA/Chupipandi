@@ -1,14 +1,5 @@
-:: Iniciar Base de Datos
-start cmd.exe @cmd /k "java -cp h2-2.1.210.jar org.h2.tools.Server -ifNotExists"
 
-:: Iniciar el servicio Gestion de correctores
-CALL mvn -f ./GestionCorrectores/pom.xml clean package
-timeout /t 3
-start cmd.exe @cmd /k "java -jar GestionCorrectores/target/ms_corrector-0.0.1-SNAPSHOT.jar"
+echo Iniciando microservicio de gestion de correctores ...
 
-:: Iniciar el servicio Evaluacion de examenes
-CALL mvn -f ./EvaluacionExamenes/pom.xml clean package
-timeout /t 10
-start cmd.exe @cmd /k "java -jar EvaluacionExamenes/target/ms_evalexamenes-0.0.1-SNAPSHOT.jar"
-
-PAUSE
+:: De momento solo consigo que funcione si se ejecuta todo en el mismo CALL. Ademas, siempre ejecuta los tests
+CALL mvn clean test spring-boot:start -f ./GestionCorrectores/pom.xml && mvn clean test spring-boot:start -f ./EvaluacionExamenes/pom.xml && echo Pulse una tecla para finalizar ambos microservicios && PAUSE && echo Deteniendo microservicio gestion de correctores ... && mvn spring-boot:stop -f ./GestionCorrectores/pom.xml && echo Deteniendo microservicio evaluacion de examenes ... && mvn spring-boot:stop -f ./EvaluacionExamenes/pom.xml

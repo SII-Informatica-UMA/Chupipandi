@@ -1,4 +1,5 @@
-:: CALL mvn clean install -U
+:: DESACTUALIZADO. USAR EL DE LA RAIZ DEL PROYECTO
+
 start cmd.exe @cmd /k "java -cp h2-2.1.210.jar org.h2.tools.Server -ifNotExists -webPort 8090"
 CALL mvn clean package
 :: start cmd.exe @cmd /k "java -cp h2-2.1.210.jar org.h2.tools.Server "

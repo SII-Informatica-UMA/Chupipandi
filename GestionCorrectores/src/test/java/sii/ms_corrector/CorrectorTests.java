@@ -170,9 +170,6 @@ class CorrectorTests {
 		assertThat(enBD.getMaximasCorrecciones()).isEqualTo(nuevo.getMaximasCorrecciones());
 
 		List<MateriaEnConvocatoriaDTO> materias = enBD.getMaterias();
-		MateriaEnConvocatoriaDTO materiaNueva = new MateriaEnConvocatoriaDTO();
-		materiaNueva.setIdConvocatoria(nuevo.getIdentificadorConvocatoria());
-		materiaNueva.setIdMateria(nuevo.getMateria().getId());
 		
 		// Necesitamos pasarle por parametro el número de materias que tiene el corrector
 		// que estamos comprobando porque para uno de los tests el put no introduce una nueva
@@ -719,7 +716,83 @@ class CorrectorTests {
 			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
 			compruebaCamposPut(respuesta.getBody(), correctorDTO, 2);
         }
-		
+
+		@Test
+        @DisplayName("modificar un corrector (siendo el idUsuario nulo)")
+        public void putIdUsuarioNulo() {
+            var materia = MateriaDTO.builder().nombre("Física").build();
+            var correctorDTO = CorrectorNuevoDTO.builder()
+                                    .identificadorConvocatoria(1L)
+                                    .materia(materia)
+                                    .telefono("112-233-445")
+                                    .maximasCorrecciones(20)
+                                    .build();
+
+            var peticion = put("http", "localhost", port, "/correctores/" + idCorrector, correctorDTO, tokenValido);
+            var respuesta = restTemplate.exchange(peticion, CorrectorDTO.class);
+			// Como no le proporcionamos el idUsuario, devolverá el que ya tenía en la base de datos
+			correctorDTO.setIdentificadorUsuario(correctorRepo.findById(idCorrector).get().getIdUsuario());
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			compruebaCamposPut(respuesta.getBody(), correctorDTO, 2);
+        }
+
+		@Test
+        @DisplayName("modificar un corrector (siendo el telefono vacio)")
+        public void putTelefonoNulo() {
+            var materia = MateriaDTO.builder().nombre("Física").build();
+            var correctorDTO = CorrectorNuevoDTO.builder()
+									.identificadorUsuario(3L)
+                                    .identificadorConvocatoria(1L)
+									.telefono("")
+                                    .materia(materia)
+                                    .maximasCorrecciones(20)
+                                    .build();
+
+            var peticion = put("http", "localhost", port, "/correctores/" + idCorrector, correctorDTO, tokenValido);
+            var respuesta = restTemplate.exchange(peticion, CorrectorDTO.class);
+			// Como no le proporcionamos el telefono, devolverá el que ya tenía en la base de datos
+			correctorDTO.setTelefono(correctorRepo.findById(idCorrector).get().getTelefono());
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			compruebaCamposPut(respuesta.getBody(), correctorDTO, 2);
+        }
+
+		@Test
+        @DisplayName("modificar un corrector (siendo correciones 0)")
+        public void putCorreccionesCero() {
+            var materia = MateriaDTO.builder().nombre("Física").build();
+            var correctorDTO = CorrectorNuevoDTO.builder()
+									.identificadorUsuario(3L)
+                                    .identificadorConvocatoria(1L)
+									.telefono("112-233-445")
+                                    .materia(materia)
+                                    .maximasCorrecciones(0)
+                                    .build();
+
+            var peticion = put("http", "localhost", port, "/correctores/" + idCorrector, correctorDTO, tokenValido);
+            var respuesta = restTemplate.exchange(peticion, CorrectorDTO.class);
+			// Como le proporcionamos correciones a 0, devolverá el contenido que ya tenía en la base de datos
+			correctorDTO.setMaximasCorrecciones(correctorRepo.findById(idCorrector).get().getMaximasCorrecciones());
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			compruebaCamposPut(respuesta.getBody(), correctorDTO, 2);
+        }
+
+		@Test
+        @DisplayName("modificar un corrector (sin nueva convocatoria)")
+        public void putNoNewConv() {
+            var correctorDTO = CorrectorNuevoDTO.builder()
+									.identificadorUsuario(3L)
+									.telefono("112-233-445")
+                                    .maximasCorrecciones(20)
+                                    .build();
+
+            var peticion = put("http", "localhost", port, "/correctores/" + idCorrector, correctorDTO, tokenValido);
+            var respuesta = restTemplate.exchange(peticion, CorrectorDTO.class);
+			assertThat(respuesta.getStatusCode().value()).isEqualTo(200);
+			// Como no le proporcionamos una nueva convocatoria, la lista de materias será igual
+			// a la que ya tenía en la base de datos (en este caso, con tamaño 1)
+			compruebaCamposPut(respuesta.getBody(), correctorDTO, 1);
+        }
+
 		@Test
 		@DisplayName("intentar modificar un corrector cuando no existe")
 		public void modCorrNoExiste() {

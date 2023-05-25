@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import sii.ms_corrector.entities.Materia;
 import sii.ms_corrector.entities.MateriaEnConvocatoria;
 
 @Getter
@@ -26,12 +25,14 @@ public class MateriaEnConvocatoriaDTO {
         return dto;
     }
 
-    public MateriaEnConvocatoria materiaEnConvocatoria() {
-        var mat = new MateriaEnConvocatoria();
-        Materia m = new Materia();
-        m.setIdMateria(idMateria);
-        mat.setMateria(m);
-        mat.setIdConvocatoria(idConvocatoria);
-        return mat;
-    }
+    // Método en desuso
+
+    // public MateriaEnConvocatoria materiaEnConvocatoria() {
+    //     var mat = new MateriaEnConvocatoria();
+    //     Materia m = new Materia();
+    //     m.setIdMateria(idMateria);
+    //     mat.setMateria(m);
+    //     mat.setIdConvocatoria(idConvocatoria);
+    //     return mat;
+    // }
 }

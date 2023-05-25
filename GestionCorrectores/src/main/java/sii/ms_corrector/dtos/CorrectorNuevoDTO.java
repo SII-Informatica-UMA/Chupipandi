@@ -21,14 +21,6 @@ public class CorrectorNuevoDTO {
     private MateriaDTO materia;
     private int maximasCorrecciones;
 
-    public static CorrectorNuevoDTO fromCorrector(Corrector corrector) {
-        var dto = new CorrectorNuevoDTO();
-        dto.setIdentificadorUsuario(corrector.getIdUsuario());
-        dto.setTelefono(corrector.getTelefono());
-        dto.setMaximasCorrecciones(corrector.getMaximasCorrecciones());
-        return dto;
-    }
-
     public Corrector corrector() {
         var correct = new Corrector();
         correct.setIdUsuario(identificadorUsuario);
@@ -36,4 +28,14 @@ public class CorrectorNuevoDTO {
         correct.setMaximasCorrecciones(maximasCorrecciones);
         return correct;
     }
+
+    // Método en desuso
+
+    // public static CorrectorNuevoDTO fromCorrector(Corrector corrector) {
+    //     var dto = new CorrectorNuevoDTO();
+    //     dto.setIdentificadorUsuario(corrector.getIdUsuario());
+    //     dto.setTelefono(corrector.getTelefono());
+    //     dto.setMaximasCorrecciones(corrector.getMaximasCorrecciones());
+    //     return dto;
+    // }
 }

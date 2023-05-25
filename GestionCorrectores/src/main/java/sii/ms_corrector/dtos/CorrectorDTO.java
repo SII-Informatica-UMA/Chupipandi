@@ -36,13 +36,15 @@ public class CorrectorDTO {
         return dto;
     }
 
-    public Corrector corrector() {
-        var correct = new Corrector();
-        correct.setId(id);
-        correct.setIdUsuario(identificadorUsuario);
-        correct.setTelefono(telefono);
-        correct.setMaximasCorrecciones(maximasCorrecciones);
-        correct.setMatEnConv(materias.stream().map(mat -> mat.materiaEnConvocatoria()).toList());
-        return correct;
-    }
+    // Método en desuso
+
+    // public Corrector corrector() {
+    //     var correct = new Corrector();
+    //     correct.setId(id);
+    //     correct.setIdUsuario(identificadorUsuario);
+    //     correct.setTelefono(telefono);
+    //     correct.setMaximasCorrecciones(maximasCorrecciones);
+    //     correct.setMatEnConv(materias.stream().map(mat -> mat.materiaEnConvocatoria()).toList());
+    //     return correct;
+    // }
 }

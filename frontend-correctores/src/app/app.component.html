@@ -14,7 +14,7 @@
         <button *ngFor="let corrector of correctores"
           class="list-group-item list-group-item-action list-group-item-success"
           (click)="elegirCorrector(corrector)"
-          [class.active]="corrector === correctorElegido">Corrector con ID: {{corrector.identificadorUsuario}}</button>
+          [class.active]="corrector === correctorElegido">Corrector con UID: {{corrector.identificadorUsuario}}</button>
       </div>
       <br *ngIf="!busquedaFallida">
       <div *ngIf="busquedaFallida" class="alert alert-info" role="alert">

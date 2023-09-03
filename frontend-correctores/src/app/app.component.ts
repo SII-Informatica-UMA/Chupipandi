@@ -21,6 +21,24 @@ export class AppComponent implements OnInit {
     this.actualizaCorrectores();
   }
 
+  // TODO: Si el token almacenado es invalido, se sustituira por uno nuevo consultando la url /token/nuevo
+  //
+  // ngOnInit(): void {
+  //   this.correctorService.getTokenValidity().subscribe(valid => {
+  //     if (!valid.body?.valueOf()) {
+  //       this.correctorService.updateToken().then(() => {
+  //         console.log('Token actualizado: ' + this.correctorService.getToken());
+  //         this.actualizaCorrectores()
+  //       })
+  //       .catch(error => {
+  //         console.error('Error al actualizar el token', error);
+  //       });
+  //     } else {
+  //       this.actualizaCorrectores()
+  //     }
+  //   })
+  // }
+
   @HostListener('keydown', ['$event'])
   onKeyDown(e: KeyboardEvent) {
     switch (e.key) {
@@ -100,6 +118,7 @@ export class AppComponent implements OnInit {
   // el 'id' que se envia en la peticion que se hace al back para que se actualice
   // la lista de correctores es un valor entero, no un string, por lo que para buscar
   // un corrector hay que proporcionar el id de la convocatoria entero, no un prefijo
+  // ej. para ID convoc. 125 buscamos pues 125, al escribir 1 o 12 no sale
   busqCorrectores() {
     this.correctorService.getCorrectores(this.idConvBusq).subscribe(correctores => {
       this.busquedaFallida = (correctores.length === 0);

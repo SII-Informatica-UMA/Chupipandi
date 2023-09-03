@@ -1,3 +1,4 @@
+:: Para probar ambos microservicios a la vez, ejecucion global:
 
 echo Iniciando microservicio de gestion de correctores ...
 

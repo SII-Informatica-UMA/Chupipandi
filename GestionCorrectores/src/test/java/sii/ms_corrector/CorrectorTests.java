@@ -38,6 +38,8 @@ import sii.ms_corrector.services.MateriaService;
 import sii.ms_corrector.util.JwtGenerator;
 import sii.ms_corrector.dtos.*;
 
+// FIX: Arreglar plugin tests (no muestra todos los tests) (buscar version actualizada de Chicano)
+
 @ActiveProfiles("dev")
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 @DisplayName("En el servicio de corrector:")

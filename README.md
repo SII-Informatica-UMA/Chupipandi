@@ -7,17 +7,25 @@ Implementación de los microservicios de Gestión de Correctores y Evaluación d
 
 ## Puesta en marcha con Docker
 ### Docker compose
-Para poner en marcha los dos microservicios al completo haremos uso de `docker-compose`.
-Las imágenes se construirán automáticamente y se pondrán en ejecución 5 contenedores: correctores back y front, evalexamenes back y front, más una base de datos común a ambos microservicios.
+Para poner en marcha los dos microservicios al completo haremos uso de **[docker-compose](https://docs.docker.com/compose/gettingstarted/)**. Las imágenes se construirán automáticamente y se pondrán en ejecución 5 contenedores: correctores back y front, evalexamenes back y front, más una base de datos común a ambos microservicios.
+
 ```bash
 # Arranca en background los contenedores
 docker compose up -d
 # Para y borra los contenedores (incluir el flag indicado para borrar tambien el volumen de datos)
 docker compose down [-v, --volumes]
 ```
-En caso de querer correr los contenedores individualmente, cada carpeta contiene su correspondiente `Dockerfile`, a excepción de el la base de datos, que se encuentra en la raiz del proyecto.
+
+### Direcciones web
+| Microservicio | URL | Microservicio | URL |
+| -------- | --- | ------ | ---- |
+| Correctores backend | http://localhost:8081/ | Evalexamenes backend | http://localhost:8080/ |
+| Correctores frontend | http://localhost:4242/ | Evalexamenes frontend | http://localhost:4200/ |
 
 ---
+
+En caso de querer correr los contenedores individualmente, cada carpeta contiene su correspondiente `Dockerfile`, a excepción de el la base de datos, que se encuentra en la raiz del proyecto.
+
 ### H2-Database
 
 Para levantar la base de datos h2 se puede usar el siguiente comando:
@@ -27,6 +35,11 @@ docker build . -f Dockerfile.database -t database-h2:latest
 # Pone en marcha un contenedor
 docker run -itp 8082:8082 --name db-service database-h2:latest
 ```
+Para entrar por la web, acceder a través de http://localhost:8082.
+| Field | Value |
+| :-----: |:-----:|
+| URL JDBC | *jdbc:h2:ms_database* |
+| User & Passwd  | \<empty> |
 
 ### Microservicio Backend/Frontend
 Se recomienda utilizar los siguientes tags propuestos al construir las imágenes.
@@ -36,6 +49,7 @@ docker build <carpeta con Dockerfile> -t <microservicio>/<back,front>
 # Poner en marcha contenedor
 docker run -itp <host port>:<cont.port> --name <name> <image>
 ```
+En caso de querer que los contenedores se comuniquen entre sí, es conveniente crear una nueva *network* y asignársela mediante el flag `--network <red>` a cada contenedor.
 
 # Gestión de Correctores
 ## Backend

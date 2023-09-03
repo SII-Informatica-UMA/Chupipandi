@@ -1,0 +1,84 @@
+version: '3'
+
+services:
+  backend-correctores:
+    image: correctores/back
+    build: ./GestionCorrectores
+    pull_policy: build
+    ports:
+      - "8081:8081"
+    networks:
+      - chupipandi-net
+    depends_on:
+      - db-service
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://backend-correctores:8081/healthcheck || exit 1"]
+      interval: 10s
+      retries: 5
+    
+  frontend-correctores:
+    image: correctores/front
+    build:
+      context: ./frontend-correctores
+      target: builder
+    pull_policy: build
+    ports:
+      - "4242:4242"
+    networks:
+      - chupipandi-net
+    depends_on:
+      backend-correctores:
+        condition: service_healthy
+
+  backend-evalexamenes:
+    image: evalexamenes/back
+    build: ./EvaluacionExamenes
+    pull_policy: build
+    ports:
+      - "8080:8080"
+    networks:
+      - chupipandi-net
+    depends_on:
+      db-service:
+        condition: service_started
+      backend-correctores:
+        condition: service_healthy
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://backend-evalexamenes:8080/healthcheck || exit 1"]
+      interval: 10s
+      retries: 5
+
+  frontend-evalexamenes:
+    image: evalexamenes/front
+    build:
+      context: ./frontend-evalexamenes
+      target: builder
+    pull_policy: build
+    ports:
+      - "4200:4200"
+    networks:
+      - chupipandi-net
+    depends_on:
+      backend-evalexamenes:
+        condition: service_healthy
+
+  db-service:
+    image: database-h2
+    build:
+      context: .
+      dockerfile: Dockerfile.database
+    pull_policy: build
+    ports:
+      - "5050:8082"
+    volumes:
+      - db-data:/h2-data
+    networks:
+      - chupipandi-net
+
+networks:
+  chupipandi-net:
+
+volumes:
+  db-data:

@@ -4,46 +4,15 @@
 Implementación de los microservicios de Gestión de Correctores y Evaluación de Exámenes para la asignatura de Sistemas de Información para Internet.
 - GestionCorrectores: puede ejecutarse independientemente del otro microservicio.
 - EvaluacionExamenes: depende del microservicio de correctores para su correcto funcionamiento.
-
-## Puesta en marcha con Docker
-### Docker compose
-Para poner en marcha los dos microservicios al completo haremos uso de `docker-compose`.
-Las imágenes se construirán automáticamente y se pondrán en ejecución 5 contenedores: correctores back y front, evalexamenes back y front, más una base de datos común a ambos microservicios.
-```bash
-# Arranca en background los contenedores
-docker compose up -d
-# Para y borra los contenedores (incluir el flag indicado para borrar tambien el volumen de datos)
-docker compose down [-v, --volumes]
-```
-En caso de querer correr los contenedores individualmente, cada carpeta contiene su correspondiente `Dockerfile`, a excepción de el la base de datos, que se encuentra en la raiz del proyecto.
-
----
-### H2-Database
-
-Para levantar la base de datos h2 se puede usar el siguiente comando:
-```bash
-# Construye la imagen
-docker build . -f Dockerfile.database -t database-h2:latest
-# Pone en marcha un contenedor
-docker run -itp 8082:8082 --name db-service database-h2:latest
-```
-
-### Microservicio Backend/Frontend
-Se recomienda utilizar los siguientes tags propuestos al construir las imágenes.
-```bash
-# Construir imagen
-docker build <carpeta con Dockerfile> -t <microservicio>/<back,front>
-# Poner en marcha contenedor
-docker run -itp <host port>:<cont.port> --name <name> <image>
-```
-
+### Ejecución global de los microservicios
+Para probar ambos microservicios a la vez, puede ejecutarse directamente el archivo `runme.bat` que se encuentra en la raíz del proyecto.
 # Gestión de Correctores
 ## Backend
 ### Ejecución mediante fichero jar:
 
 En primer lugar ejecutamos `mvn clean package`.
 
-Seguidamente, ejecutamos el fichero jar generado en la carpeta target, donde distinguimos dos tipos de ejecución
+Seguidamente, ejecutamos el fichero jar generado en la carpeta target, donde disntinguimos dos tipos de ejecución
 - Ejecución con la base de datos en memoria:
 ```java
 java -jar -Dspring.profiles.active=dev target/ms_corrector-0.0.1-SNAPSHOT.jar

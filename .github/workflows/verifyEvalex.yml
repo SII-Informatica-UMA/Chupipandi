@@ -10,9 +10,9 @@ name: CI/CD EvaluacionExamenes
 
 on:
   push:
-    branches: [ "workflow-feat" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "workflow-feat" ]
+    branches: [ "master" ]
 
 jobs:
   verify:

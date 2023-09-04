@@ -98,14 +98,15 @@
 					<dependency>
 						<groupId>me.fabriciorby</groupId>
 						<artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-						<version>1.1.0</version>
+						<version>1.2.1</version>
 					</dependency>
 				</dependencies>
 				<configuration>
 					<skipTests>false</skipTests>
 					<reportFormat>plain</reportFormat>
 					<consoleOutputReporter>
-						<disable>false</disable>
+					<!-- Enable to see tests stack trace -->
+						<disable>true</disable>
 					</consoleOutputReporter>
 					<statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter"/>
 				</configuration>

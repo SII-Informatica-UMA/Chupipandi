@@ -14,8 +14,8 @@ services:
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://backend-correctores:8081/healthcheck || exit 1"]
-      interval: 5s
-      retries: 10
+      interval: 10s
+      retries: 5
     
   frontend-correctores:
     image: correctores/front
@@ -47,8 +47,8 @@ services:
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://backend-evalexamenes:8080/healthcheck || exit 1"]
-      interval: 5s
-      retries: 10
+      interval: 10s
+      retries: 5
 
   frontend-evalexamenes:
     image: evalexamenes/front

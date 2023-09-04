@@ -27,6 +27,6 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Setup Correctores microservice
-      run: mvn -f GestionCorrectores/pom.xml spring-boot:run
+      run: mvn -f GestionCorrectores/pom.xml spring-boot:start
     - name: Maven verify phase
       run: mvn --file EvaluacionExamenes/pom.xml --batch-mode --update-snapshots verify

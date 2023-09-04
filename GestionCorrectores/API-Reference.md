@@ -1,7 +1,7 @@
 ## API Reference
 
 > **Note**
-> Para acceder a casi todos los endpoints es necesario incluir un token en la cabecera de la petición. Este debe seguir el formato especificado [aquí](src/main/java/sii/ms_corrector/security/README.md#formato-ejemplo). La execpción son los endpoints bajo la dirección */token*, pues son públicos.
+> Para acceder a casi todos los endpoints es necesario incluir un token en la cabecera de la petición. Este debe seguir el formato especificado [aquí](src/main/java/sii/ms_corrector/security/README.md#formato-ejemplo). La excepción son los endpoints bajo la dirección */token*, pues son públicos.
 >
 > La incorporación del token la hace la aplicacion automáticamente, pero si se desea acceder al servicio desde la terminal es necesario proporcionarlo. Se recomienda para ello exportar una variable donde se almacene el token.
 
@@ -28,7 +28,7 @@ PUT /correctores/{id}
 
 | Parameter | Type   | Description                             |
 | :-------- | :----- | :-------------------------------------- |
-| `id`      | `long` | **Required**. Id del corrector a buscar |
+| `id`      | `long` | **Required**. Id del corrector a editar |
 
 Uso/Ejemplo
 ```bash
@@ -59,7 +59,7 @@ DELETE /correctores/{id}
 
 | Parameter | Type   | Description                             |
 | :-------- | :----- | :-------------------------------------- |
-| `id`      | `long` | **Required**. Id del corrector a buscar |
+| `id`      | `long` | **Required**. Id del corrector a borrar |
 
 Uso/Ejemplo
 ```bash
@@ -72,9 +72,9 @@ curl -X "DELETE" -H "Authorization: Bearer $TOKEN" http://localhost:8081/correct
 GET /correctores
 ```
 
-| Parameter        | Type   | Description                                  |
-| :--------------- | :----- | :------------------------------------------- |
-| `idConvocatoria` | `long` | **Optional**. Id de la convocatoria a buscar |
+| Parameter                  | Type   | Description                                  |
+| :------------------------- | :----- | :------------------------------------------- |
+| `idConvocatoria` (*query*) | `long` | **Optional**. Id de la convocatoria a buscar |
 
 Uso/Ejemplo
 ```bash
@@ -145,3 +145,6 @@ curl http://localhost:8081/token/validez?token=$TOKEN
 | 9  | Dibujo Técnico II              |
 | 10 | Economía                       |
 | 11 | Filosofía                      |
+
+## Relacionado
+Para mas detalles consultar: [OpenAPI definition](https://jfrchicanog.github.io/html/correctores.html)

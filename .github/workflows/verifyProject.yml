@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: CI/CD GestionCorrectores
+name: CI/CD Microservices
 
 on:
   push:
@@ -15,7 +15,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  verify:
+  verify-correctores:
 
     runs-on: ubuntu-latest
 
@@ -28,3 +28,19 @@ jobs:
         cache: maven
     - name: Maven verify phase
       run: mvn --file GestionCorrectores/pom.xml --batch-mode --update-snapshots verify
+
+  verify-evalexamenes:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Setup Correctores microservice
+      run: mvn -f GestionCorrectores/pom.xml spring-boot:run &
+    - name: Maven verify phase
+      run: mvn --file EvaluacionExamenes/pom.xml --batch-mode --update-snapshots verify

@@ -1,3 +1,6 @@
+# Todas las imagenes estan definidas con el proposito de seguir desarrollando,
+# convendria rehacer los Dockerfiles usando solo los ficheros jar generados para un
+# entorno mas de producción. (Donde el cliente no tenga que compilar cada proyecto)
 version: '3'
 
 services:

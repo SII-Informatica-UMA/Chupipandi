@@ -1,3 +1,4 @@
+# TODO: Desplegar para produccion
 FROM node:18.17.1-bullseye-slim as builder
 
 WORKDIR /app

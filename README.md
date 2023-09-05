@@ -70,6 +70,6 @@ docker run -itp <host port>:<cont.port> --name <name> --network <red> <image>
 
 ## Documentación
 
-[Spring Boot Maven Plugin](https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/)
-[Docker](https://docs.docker.com/get-started/)
-[Docker-compose](https://docs.docker.com/compose/compose-file/03-compose-file/)
+- [Spring Boot Maven Plugin](https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/)
+- [Docker](https://docs.docker.com/get-started/)
+- [Docker-compose](https://docs.docker.com/compose/compose-file/03-compose-file/)

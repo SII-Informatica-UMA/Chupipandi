@@ -22,7 +22,7 @@ docker compose down [-v, --volumes]
 | Correctores backend | http://localhost:8081/ | Evalexamenes backend | http://localhost:8080/ |
 | Correctores frontend | http://localhost:4242/ | Evalexamenes frontend | http://localhost:4200/ |
 
-Consulta: [GestionCorrectores API](GestionCorrectores/API-Reference.md) y [EvaluacionExamenes API](EvaluacionExamenes/API-Reference.md)
+Consulta: [GestionCorrectores API](GestionCorrectores/.docs/API-Reference.md) y [EvaluacionExamenes API](EvaluacionExamenes/.docs/API-Reference.md)
 
 ---
 
@@ -57,8 +57,8 @@ docker run -itp <host port>:<cont.port> --name <name> --network <red> <image>
 
 ## Despliegue con maven y/o archivo jar
 
-- Microservicio [Gestión de Correctores](GestionCorrectores/README.corr.md)
-- Microservicio [Evaluación de Examenes](EvaluacionExamenes/README.eval.md)
+- Microservicio [Gestión de Correctores](GestionCorrectores/.docs/README.corr.md)
+- Microservicio [Evaluación de Examenes](EvaluacionExamenes/.docs/README.eval.md)
 
 ## Authors
 

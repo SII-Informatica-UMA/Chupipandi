@@ -8,6 +8,10 @@ RUN [ "mvn", "verify", "clean", "--fail-never" ]
 
 COPY src ./src
 
+# Por defecto se presupone 'db-service' como nombre del servicio de base de datos
+# Este valor se puede cambiar en tiempo de ejecución
+ENV SPRING_DATASOURCE_URL jdbc:h2:tcp://db-service/ms_database
+
 EXPOSE 8081
 
 ENTRYPOINT [ "tini", "--" ]

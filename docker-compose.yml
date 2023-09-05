@@ -74,7 +74,7 @@ services:
       dockerfile: Dockerfile.database
     pull_policy: build
     ports:
-      - "5050:8082"
+      - "8082:8082"
     volumes:
       - db-data:/h2-data
     networks:

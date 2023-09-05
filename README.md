@@ -26,9 +26,9 @@ Consulta: [GestionCorrectores API](GestionCorrectores/API-Reference.md) y [Evalu
 
 ---
 
-En caso de querer correr los contenedores individualmente, cada carpeta contiene su correspondiente `Dockerfile`, a excepción de el la base de datos, que se encuentra en la raiz del proyecto (`Dockerfile.database`).
+En caso de querer correr los contenedores individualmente, cada carpeta contiene su correspondiente `Dockerfile`, a excepción de el la base de datos, que se encuentra en la raiz del proyecto.
 
-> **Note**
+> **Important**
 > Tener en cuenta que al ejecutar con docker, ambos microservicios necesitan tener el contenedor de la base de datos corriendo para poder iniciarse correctamente. Además, para comunicar los contenedores entre sí, es necesario crear una nueva *network* y asignársela mediante el flag `--network <red>` a cada contenedor.
 
 ### Contenedor para H2-Database
@@ -60,7 +60,6 @@ docker run -itp <host port>:<cont.port> --name <name> --network <red> <image>
 - Microservicio [Gestión de Correctores](GestionCorrectores/README.corr.md)
 - Microservicio [Evaluación de Examenes](EvaluacionExamenes/README.eval.md)
 
-# Documentación
 ## Authors
 
 - [@M4rdom](https://www.github.com/M4rdom)
@@ -68,3 +67,9 @@ docker run -itp <host port>:<cont.port> --name <name> --network <red> <image>
 - [@fcristallocagnoli](https://www.github.com/fcristallocagnoli)
 - [@RocioLN15](https://github.com/RocioLN15)
 - [@jorgeroma](https://github.com/jorgeroma)
+
+## Documentación
+
+[Spring Boot Maven Plugin](https://docs.spring.io/spring-boot/docs/current/maven-plugin/reference/htmlsingle/)
+[Docker](https://docs.docker.com/get-started/)
+[Docker-compose](https://docs.docker.com/compose/compose-file/03-compose-file/)

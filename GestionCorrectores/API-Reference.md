@@ -48,8 +48,8 @@ curl -X 'PUT' \
     }'
 ```
 
-> **Note**
-> Se podrá proporcionar el Id de la materia, el nombre de esta, o ambos. En cualquier caso, consultar las [materias disponibles](#materias-disponibles) y sus correspondientes Id. Una incorrespondencia resultará en un error.
+> **Important**
+> Se podrá proporcionar el ID de la materia, el nombre de esta, o ambos. En cualquier caso, consultar las [materias disponibles](#materias-disponibles) y sus correspondientes IDs. Una incorrespondencia resultará en un error.
 
 #### Elimina un corrector
 
@@ -105,7 +105,7 @@ curl -X 'POST' \
     }'
 ```
 
-> **Note**
+> **Important**
 > Se podrá proporcionar el ID de la materia, el nombre de esta, o ambos. En cualquier caso, consultar las [materias disponibles](#materias-disponibles) y sus correspondientes IDs. Una incorrespondencia resultará en un error.
 
 #### Obtiene un nuevo token

@@ -54,6 +54,8 @@ docker build <carpeta con Dockerfile> -t <microservicio>/<back,front>
 # Poner en marcha contenedor
 docker run -itp <host port>:<cont.port> --name <name> --network <red> <image>
 ```
+> **Note**
+> El nombre sugerido para el servicio de la BD es `db-service`, en caso de escoger otro, será necesario editar la variable de entorno `SPRING_DATASOURCE_URL` al crear el contenedor del microservicio
 
 ## Despliegue con maven y/o archivo jar
 

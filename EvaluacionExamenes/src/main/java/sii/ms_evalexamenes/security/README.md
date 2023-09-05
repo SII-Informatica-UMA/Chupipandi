@@ -1,4 +1,4 @@
-Implementación de la tarea #23. Seguridad mediante JWT.
+## Implementación de la tarea #23. Seguridad mediante JWT.
 Para hacer uso de la clase `TokenUtils`, basta con seguir estos pasos para cada endpoint que queramos segurizar.
 ```java
 @GetMapping("{id}")
@@ -12,14 +12,14 @@ public ResponseEntity<T> obtener( . . . @RequestHeader Map<String, String> heade
     // . . . continuamos con el metodo como habitualmente
 }
 ```
-Para crear tokens:
+## Creación de tokens
 1. Seguir el enlace a la [web de JWT](https://jwt.io/).
 2. Incluir el el *payload* unos datos como el ejemplo. El campo 'Subject' (`sub`) en principio no es relevante para este microservicio.
 3. Copiar el token y pegar junto con la clave secreta en *postman* para hacer las pruebas.
 
 Siendo la clave secreta: `sistemasinformacioninternet20222023sistemasinformacioninternet20222023`
 Y el algoritmo de firma: `HS512`
-Formato ejemplo para el token:
+### Formato ejemplo
 ```json
 {
   "roles": [

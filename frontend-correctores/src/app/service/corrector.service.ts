@@ -44,8 +44,10 @@ export class CorrectorService {
         const modalRef = this.modalService.open(ErrorModalComponentComponent);
         modalRef.componentInstance.errorCode = `Error code ${error.status}: `;
         switch (error.status) {
+            // Status code 0 is returned when the server is not available. It gets no response.
             case 0:
-                errorMessage = "Error de angular ¿?";
+                errorMessage = "Comprobar si el backend está disponible";
+                modalRef.componentInstance.errorCode += "Error de conexión";
                 break;
             case HttpStatusCode.BadRequest:
                 errorMessage = "Error del cliente";

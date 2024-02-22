@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpStatusCode } from '@angular/
 import { Observable, catchError, firstValueFrom, lastValueFrom, throwError } from 'rxjs';
 import { ErrorModalComponentComponent } from '../error-modal-component/error-modal-component.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TokenService } from './token.service';
 
 @Injectable({
     providedIn: 'root'
@@ -11,31 +12,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 export class CorrectorService {
     private correctoresUrl = 'http://localhost:8081/correctores';
-    private tokenUrl = 'http://localhost:8081/token';
 
-    // Token valido 01/01/2023 - 01/01/2033
-    private token: string = 'eyJhbGciOiJIUzUxMiJ9.eyJyb2xlcyI6WyJWSUNFUlJFQ1RPUkFETyIsIkNPUlJFQ1RPUiJdLCJzdWIiOiJ1c2VyIiwiaWF0IjoxNjcyNTI3NjAwLCJleHAiOjE5ODgxNDY4MDB9.4e4pTFYwSxy81WAFpAM33UsaTA4FQMgiT43QZVsf8XMr5IsZmuRpaC68O6233BYGFaXhe9DNwQEMA8F_6wYUFg';
     private headers = new HttpHeaders({
-        'Authorization': 'Bearer ' + this.token
+        'Authorization': 'Bearer ' + this.tokenService.getToken()
     });
 
-    constructor(private http: HttpClient, private modalService: NgbModal) { }
-
-    // TODO: Actualiza el token invalido por uno nuevo consultando la url /token/nuevo
-    //
-    // async updateToken(): Promise<void> {
-    //   try {
-    //       const response: HttpResponse<string> = await firstValueFrom(this.http.get<string>(`${this.tokenUrl}/nuevo`, { observe: 'response' }));
-    //       this.token = JSON.parse(JSON.stringify(response.body)).token as string
-    //       console.log(this.token);
-    //   } catch (error) {
-    //       throw error;
-    //   }
-    // }
-    //
-    // getTokenValidity(): Observable<HttpResponse<boolean>> {
-    //   return this.http.get<boolean>(`${this.tokenUrl}/validez?token=${this.token}`, { observe: 'response' });
-    // }
+    constructor(private http: HttpClient, private tokenService: TokenService, private modalService: NgbModal) { }
 
     getCorrectores(idConv?: bigint): Observable<Corrector[]> {
         let uri = idConv ? `${this.correctoresUrl}?idConvocatoria=${idConv}` : this.correctoresUrl;

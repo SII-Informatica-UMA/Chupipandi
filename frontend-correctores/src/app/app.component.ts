@@ -3,6 +3,7 @@ import { Corrector, CorrectorNuevo } from './model/interfaces';
 import { CorrectorService } from './service/corrector.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormularioCorrectorComponent } from './formulario-corrector/formulario-corrector.component';
+import { TokenService } from './service/token.service';
 
 @Component({
   selector: 'app-root',
@@ -15,29 +16,19 @@ export class AppComponent implements OnInit {
   idConvBusq?: bigint;
   busquedaFallida: boolean = false;
 
-  constructor(private correctorService: CorrectorService, private modalService: NgbModal) { }
+  constructor(private correctorService: CorrectorService, private tokenService: TokenService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
-    this.actualizaCorrectores();
+    this.tokenService.getTokenValidity().subscribe(valid => {
+      if (!valid.body?.valueOf()) {
+        this.tokenService.updateToken()
+        .catch(error => {
+          console.error('Error al actualizar el token', error);
+        });
+      }
+      this.actualizaCorrectores()
+    })
   }
-
-  // TODO: Si el token almacenado es invalido, se sustituira por uno nuevo consultando la url /token/nuevo
-  //
-  // ngOnInit(): void {
-  //   this.correctorService.getTokenValidity().subscribe(valid => {
-  //     if (!valid.body?.valueOf()) {
-  //       this.correctorService.updateToken().then(() => {
-  //         console.log('Token actualizado: ' + this.correctorService.getToken());
-  //         this.actualizaCorrectores()
-  //       })
-  //       .catch(error => {
-  //         console.error('Error al actualizar el token', error);
-  //       });
-  //     } else {
-  //       this.actualizaCorrectores()
-  //     }
-  //   })
-  // }
 
   @HostListener('keydown', ['$event'])
   onKeyDown(e: KeyboardEvent) {

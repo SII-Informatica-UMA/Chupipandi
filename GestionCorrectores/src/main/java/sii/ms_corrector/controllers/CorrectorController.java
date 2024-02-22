@@ -139,7 +139,7 @@ public class CorrectorController {
      * @param header cabecera para extraer el token (incluir token al hacer la peticion)
      * @return {@code 201 Created} - {@link Void}
 	 * @exception AccesoNoAutorizado {@code 403 Forbidden} Acceso no autorizado
-	 * @exception CorrectorNoEncontrado {@code 404 Not Found} El corrector no existe
+	 * @exception CorrectorYaExiste {@code 409 Conflict} El corrector ya existe
 	 * @see "para obtener un {@code 200 OK}, la materia contenida en {@link CorrectorNuevoDTO}
 	 * debe ser una de las declaradas en en método {@link sii.ms_corrector.services.MateriaService#inicializar() inicializar()}"
      */

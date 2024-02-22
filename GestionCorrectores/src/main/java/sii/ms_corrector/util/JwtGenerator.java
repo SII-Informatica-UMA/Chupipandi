@@ -13,17 +13,17 @@ import io.jsonwebtoken.security.Keys;
 public class JwtGenerator {
 
     private final static String ACCESS_TOKEN_SECRET = "sistemasinformacioninternet20222023sistemasinformacioninternet20222023";
-    private final static Function<Integer, Long> ACCESS_TOKEN_VALIDITY_SECONDS = (time -> time * 60 * 60 * 1_000L);
+    private final static Function<Integer, Long> ACCESS_TOKEN_VALIDITY_MILLISECONDS = (time -> time * 60 * 1_000L);
 
     /**
      * Crea y devuelve un JWT
      * @param sub sujeto a quien va dirigido
-     * @param expTime tiempo de validez (en horas)
+     * @param expTime tiempo de validez (en minutos)
      * @param roles roles asociados al sujeto
      * @return token de tipo JWT
      */
     public static String createToken(String sub, Integer expTime, String ...roles) {
-        long expirationTime = ACCESS_TOKEN_VALIDITY_SECONDS.apply(expTime);
+        long expirationTime = ACCESS_TOKEN_VALIDITY_MILLISECONDS.apply(expTime);
         
         Long creationTime = System.currentTimeMillis();
 

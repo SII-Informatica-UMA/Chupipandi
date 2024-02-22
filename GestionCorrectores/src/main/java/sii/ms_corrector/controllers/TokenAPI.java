@@ -1,5 +1,7 @@
 package sii.ms_corrector.controllers;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,12 +41,12 @@ public class TokenAPI {
     }
 
     /**
-	 * Genera y devuelve un nuevo token, con una validez de 5 horas
+	 * Genera y devuelve un nuevo token, con una validez de 30 minutos
      * @return {@code 200 OK} - Token generado
      */
     @GetMapping("/nuevo")
     public ResponseEntity<String> nuevoToken() {
-        String token = JwtGenerator.createToken("user", 5, new String[]{"VICERRECTORADO", "CORRECTOR"});
-        return ResponseEntity.ok(String.format("{\"token\": \"%s\"}", token));
+        String token = JwtGenerator.createToken("user", 30, new String[]{"VICERRECTORADO", "CORRECTOR"});
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE).body(String.format("{\"token\": \"%s\"}", token));
     }
 }

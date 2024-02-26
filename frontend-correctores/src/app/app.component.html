@@ -1,7 +1,7 @@
 <div class="container">
   <div class="row">
     <div class="col-md-5">
-      <h1>Lista de correctores</h1>
+      <h1 style="margin-top: 25px;">Lista de correctores</h1>
       <div class="input-group mb-3">
         <span class="input-group-text" id="basic-addon1">Id. Convocatoria:</span>
         <input id="searchInput" type="text" class="form-control" placeholder="Convocatoria" [(ngModel)]="idConvBusq"
@@ -26,6 +26,15 @@
       <app-detalle-corrector [corrector]="correctorElegido"
         (correctorEditado)="editarCorrector($event, correctorElegido.id)"
         (correctorEliminado)="eliminarCorrector($event)"></app-detalle-corrector>
+    </div>
+    <div *ngIf="!conectado" class="col-md-6 alert alert-warning" role="alert" style="margin-top: 25px; margin-left: 25px; width: fit-content;">
+      <h4 class="alert-heading"><div>
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        Warning
+      </div></h4>
+      <p>No se ha podido establecer conexion con el servidor.</p>
+      <hr>
+      <p class="mb-0">Compruébese que éste está corriendo.</p>
     </div>
   </div>
 </div>

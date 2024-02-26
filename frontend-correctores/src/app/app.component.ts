@@ -15,10 +15,18 @@ export class AppComponent implements OnInit {
   correctorElegido?: Corrector;
   idConvBusq?: bigint;
   busquedaFallida: boolean = false;
+  // para comprobar si se ha conectado con el backend
+  conectado: boolean = false;
 
   constructor(private correctorService: CorrectorService, private tokenService: TokenService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
+    this.correctorService.tryConnect().then(() => {
+      console.log("Conectado con el backend");
+    }).catch(error => {
+      // console.error('Error al conectar con el backend', error);
+      this.conectado = false;
+    });
     this.tokenService.getTokenValidity().subscribe(valid => {
       if (!valid.body?.valueOf()) {
         this.tokenService.updateToken()

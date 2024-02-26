@@ -39,6 +39,17 @@ export class CorrectorService {
             .pipe(catchError(e => this.handleError(e)));
     }
 
+    async tryConnect(): Promise<void> {
+        try {
+            const response = await firstValueFrom(this.http.get<{token: string}>(`${this.correctoresUrl}/healthcheck`, { observe: 'response' }));
+            if (response && response.status === HttpStatusCode.Ok) {
+                console.log("Conexion correcta");
+            }
+        } catch (error : any) {
+            throw new Error('Error al conectar con el servidor');
+        }
+    }
+
     handleError(error: any) {
         let errorMessage = '';
         const modalRef = this.modalService.open(ErrorModalComponentComponent);
